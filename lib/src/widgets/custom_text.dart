@@ -6,7 +6,6 @@ class CustomText extends StatelessWidget {
   final double adjustSize;
   final Color? color;
   final Color? darkColor;
-  final TextAlign? align;
   final bool invertColor;
   final TextOverflow? overflow;
   final String? fontFamily;
@@ -49,7 +48,6 @@ class CustomText extends StatelessWidget {
     this.adjustSize = 0.0,
     this.color,
     this.darkColor,
-    this.align,
     this.invertColor = false,
     this.overflow,
     this.fontFamily,
@@ -124,7 +122,7 @@ class CustomText extends StatelessWidget {
     return Text(
       data,
       style: effectiveStyle(context),
-      textAlign: align,
+      textAlign: textAlign,
       overflow: overflow,
       softWrap: softWrap,
       maxLines: maxLines,
