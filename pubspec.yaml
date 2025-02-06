@@ -1,6 +1,5 @@
 name: custom_widgets_toolkit
-description: >
-  A lightweight and customizable Flutter package featuring custom widgets and utilities for enhanced UI development. Includes custom buttons, text fields, dialogs, custom scroll physics, and more for flexible app design.
+description: A lightweight and customizable Flutter package featuring custom widgets and utilities for enhanced UI development.
 version: 0.0.2
 homepage: https://github.com/okikday
 repository: https://github.com/Okikday/custom_widgets_toolkit

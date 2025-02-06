@@ -164,10 +164,10 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-02-05T01:47:12.363616Z",
+  "generated": "2025-02-06T01:10:08.750234Z",
   "generator": "pub",
-  "generatorVersion": "3.6.0",
+  "generatorVersion": "3.6.1",
   "flutterRoot": "file:///C:/dev/flutter",
-  "flutterVersion": "3.27.0-1.0.pre.4",
+  "flutterVersion": "3.27.3",
   "pubCache": "file:///C:/Users/Okikiola/AppData/Local/Pub/Cache"
 }
