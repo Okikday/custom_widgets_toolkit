@@ -1,4 +1,5 @@
 import 'package:custom_widgets_toolkit/custom_widgets_toolkit.dart';
+import 'package:custom_widgets_toolkit/src/others/custom_curves.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -63,24 +64,29 @@ class _CurvesDemoPageState extends State<CurvesDemoPage>
   late AnimationController _controller;
   late Animation<double> _animation;
 
-// Updated list of curve names with their corresponding Curve objects.
 final List<MapEntry<String, Curve>> _curves = [
-  // Flutter's built-in curves:
-  const MapEntry('Linear', Curves.linear),
-  const MapEntry('Ease', Curves.ease),
-  const MapEntry('EaseIn', Curves.easeIn),
-  const MapEntry('EaseOut', Curves.easeOut),
-  const MapEntry('EaseInOut', Curves.easeInOut),
-  const MapEntry('FastOutSlowIn', Curves.fastOutSlowIn),
-  const MapEntry('Decelerate', Curves.decelerate),
+  // Spring‑based curves:
+  MapEntry('Instant (Spring)', CustomCurves.instantSpring),
+  MapEntry('Default iOS (Spring)', CustomCurves.defaultIosSpring),
+  MapEntry('Bouncy (Spring)', CustomCurves.bouncySpring),
+  MapEntry('Snappy (Spring)', CustomCurves.snappySpring),
+  MapEntry('Interactive (Spring)', CustomCurves.interactiveSpring),
 
-  // Custom spring-based curves:
-  MapEntry('Instant (Spring)', CustomCurves.instant),
-  MapEntry('Default iOS (Spring)', CustomCurves.defaultIos),
-  MapEntry('Bouncy (Spring)', CustomCurves.bouncy),
-  MapEntry('Snappy (Spring)', CustomCurves.snappy),
-  MapEntry('Interactive (Spring)', CustomCurves.interactive),
+  // Additional custom curves:
+  MapEntry('Linear', CustomCurves.linear),
+  MapEntry('Ease', CustomCurves.ease),
+  MapEntry('Decelerate', CustomCurves.decelerate),
+  MapEntry('FastSlowInOut', CustomCurves.fastSlowInOut),
+  MapEntry('Bounce Out', CustomCurves.bounceOut),
+  MapEntry('Bounce In', CustomCurves.bounceIn),
+
+  // Additional smooth easing curves:
+  MapEntry('Ease Out Sine', CustomCurves.easeOutSine),
+  MapEntry('Ease In Out Sine', CustomCurves.easeInOutSine),
+  MapEntry('Ease Out Circ', CustomCurves.easeOutCirc),
+  MapEntry('Ease In Out Circ', CustomCurves.easeInOutCirc),
 ];
+
 
   int _selectedCurveIndex = 0;
 

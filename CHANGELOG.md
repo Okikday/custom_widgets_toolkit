@@ -1,21 +1,41 @@
 ## 0.0.1
 
-* [1.0.0] - Initial Release
-Added
-Constant Sizing Utilities: Easily manage widget dimensions with constant_sizing.dart.
-Custom Scroll Physics: Smooth scrolling experience with custom_scroll_physics.dart.
-Spring Animation Curves: Improved animations using custom_spring_curves.dart.
-Custom Widgets:
-custom_elevated_button.dart: Enhanced elevated button with extended customization options.
-custom_rich_text.dart: Rich text widget supporting advanced text formatting.
-custom_text_button.dart: Flexible text button with custom styling.
-custom_text.dart: Dark mode-aware and highly customizable text widget extending Text.
-custom_textfield.dart: Text field widget supporting advanced validation and styling.
-loading_dialog.dart: Lightweight and customizable loading dialog for UI feedback.
+* [1.0.0] - Initial Release  
+  **Added:**  
+  - **Constant Sizing Utilities:** Easily manage widget dimensions with `constant_sizing.dart`.  
+  - **Custom Scroll Physics:** Smooth scrolling experience with `custom_scroll_physics.dart`.  
+  - **Spring Animation Curves:** Improved animations using `custom_spring_curves.dart`.  
+  - **Custom Widgets:**  
+    - `custom_elevated_button.dart`: Enhanced elevated button with extended customization options.  
+    - `custom_rich_text.dart`: Rich text widget supporting advanced text formatting.  
+    - `custom_text_button.dart`: Flexible text button with custom styling.  
+    - `custom_text.dart`: Dark mode-aware and highly customizable text widget extending `Text`.  
+    - `custom_textfield.dart`: Text field widget supporting advanced validation and styling.  
+    - `loading_dialog.dart`: Lightweight and customizable loading dialog for UI feedback.
 
-## 0.0.2
+## 0.0.3
 
-* [1.0.1] - Initial Release
-Removed custom_spring_curves.dart for custom_curves.dart
-custom_rich_text.dart: Updated and fixed functionality
-custom_text.dart
+- **custom_rich_text.dart:** Updated and fixed functionality  
+- **custom_text.dart**
+
+## 0.0.31
+
+- **custom_spring_curves.dart:** Reduced curves  
+- **custom_textfield.dart:** Improved
+
+## 0.0.32
+
+**Custom Curves Enhancements:**  
+- **Smooth Easing Curves Added:** Introduced additional smooth easing curves—`easeOutSine`, `easeInOutSine`, `easeOutCirc`, and `easeInOutCirc`—to complement the existing spring‑based curves.  
+- **Unique Identifiers:** Updated the `_LambdaCurve` implementation to include unique IDs for each curve, ensuring accurate equality checks and proper selection in UI elements.  
+- **Spring Curve Renaming:** Renamed spring‑based curves to clearly include “Spring” in their names (e.g. `instantSpring`, `defaultIosSpring`, etc.) for better clarity in the curve options.
+
+**Custom Widget Improvements:**  
+- **CustomTextButton Enhancements:** Extended the custom text button widget to support icon integration via `TextButton.icon` and increased customization over styling, size, and padding.  
+- **General Refinements:** Made minor tweaks in `custom_text.dart` and `custom_textfield.dart` to improve performance and ensure UI consistency.
+
+## 0.0.32
+- **Fixed little onSubmitted bug in CustomTextfield**
+
+## 0.0.33
+- **Added documentation for CustomText
