@@ -38,4 +38,35 @@
 - **Fixed little onSubmitted bug in CustomTextfield**
 
 ## 0.0.33
-- **Added documentation for CustomText
+- **Added documentation for CustomText**
+
+## 0.0.34
+- **Added comprehensive documentation comments to all classes, enums, and methods to explain their purpose and functionality.**
+- **Finalized the full-screen loading page (FrostyLoadingScaffold) with all extra parameters (including gradient and particle options) for maximum customization.**
+
+## 0.0.35
+### Added
+- **CustomSnackBar Helper Class:**  
+  Introduced a new helper class for displaying custom-styled SnackBars throughout the app.
+  
+- **SnackBarVibe Enum:**  
+  Created an enumeration (`SnackBarVibe`) to represent different visual states: `error`, `neutral`, `success`, and `warning`.
+
+- **Theme-Aware Color Mapping:**  
+  Added color maps for both light and dark modes.  
+  - Light mode uses lighter shades (e.g., `Colors.red.shade50` for the background) and darker primary colors (e.g., `Colors.red`).
+  - Dark mode uses darker background colors (e.g., `Colors.red.shade900`) and softer primary colors (e.g., `Colors.red.shade300`).
+
+- **Customization Options:**  
+  Allowed optional parameters to override:
+  - `backgroundColor`
+  - `textStyle`
+  - `icon`
+  - `contentWidget`
+  - `dismissDirection`
+  - `shape`
+  - `duration`
+
+- **User Experience Enhancements:**  
+  - Automatically removes any currently visible SnackBar before showing a new one.
+  - Applies a floating behavior with a custom margin and a rounded rectangular shape with a colored border.
