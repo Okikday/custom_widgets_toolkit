@@ -70,3 +70,7 @@
 - **User Experience Enhancements:**  
   - Automatically removes any currently visible SnackBar before showing a new one.
   - Applies a floating behavior with a custom margin and a rounded rectangular shape with a colored border.
+
+
+## 0.0.36
+- **Updates readme.md** 

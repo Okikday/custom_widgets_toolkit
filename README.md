@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Flutter Custom Widgets Package
 
 This package contains a collection of custom components and widgets designed to simplify UI building and enhance the user experience in Flutter applications.
@@ -30,7 +29,6 @@ This package contains a collection of custom components and widgets designed to 
 
 To use this package in your Flutter project, follow these steps:
 
-=======
 https://pub.dev/packages/custom_widgets_toolkit
 
 # Flutter Custom Widgets Package
@@ -60,15 +58,14 @@ This package contains a collection of custom components and widgets designed to 
 - **custom_text.dart**: A versatile text widget that allows easy styling with dynamic properties.
 - **custom_textfield.dart**: A custom text input field widget with enhanced styling and input validation.
 - **loading_dialog.dart**: A loading dialog widget to show an animated loading indicator during data processing or app operations.
+- **custom_snackbar.dart**: A custom snackbar with rich basic use-cases customization and usage
 
 ## Installation
 
 To use this package in your Flutter project, follow these steps:
-
->>>>>>> 3633b8dc4002d3f27aedd8ced4e36e997fcce8e5
 1. Add the package to your `pubspec.yaml`:
    ```yaml
    dependencies:
      flutter:
        sdk: flutter
-     custom_widgets_toolkit: ^0.0.1
+     custom_widgets_toolkit: ^0.0.35
