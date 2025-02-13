@@ -74,3 +74,6 @@
 
 ## 0.0.36
 - **Updates readme.md** 
+
+## 0.0.37
+- **Fixed SnackBarVibe enum to show**

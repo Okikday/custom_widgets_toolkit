@@ -68,4 +68,4 @@ To use this package in your Flutter project, follow these steps:
    dependencies:
      flutter:
        sdk: flutter
-     custom_widgets_toolkit: ^0.0.35
+     custom_widgets_toolkit: ^0.0.37
