@@ -87,3 +87,17 @@
   - Minor refinements to `CustomSnackBar` for better theme consistency and error handling.  
   - Improved example page
 
+## 0.0.39
+- **Custom SnackBar Color Scheme Update: Important Update**
+  - Updated `CustomSnackBar` to always use light background colors (using `Colors.shade50`) for a consistent and bright appearance.
+  - Adjusted text, icon, and border colors to use darker shades (using `Colors.shade800`) to ensure excellent contrast and visibility.
+  - Removed dark mode-specific color logic to maintain a uniform look across themes.
+
+## 0.0.40
+- **Stabilized packaged: NOTE: this version has breaking changes**
+- **Refined colors in custom snackbar**
+- **Deprecated loadingDialogBuilder, use showDialog instead e.g LoadingDialog.showDialog(context)...**
+- **Added property to change textColor, textSize and textStyle ultimately in loadingDialog**
+- **Refined loadingDialog colors and texture**
+- **Fixed major bugs on loadingDialog**
+- **Most stable version**

@@ -488,6 +488,9 @@ class FrostyLoadingScaffold extends StatefulWidget {
   final double particleOpacity;
   final double gradientOpacity;
   final double blurSigma;
+  final Color? msgTextColor;
+  final double? msgTextSize;
+  final TextStyle? msgTextStyle;
 
   const FrostyLoadingScaffold(
       {super.key,
@@ -501,7 +504,10 @@ class FrostyLoadingScaffold extends StatefulWidget {
       this.particleCount = 1000,
       this.particleOpacity = 0.07,
       this.gradientOpacity = 0.07,
-      this.blurSigma = 4.0});
+      this.blurSigma = 4.0,
+      this.msgTextColor,
+      this.msgTextSize,
+      this.msgTextStyle});
 
   @override
   State<FrostyLoadingScaffold> createState() => _FrostyLoadingScaffoldState();
@@ -529,8 +535,6 @@ class _FrostyLoadingScaffoldState extends State<FrostyLoadingScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    // final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return PopScope(
       canPop: widget.canPop,
       child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -582,7 +586,9 @@ class _FrostyLoadingScaffoldState extends State<FrostyLoadingScaffold> {
                     child: CustomText(
                       widget.msg ?? loadingMessages[msgIndex],
                       key: ValueKey<int>(msgIndex),
-                      fontSize: 18,
+                      color: widget.msgTextColor,
+                      fontSize: widget.msgTextSize ?? 18,
+                      style: widget.msgTextStyle,
                       shadows: const [
                         Shadow(color: Colors.black26, offset: Offset(0, 1), blurRadius: 4),
                       ],
@@ -604,15 +610,20 @@ class NormalLoadingScaffold extends StatefulWidget {
   final Color? progressIndicatorColor;
   final Color? backgroundColor;
   final bool adaptToScreenSize;
+  final Color? msgTextColor;
+  final double? msgTextSize;
+  final TextStyle? msgTextStyle;
 
-  const NormalLoadingScaffold({
-    super.key,
-    this.canPop = false,
-    this.msg,
-    this.progressIndicatorColor,
-    this.backgroundColor,
-    this.adaptToScreenSize = false
-  });
+  const NormalLoadingScaffold(
+      {super.key,
+      this.canPop = false,
+      this.msg,
+      this.progressIndicatorColor,
+      this.backgroundColor,
+      this.adaptToScreenSize = false,
+      this.msgTextColor,
+      this.msgTextSize,
+      this.msgTextStyle});
 
   @override
   State<NormalLoadingScaffold> createState() => _NormalLoadingScaffoldState();
@@ -646,6 +657,8 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.sizeOf(context).width;
 
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return PopScope(
       canPop: widget.canPop,
       child: Scaffold(
@@ -656,9 +669,12 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> {
             alignment: Alignment.center,
             child: DecoratedBox(
               decoration: BoxDecoration(
-                  color: widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+                  color: widget.backgroundColor ?? (isDarkMode ? Colors.black : Colors.white),
                   borderRadius: BorderRadius.circular(36),
-                  boxShadow: [BoxShadow(offset: Offset.zero, blurRadius: 5.0, spreadRadius: 2.0, color: Colors.blueGrey)]),
+                  border: Border.fromBorderSide(BorderSide(color: Colors.blueGrey.withValues(alpha: 0.05))),
+                  boxShadow: [
+                    BoxShadow(offset: Offset.zero, blurRadius: 4.0, spreadRadius: 2.0, color: Colors.blueGrey.withValues(alpha: 0.2), blurStyle: BlurStyle.outer)
+                  ]),
               child: SizedBox(
                 width: widget.adaptToScreenSize ? screenWidth * 0.6 : 240,
                 height: widget.adaptToScreenSize ? screenWidth * 0.4 : 160,
@@ -677,7 +693,12 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> {
                       const SizedBox(height: 16),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                        child: CustomText(widget.msg ?? loadingMessages[msgIndex], invertColor: true,),
+                        child: CustomText(
+                          widget.msg ?? loadingMessages[msgIndex],
+                          color: widget.msgTextColor ?? Colors.blueGrey,
+                          fontSize: widget.msgTextSize ?? 14,
+                          style: widget.msgTextStyle,
+                        ),
                       ),
                     ],
                   ),
@@ -695,11 +716,15 @@ class LoadingDialog {
   // Static reference to the current loading dialog route.
   static PageRoute? _currentLoadingRoute;
 
-  @Deprecated("loadingDialogBuilder deprecated, use showDialog instead")
-  /// Use showDialog instead
-  static PageRouteBuilder loadingDialogBuilder({
+  /// Shows the loading dialog by pushing a custom route using [loadingDialogBuilder].
+  /// It now takes the [BuildContext] as a required parameter.
+  static Future<T?> showLoadingDialog<T>(
+    BuildContext context, {
     bool isAnimatedDialog = false,
     String? msg,
+    Color? msgTextColor,
+    double? msgTextSize,
+    TextStyle? msgTextStyle,
     bool? canPop,
     Color? backgroundColor,
     List<Color>? animatedColors,
@@ -707,6 +732,8 @@ class LoadingDialog {
     Duration transitionDuration = const Duration(milliseconds: 500),
     Duration reverseTransitionDuration = const Duration(milliseconds: 250),
     Curve curve = Curves.ease,
+
+    /// For non-animatedDialog
     bool adaptToScreenSize = false,
     // Extra parameters for the animated scaffold:
     List<Color>? gradientColors,
@@ -716,7 +743,7 @@ class LoadingDialog {
     double gradientOpacity = 0.07,
     double blurSigma = 4.0,
   }) {
-    return PageRouteBuilder(
+    final pageRoute = PageRouteBuilder(
       opaque: false,
       transitionDuration: transitionDuration,
       reverseTransitionDuration: reverseTransitionDuration,
@@ -733,6 +760,9 @@ class LoadingDialog {
             particleOpacity: particleOpacity,
             gradientOpacity: gradientOpacity,
             blurSigma: blurSigma,
+            msgTextColor: msgTextColor,
+            msgTextSize: msgTextSize,
+            msgTextStyle: msgTextStyle,
           );
         } else {
           return NormalLoadingScaffold(
@@ -741,6 +771,9 @@ class LoadingDialog {
             progressIndicatorColor: progressIndicatorColor,
             backgroundColor: backgroundColor,
             adaptToScreenSize: adaptToScreenSize,
+            msgTextColor: msgTextColor,
+            msgTextSize: msgTextSize,
+            msgTextStyle: msgTextStyle,
           );
         }
       },
@@ -768,59 +801,15 @@ class LoadingDialog {
         );
       },
     );
-  }
-
-  /// Shows the loading dialog by pushing a custom route using [loadingDialogBuilder].
-  /// It now takes the [BuildContext] as a required parameter.
-  static Future<T?> showLoadingDialog<T>(BuildContext context, {
-    bool isAnimatedDialog = false,
-    String? msg,
-    bool? canPop,
-    Color? backgroundColor,
-    List<Color>? animatedColors,
-    Color? progressIndicatorColor,
-    Duration transitionDuration = const Duration(milliseconds: 500),
-    Duration reverseTransitionDuration = const Duration(milliseconds: 250),
-    Curve curve = Curves.ease,
-    /// For non-animatedDialog
-    bool adaptToScreenSize = false,
-    // Extra parameters for the animated scaffold:
-    List<Color>? gradientColors,
-    List<Color>? particleColors,
-    int particleCount = 1000,
-    double particleOpacity = 0.07,
-    double gradientOpacity = 0.07,
-    double blurSigma = 4.0,
-  }) {
-    final route = loadingDialogBuilder(
-      isAnimatedDialog: isAnimatedDialog,
-      msg: msg,
-      canPop: canPop,
-      backgroundColor: backgroundColor,
-      animatedColors: animatedColors,
-      progressIndicatorColor: progressIndicatorColor,
-      transitionDuration: transitionDuration,
-      reverseTransitionDuration: reverseTransitionDuration,
-      curve: curve,
-      gradientColors: gradientColors,
-      particleColors: particleColors,
-      particleCount: particleCount,
-      particleOpacity: particleOpacity,
-      gradientOpacity: gradientOpacity,
-      blurSigma: blurSigma,
-      adaptToScreenSize: adaptToScreenSize,
-    );
 
     // Store the route reference.
-    _currentLoadingRoute = route;
+    _currentLoadingRoute = pageRoute;
 
     // Push the route and clear the stored reference once it completes.
-    return Navigator.of(context).push<T>(route as Route<T>).whenComplete(() {
+    return Navigator.of(context).push<T>(pageRoute as Route<T>).whenComplete(() {
       _currentLoadingRoute = null;
     });
   }
-
-
 
   /// Hides the loading dialog by popping the current route if it exists.
   /// If the dialog has already been popped or the context is no longer valid,
@@ -834,5 +823,4 @@ class LoadingDialog {
       _currentLoadingRoute = null;
     }
   }
-
 }

@@ -243,9 +243,14 @@ class _ScrollPhysicsDemoPageState extends State<ScrollPhysicsDemoPage> {
 
 /// A test page that shows two buttons: one to show the LoadingDialog,
 /// and another to hide it.
-class LoadingDialogTestPage extends StatelessWidget {
+class LoadingDialogTestPage extends StatefulWidget {
   const LoadingDialogTestPage({super.key});
 
+  @override
+  State<LoadingDialogTestPage> createState() => _LoadingDialogTestPageState();
+}
+
+class _LoadingDialogTestPageState extends State<LoadingDialogTestPage> {
   /// Shows the loading dialog using the LoadingDialog helper.
   void _showDialog(BuildContext context) {
     LoadingDialog.showLoadingDialog(

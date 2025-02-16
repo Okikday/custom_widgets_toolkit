@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:custom_widgets_toolkit/custom_widgets_toolkit.dart';
 import 'package:flutter/material.dart';
 
@@ -50,45 +52,31 @@ class CustomSnackBar {
         ShapeBorder? shape,
         Duration? duration,
       }) {
-    // Automatically determine dark mode based on the current theme.
-    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    // Map each vibe to a main color, a light background color, and an icon.
+
     final Map<SnackBarVibe, Color> mainColors = {
       SnackBarVibe.none: Colors.grey.shade800,
-      SnackBarVibe.info: Colors.lightBlue.shade600,
-      SnackBarVibe.error: Colors.red.shade400,
-      SnackBarVibe.neutral: Colors.blueGrey,
-      SnackBarVibe.success: Colors.green.shade600,
-      SnackBarVibe.warning: Colors.orange.shade600,
+      SnackBarVibe.info: Colors.lightBlue.shade800,
+      SnackBarVibe.error: Colors.red.shade800,
+      SnackBarVibe.neutral: Colors.blueGrey.shade800,
+      SnackBarVibe.success: Colors.green.shade800,
+      // Use the provided pumpkin color for warning
+      SnackBarVibe.warning: const Color(0xFFF46B22),
     };
 
     final Map<SnackBarVibe, Color> backgroundColors = {
-      SnackBarVibe.none: Colors.grey.shade50,
-      SnackBarVibe.info: Colors.lightBlue.shade50,
-      SnackBarVibe.error: Colors.red.shade50,
-      SnackBarVibe.neutral: Colors.blueGrey.shade50,
-      SnackBarVibe.success: Colors.green.shade50,
-      SnackBarVibe.warning: Colors.orange.shade50,
+      // For every vibe, border is mainColor with 20% opacity.
+      for (final vibe in SnackBarVibe.values)
+        vibe: mainColors[vibe]!.withValues(alpha: 0.05),
     };
 
-    // Dark mode color maps.
-    final Map<SnackBarVibe, Color> mainColorsDarkMode = {
-      SnackBarVibe.error: Colors.red.shade300,
-      SnackBarVibe.neutral: Colors.blueGrey.shade300,
-      SnackBarVibe.success: Colors.green.shade300,
-      SnackBarVibe.warning: Colors.orange.shade300,
+    final Map<SnackBarVibe, Color> borderColors = {
+      // For every vibe, border is mainColor with 20% opacity.
+      for (final vibe in SnackBarVibe.values)
+        vibe: mainColors[vibe]!.withValues(alpha: 0.2),
     };
 
-    final Map<SnackBarVibe, Color> backgroundColorsDarkMode = {
-      SnackBarVibe.none: Colors.white,
-      SnackBarVibe.info: Colors.lightBlue.shade300,
-      SnackBarVibe.error: Colors.red.shade300,
-      SnackBarVibe.neutral: Colors.blueGrey.shade300,
-      SnackBarVibe.success: Colors.green.shade300,
-      SnackBarVibe.warning: Colors.orange.shade300,
 
-    };
 
     final Map<SnackBarVibe, IconData> icons = {
       SnackBarVibe.none: Icons.remove_circle_outline,
@@ -100,11 +88,8 @@ class CustomSnackBar {
     };
 
     // Choose colors based on whether dark mode is active.
-    final Color mainColor =
-    isDarkMode ? mainColorsDarkMode[vibe]! : mainColors[vibe]!;
-    final Color bgColor = isDarkMode
-        ? backgroundColorsDarkMode[vibe]!
-        : backgroundColors[vibe]!;
+    final Color mainColor = mainColors[vibe]!;
+    final Color bgColor = backgroundColors[vibe]!;
     final IconData iconData = icons[vibe]!;
 
     // Remove any currently visible SnackBar.
@@ -118,33 +103,37 @@ class CustomSnackBar {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         backgroundColor: backgroundColor ?? bgColor,
         dismissDirection: dismissDirection ?? DismissDirection.vertical,
+        elevation: 0,
         shape: shape ??
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
-              side: BorderSide(color: mainColor, width: 1),
+              side: BorderSide(color: borderColors[vibe]!, width: 1),
             ),
-        content: contentWidget ??
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                // Expanded widget ensures the text takes up available space.
-                Expanded(
-                  child: CustomText(
-                    content,
-                    style: textStyle ??
-                        TextStyle(
-                          color: mainColor,
-                          fontSize: 16,
-                        ),
+        content: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: contentWidget ??
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Expanded widget ensures the text takes up available space.
+                  Expanded(
+                    child: CustomText(
+                      content,
+                      style: textStyle ??
+                          TextStyle(
+                            color: mainColor,
+                            fontSize: 16,
+                          ),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Icon(
-                  iconData,
-                  color: mainColor,
-                ),
-              ],
-            ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    iconData,
+                    color: mainColor,
+                  ),
+                ],
+              ),
+        ),
       ),
     );
   }

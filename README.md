@@ -1,6 +1,6 @@
 # Flutter Custom Widgets Package
 
-This package contains a collection of custom components and widgets designed to simplify UI building and enhance the user experience in Flutter applications.
+This package provides a curated set of custom components and widgets that simplify Flutter UI development. It streamlines configuration by exposing tailored properties, helping you build beautiful interfaces quickly with less boilerplate.
 
 ## Table of Contents
 - [Custom Components](#custom-components)
@@ -11,61 +11,28 @@ This package contains a collection of custom components and widgets designed to 
 
 ## Custom Components
 
-### `lib/src/others/`
-- **constant_sizing.dart**: Contains predefined constant values for sizing elements to ensure consistency across the app.
-- **custom_scroll_physics.dart**: Custom scroll behavior for a more tailored scrolling experience.
-- **custom_spring_curves.dart**: Provides spring-like animations using custom curves for a more natural feel in UI transitions.
+**`lib/src/others/`**
+- **constant_sizing.dart:** Predefined sizing constants for design consistency.
+- **custom_scroll_physics.dart:** Tailored scroll behavior.
+- **custom_spring_curves.dart:** Spring-like animations for natural UI transitions.
 
 ## Custom Widgets
 
-### `lib/src/widgets/`
-- **custom_elevated_button.dart**: A custom implementation of an ElevatedButton with additional properties for customization.
-- **custom_text_button.dart**: A styled text button widget with support for custom actions and appearance.
-- **custom_text.dart**: A versatile text widget that allows easy styling with dynamic properties.
-- **custom_textfield.dart**: A custom text input field widget with enhanced styling and input validation.
-- **loading_dialog.dart**: A loading dialog widget to show an animated loading indicator during data processing or app operations.
+**`lib/src/widgets/`**
+- **custom_elevated_button.dart:** Enhanced ElevatedButton with extra customization.
+- **custom_rich_text.dart:** Rich text widget with flexible styling.
+- **custom_text_button.dart:** Styled text button for intuitive interactions.
+- **custom_text.dart:** Versatile text widget with dynamic styling.
+- **custom_textfield.dart:** Advanced text input field with built-in validation.
+- **loading_dialog.dart:** Customizable/animated loading dialog for smooth operation feedback.
+- **custom_snackbar.dart:** Custom snackbar offering flexible usage.
 
 ## Installation
 
-To use this package in your Flutter project, follow these steps:
+Add the package to your `pubspec.yaml`:
 
-https://pub.dev/packages/custom_widgets_toolkit
-
-# Flutter Custom Widgets Package
-
-This package contains a collection of custom components and widgets designed to simplify UI building and enhance the user experience in Flutter applications.
-
-## Table of Contents
-- [Custom Components](#custom-components)
-- [Custom Widgets](#custom-widgets)
-- [Installation](#installation)
-- [Usage](#usage)
-- [License](#license)
-
-## Custom Components
-
-### `lib/src/others/`
-- **constant_sizing.dart**: Contains predefined constant values for sizing elements to ensure consistency across the app.
-- **custom_scroll_physics.dart**: Custom scroll behavior for a more tailored scrolling experience.
-- **custom_spring_curves.dart**: Provides spring-like animations using custom curves for a more natural feel in UI transitions.
-
-## Custom Widgets
-
-### `lib/src/widgets/`
-- **custom_elevated_button.dart**: A custom implementation of an ElevatedButton with additional properties for customization.
-- **custom_rich_text.dart**: A custom widget for displaying rich text with customizable styles.
-- **custom_text_button.dart**: A styled text button widget with support for custom actions and appearance.
-- **custom_text.dart**: A versatile text widget that allows easy styling with dynamic properties.
-- **custom_textfield.dart**: A custom text input field widget with enhanced styling and input validation.
-- **loading_dialog.dart**: A loading dialog widget to show an animated loading indicator during data processing or app operations.
-- **custom_snackbar.dart**: A custom snackbar with rich basic use-cases customization and usage
-
-## Installation
-
-To use this package in your Flutter project, follow these steps:
-1. Add the package to your `pubspec.yaml`:
-   ```yaml
-   dependencies:
-     flutter:
-       sdk: flutter
-     custom_widgets_toolkit: ^0.0.37
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  custom_widgets_toolkit: ^0.0.40
