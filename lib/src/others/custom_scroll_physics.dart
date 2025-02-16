@@ -69,7 +69,7 @@ class CustomScrollPhysics extends ScrollPhysics {
   @override
   Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
     // If we're nearly at rest and in bounds, no simulation is needed.
-    if ((velocity.abs() < tolerance.velocity) && !position.outOfRange) {
+    if ((velocity.abs() < toleranceFor(position).velocity) && !position.outOfRange) {
       return null;
     }
 
@@ -78,7 +78,7 @@ class CustomScrollPhysics extends ScrollPhysics {
         return ClampingScrollSimulation(
           position: position.pixels,
           velocity: velocity,
-          tolerance: tolerance,
+          tolerance: toleranceFor(position),
         );
       case ScrollPhysicsBehavior.ios:
         return BouncingScrollSimulation(
@@ -91,7 +91,7 @@ class CustomScrollPhysics extends ScrollPhysics {
           velocity: velocity,
           leadingExtent: position.minScrollExtent,
           trailingExtent: position.maxScrollExtent,
-          tolerance: tolerance,
+          tolerance: toleranceFor(position),
         );
       case ScrollPhysicsBehavior.springyGlow:
         // When overscrolled, bounce back to the boundary.

@@ -9,7 +9,9 @@ enum SnackBarVibe {
   error,
   neutral,
   success,
-  warning
+  warning,
+  none,
+  info,
 }
 
 /// A helper class that provides a method to display a custom-styled SnackBar.
@@ -53,14 +55,17 @@ class CustomSnackBar {
 
     // Map each vibe to a main color, a light background color, and an icon.
     final Map<SnackBarVibe, Color> mainColors = {
-      SnackBarVibe.error: Colors.red,
+      SnackBarVibe.none: Colors.grey.shade800,
+      SnackBarVibe.info: Colors.lightBlue.shade600,
+      SnackBarVibe.error: Colors.red.shade400,
       SnackBarVibe.neutral: Colors.blueGrey,
-      SnackBarVibe.success: Colors.green,
-      SnackBarVibe.warning: Colors.orange,
+      SnackBarVibe.success: Colors.green.shade600,
+      SnackBarVibe.warning: Colors.orange.shade600,
     };
 
     final Map<SnackBarVibe, Color> backgroundColors = {
-      // Use a light shade for the background.
+      SnackBarVibe.none: Colors.grey.shade50,
+      SnackBarVibe.info: Colors.lightBlue.shade50,
       SnackBarVibe.error: Colors.red.shade50,
       SnackBarVibe.neutral: Colors.blueGrey.shade50,
       SnackBarVibe.success: Colors.green.shade50,
@@ -76,14 +81,18 @@ class CustomSnackBar {
     };
 
     final Map<SnackBarVibe, Color> backgroundColorsDarkMode = {
-      // Use a darker shade for the background in dark mode.
-      SnackBarVibe.error: Colors.red.shade900,
-      SnackBarVibe.neutral: Colors.blueGrey.shade900,
-      SnackBarVibe.success: Colors.green.shade900,
-      SnackBarVibe.warning: Colors.orange.shade900,
+      SnackBarVibe.none: Colors.white,
+      SnackBarVibe.info: Colors.lightBlue.shade300,
+      SnackBarVibe.error: Colors.red.shade300,
+      SnackBarVibe.neutral: Colors.blueGrey.shade300,
+      SnackBarVibe.success: Colors.green.shade300,
+      SnackBarVibe.warning: Colors.orange.shade300,
+
     };
 
     final Map<SnackBarVibe, IconData> icons = {
+      SnackBarVibe.none: Icons.remove_circle_outline,
+      SnackBarVibe.info: Icons.info,
       SnackBarVibe.error: Icons.error_outline,
       SnackBarVibe.neutral: Icons.info_outline,
       SnackBarVibe.success: Icons.check_circle_outline,
@@ -99,7 +108,7 @@ class CustomSnackBar {
     final IconData iconData = icons[vibe]!;
 
     // Remove any currently visible SnackBar.
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     // Show the custom SnackBar.
     ScaffoldMessenger.of(context).showSnackBar(

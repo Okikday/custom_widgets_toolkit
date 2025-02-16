@@ -258,8 +258,6 @@ class _CirclePainter extends CustomPainter {
   bool shouldRepaint(covariant _CirclePainter oldDelegate) => true;
 }
 
-
-
 class OrganicBackgroundEffect extends StatefulWidget {
   final List<Color>? gradientColors;
   final List<Color>? particleColors;
@@ -325,8 +323,7 @@ class _OrganicBackgroundEffectState extends State<OrganicBackgroundEffect> with 
           _random.nextDouble() * size.width,
           _random.nextDouble() * size.height,
         ),
-        color: particleColors[_random.nextInt(particleColors.length)]
-            .withValues(alpha: widget.particleOpacity),
+        color: particleColors[_random.nextInt(particleColors.length)].withValues(alpha: widget.particleOpacity),
         size: 1 + _random.nextDouble() * 2,
         speed: 0.2 + _random.nextDouble() * 0.3,
         angle: _random.nextDouble() * 2 * pi,
@@ -427,8 +424,7 @@ class GradientPainter extends CustomPainter {
           ],
           [0, 1],
           TileMode.clamp,
-          Matrix4.rotationZ(rotationValue * pi * 2 + (i * pi / colors.length))
-              .storage,
+          Matrix4.rotationZ(rotationValue * pi * 2 + (i * pi / colors.length)).storage,
         );
 
       canvas.drawRect(rect, paint);
@@ -477,7 +473,6 @@ class ParticlePainter extends CustomPainter {
   bool shouldRepaint(ParticlePainter oldDelegate) => true;
 }
 
-
 /// A full-screen, animated loading page that always animates.
 /// This page uses a transparent Scaffold with an animated frosty background
 /// and a centered animated loading message.
@@ -494,17 +489,19 @@ class FrostyLoadingScaffold extends StatefulWidget {
   final double gradientOpacity;
   final double blurSigma;
 
-  const FrostyLoadingScaffold({
-    super.key,
-    this.msg,
-    this.transitionDuration = const Duration(milliseconds: 600),
-    this.gradientColors,
-    this.particleColors,
-    this.canPop = true,
-    this.backgroundColor, this.circleColors, this.particleCount = 1000,
-    this.particleOpacity = 0.07, this.gradientOpacity = 0.07,
-    this.blurSigma = 4.0
-  });
+  const FrostyLoadingScaffold(
+      {super.key,
+      this.msg,
+      this.transitionDuration = const Duration(milliseconds: 600),
+      this.gradientColors,
+      this.particleColors,
+      this.canPop = true,
+      this.backgroundColor,
+      this.circleColors,
+      this.particleCount = 1000,
+      this.particleOpacity = 0.07,
+      this.gradientOpacity = 0.07,
+      this.blurSigma = 4.0});
 
   @override
   State<FrostyLoadingScaffold> createState() => _FrostyLoadingScaffoldState();
@@ -601,13 +598,12 @@ class _FrostyLoadingScaffoldState extends State<FrostyLoadingScaffold> {
   }
 }
 
-
-
 class NormalLoadingScaffold extends StatefulWidget {
   final bool canPop;
   final String? msg;
   final Color? progressIndicatorColor;
   final Color? backgroundColor;
+  final bool adaptToScreenSize;
 
   const NormalLoadingScaffold({
     super.key,
@@ -615,6 +611,7 @@ class NormalLoadingScaffold extends StatefulWidget {
     this.msg,
     this.progressIndicatorColor,
     this.backgroundColor,
+    this.adaptToScreenSize = false
   });
 
   @override
@@ -659,12 +656,12 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> {
             alignment: Alignment.center,
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(36),
-              ),
+                  color: widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(36),
+                  boxShadow: [BoxShadow(offset: Offset.zero, blurRadius: 5.0, spreadRadius: 2.0, color: Colors.blueGrey)]),
               child: SizedBox(
-                width: screenWidth * 0.6,
-                height: screenWidth * 0.4,
+                width: widget.adaptToScreenSize ? screenWidth * 0.6 : 240,
+                height: widget.adaptToScreenSize ? screenWidth * 0.4 : 160,
                 child: ClipRRect(
                   clipBehavior: Clip.hardEdge,
                   child: Column(
@@ -680,7 +677,7 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> {
                       const SizedBox(height: 16),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                        child: CustomText(widget.msg ?? loadingMessages[msgIndex]),
+                        child: CustomText(widget.msg ?? loadingMessages[msgIndex], invertColor: true,),
                       ),
                     ],
                   ),
@@ -694,77 +691,148 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> {
   }
 }
 
-
-
 class LoadingDialog {
-  static PageRouteBuilder loadingDialogBuilder({
-  bool isAnimatedDialog = false,
-  String? msg,
-  bool? canPop,
-  Color? backgroundColor,
-  List<Color>? animatedColors,
-  Color? progressIndicatorColor,
-  Duration transitionDuration = const Duration(milliseconds: 500),
-  Duration reverseTransitionDuration = const Duration(milliseconds: 250),
-  Curve curve = Curves.ease,
-  // Extra parameters for the animated scaffold:
-  List<Color>? gradientColors,
-  List<Color>? particleColors,
-  int particleCount = 1000,
-  double particleOpacity = 0.07,
-  double gradientOpacity = 0.07,
-  double blurSigma = 4.0,
-}) {
-  return PageRouteBuilder(
-    opaque: false,
-    transitionDuration: transitionDuration,
-    reverseTransitionDuration: reverseTransitionDuration,
-    pageBuilder: (context, animation, secondaryAnimation) {
-      if (isAnimatedDialog) {
-        return FrostyLoadingScaffold(
-          msg: msg,
-          canPop: canPop ?? true,
-          backgroundColor: backgroundColor,
-          circleColors: animatedColors,
-          gradientColors: gradientColors,
-          particleColors: particleColors,
-          particleCount: particleCount,
-          particleOpacity: particleOpacity,
-          gradientOpacity: gradientOpacity,
-          blurSigma: blurSigma,
-        );
-      } else {
-        return NormalLoadingScaffold(
-          msg: msg,
-          canPop: canPop ?? false,
-          progressIndicatorColor: progressIndicatorColor,
-          backgroundColor: backgroundColor,
-        );
-      }
-    },
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      // Always apply a fade transition using the provided curve.
-      final Animation<double> fadeAnimation = Tween<double>(begin: 0.0, end: 1.0)
-          .animate(CurvedAnimation(parent: animation, curve: curve));
+  // Static reference to the current loading dialog route.
+  static PageRoute? _currentLoadingRoute;
 
-      return FadeTransition(
-        opacity: fadeAnimation,
-        child: Builder(
-          builder: (context) {
-            // When the route is popping, apply an additional scale effect:
-            // Scale = 1.0 when animation.value == 1 and 1.5 when animation.value == 0.
-            double scale = 1.0;
-            if (animation.status == AnimationStatus.reverse) {
-              scale = 1.0 + (1 - animation.value) * 0.5;
-            }
-            return Transform.scale(
-              scale: scale,
-              child: child,
-            );
-          },
-        ),
-      );
-    },
-  );
-}
+  @Deprecated("loadingDialogBuilder deprecated, use showDialog instead")
+  /// Use showDialog instead
+  static PageRouteBuilder loadingDialogBuilder({
+    bool isAnimatedDialog = false,
+    String? msg,
+    bool? canPop,
+    Color? backgroundColor,
+    List<Color>? animatedColors,
+    Color? progressIndicatorColor,
+    Duration transitionDuration = const Duration(milliseconds: 500),
+    Duration reverseTransitionDuration = const Duration(milliseconds: 250),
+    Curve curve = Curves.ease,
+    bool adaptToScreenSize = false,
+    // Extra parameters for the animated scaffold:
+    List<Color>? gradientColors,
+    List<Color>? particleColors,
+    int particleCount = 1000,
+    double particleOpacity = 0.07,
+    double gradientOpacity = 0.07,
+    double blurSigma = 4.0,
+  }) {
+    return PageRouteBuilder(
+      opaque: false,
+      transitionDuration: transitionDuration,
+      reverseTransitionDuration: reverseTransitionDuration,
+      pageBuilder: (context, animation, secondaryAnimation) {
+        if (isAnimatedDialog) {
+          return FrostyLoadingScaffold(
+            msg: msg,
+            canPop: canPop ?? true,
+            backgroundColor: backgroundColor,
+            circleColors: animatedColors,
+            gradientColors: gradientColors,
+            particleColors: particleColors,
+            particleCount: particleCount,
+            particleOpacity: particleOpacity,
+            gradientOpacity: gradientOpacity,
+            blurSigma: blurSigma,
+          );
+        } else {
+          return NormalLoadingScaffold(
+            msg: msg,
+            canPop: canPop ?? false,
+            progressIndicatorColor: progressIndicatorColor,
+            backgroundColor: backgroundColor,
+            adaptToScreenSize: adaptToScreenSize,
+          );
+        }
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // Always apply a fade transition using the provided curve.
+        final Animation<double> fadeAnimation =
+            Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animation, curve: curve));
+
+        return FadeTransition(
+          opacity: fadeAnimation,
+          child: Builder(
+            builder: (context) {
+              // When the route is popping, apply an additional scale effect:
+              // Scale = 1.0 when animation.value == 1 and 1.5 when animation.value == 0.
+              double scale = 1.0;
+              if (animation.status == AnimationStatus.reverse) {
+                scale = 1.0 + (1 - animation.value) * 0.5;
+              }
+              return Transform.scale(
+                scale: scale,
+                child: child,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  /// Shows the loading dialog by pushing a custom route using [loadingDialogBuilder].
+  /// It now takes the [BuildContext] as a required parameter.
+  static Future<T?> showLoadingDialog<T>(BuildContext context, {
+    bool isAnimatedDialog = false,
+    String? msg,
+    bool? canPop,
+    Color? backgroundColor,
+    List<Color>? animatedColors,
+    Color? progressIndicatorColor,
+    Duration transitionDuration = const Duration(milliseconds: 500),
+    Duration reverseTransitionDuration = const Duration(milliseconds: 250),
+    Curve curve = Curves.ease,
+    /// For non-animatedDialog
+    bool adaptToScreenSize = false,
+    // Extra parameters for the animated scaffold:
+    List<Color>? gradientColors,
+    List<Color>? particleColors,
+    int particleCount = 1000,
+    double particleOpacity = 0.07,
+    double gradientOpacity = 0.07,
+    double blurSigma = 4.0,
+  }) {
+    final route = loadingDialogBuilder(
+      isAnimatedDialog: isAnimatedDialog,
+      msg: msg,
+      canPop: canPop,
+      backgroundColor: backgroundColor,
+      animatedColors: animatedColors,
+      progressIndicatorColor: progressIndicatorColor,
+      transitionDuration: transitionDuration,
+      reverseTransitionDuration: reverseTransitionDuration,
+      curve: curve,
+      gradientColors: gradientColors,
+      particleColors: particleColors,
+      particleCount: particleCount,
+      particleOpacity: particleOpacity,
+      gradientOpacity: gradientOpacity,
+      blurSigma: blurSigma,
+      adaptToScreenSize: adaptToScreenSize,
+    );
+
+    // Store the route reference.
+    _currentLoadingRoute = route;
+
+    // Push the route and clear the stored reference once it completes.
+    return Navigator.of(context).push<T>(route as Route<T>).whenComplete(() {
+      _currentLoadingRoute = null;
+    });
+  }
+
+
+
+  /// Hides the loading dialog by popping the current route if it exists.
+  /// If the dialog has already been popped or the context is no longer valid,
+  /// this function will do nothing.
+  static void hideLoadingDialog(BuildContext context) {
+    if (_currentLoadingRoute != null) {
+      // Check if the Navigator can pop before calling pop.
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+      _currentLoadingRoute = null;
+    }
+  }
+
 }

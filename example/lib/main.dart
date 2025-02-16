@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Curves & Physics Demo'),
@@ -37,6 +37,8 @@ class HomePage extends StatelessWidget {
             tabs: [
               Tab(text: 'Curves Demo'),
               Tab(text: 'Scroll Physics Demo'),
+              Tab(text: "Loading Dialog Demo",),
+              Tab(text: "Custom Snackbar Demo")
             ],
           ),
         ),
@@ -44,6 +46,8 @@ class HomePage extends StatelessWidget {
           children: [
             CurvesDemoPage(),
             ScrollPhysicsDemoPage(),
+            LoadingDialogTestPage(),
+            CustomSnackBarTestPage()
           ],
         ),
       ),
@@ -232,6 +236,112 @@ class _ScrollPhysicsDemoPageState extends State<ScrollPhysicsDemoPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+
+/// A test page that shows two buttons: one to show the LoadingDialog,
+/// and another to hide it.
+class LoadingDialogTestPage extends StatelessWidget {
+  const LoadingDialogTestPage({super.key});
+
+  /// Shows the loading dialog using the LoadingDialog helper.
+  void _showDialog(BuildContext context) {
+    LoadingDialog.showLoadingDialog(
+      context,
+      isAnimatedDialog: false,
+      msg: 'Please wait...',
+      canPop: true,
+    );
+  }
+
+  /// Hides the loading dialog if it is still active.
+  void _hideDialog(BuildContext context) {
+    LoadingDialog.hideLoadingDialog(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Loading Dialog Test'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () => _showDialog(context),
+              child: const Text('Show Loading Dialog'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => _hideDialog(context),
+              child: const Text('Hide Loading Dialog'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+/// A test page to display CustomSnackBar examples for each SnackBarVibe.
+class CustomSnackBarTestPage extends StatelessWidget {
+  const CustomSnackBarTestPage({super.key});
+
+  /// Helper function to show a SnackBar with the given vibe.
+  void _showSnackBar(BuildContext context, SnackBarVibe vibe) {
+    // Extract the vibe name (error, neutral, etc.) for display.
+    final String vibeName = vibe.toString().split('.').last;
+    CustomSnackBar.showSnackBar(
+      context,
+      content: 'This is a $vibeName SnackBar',
+      vibe: vibe,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Custom SnackBar Test'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            ElevatedButton(
+              onPressed: () => _showSnackBar(context, SnackBarVibe.error),
+              child: const Text('Error SnackBar'),
+            ),
+            ElevatedButton(
+              onPressed: () => _showSnackBar(context, SnackBarVibe.neutral),
+              child: const Text('Neutral SnackBar'),
+            ),
+            ElevatedButton(
+              onPressed: () => _showSnackBar(context, SnackBarVibe.success),
+              child: const Text('Success SnackBar'),
+            ),
+            ElevatedButton(
+              onPressed: () => _showSnackBar(context, SnackBarVibe.warning),
+              child: const Text('Warning SnackBar'),
+            ),
+            ElevatedButton(
+              onPressed: () => _showSnackBar(context, SnackBarVibe.none),
+              child: const Text('None SnackBar'),
+            ),
+            ElevatedButton(
+              onPressed: () => _showSnackBar(context, SnackBarVibe.info),
+              child: const Text('Info SnackBar'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

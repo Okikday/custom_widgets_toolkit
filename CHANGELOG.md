@@ -77,3 +77,13 @@
 
 ## 0.0.37
 - **Fixed SnackBarVibe enum to show**
+
+## 0.0.38
+- **Custom Scroll Physics Update:**  
+  Replaced all references to the deprecated `tolerance` getter with `toleranceFor(position)` in the `CustomScrollPhysics` class, ensuring compatibility with the latest Flutter API standards.
+
+- **Custom SnackBar Enhancements:**
+  - Improved `SnackBarVibe` enum handling to ensure the correct vibe is displayed.
+  - Minor refinements to `CustomSnackBar` for better theme consistency and error handling.  
+  - Improved example page
+
