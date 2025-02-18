@@ -101,3 +101,7 @@
 - **Refined loadingDialog colors and texture**
 - **Fixed major bugs on loadingDialog**
 - **Most stable version**
+
+## 0.0.41
+- **Added more properties to CustomTextfield**
+- **Improved CustomElevatedButton, button's background color now automatically adapts to app's theme color**

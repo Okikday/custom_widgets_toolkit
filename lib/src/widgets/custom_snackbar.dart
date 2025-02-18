@@ -51,6 +51,7 @@ class CustomSnackBar {
         DismissDirection? dismissDirection,
         ShapeBorder? shape,
         Duration? duration,
+        EdgeInsets? margin
       }) {
 
 
@@ -100,7 +101,7 @@ class CustomSnackBar {
       SnackBar(
         behavior: SnackBarBehavior.floating, // Makes the SnackBar float above the UI.
         duration: duration ?? const Duration(milliseconds: 2000),
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         backgroundColor: backgroundColor ?? bgColor,
         dismissDirection: dismissDirection ?? DismissDirection.vertical,
         elevation: 0,

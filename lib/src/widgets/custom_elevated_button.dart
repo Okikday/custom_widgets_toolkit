@@ -43,6 +43,8 @@ class CustomElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color defaultBgColor = Colors.blueGrey;
+    final Color primaryColor = Theme.of(context).primaryColor;
     return SizedBox(
       width: screenWidth != null ? MediaQuery.of(context).size.width * (screenWidth! / 100) : pixelWidth,
       height: screenHeight != null ? MediaQuery.of(context).size.height * (screenHeight! / 100) : pixelHeight,
@@ -50,18 +52,18 @@ class CustomElevatedButton extends StatelessWidget {
           onPressed: onClick,
           onLongPress: onLongClick,
           style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(backgroundColor ?? Theme.of(context).primaryColor),
+            backgroundColor: WidgetStatePropertyAll(backgroundColor ?? defaultBgColor),
             padding: WidgetStatePropertyAll(contentPadding ?? EdgeInsets.zero),
-            overlayColor: WidgetStatePropertyAll(overlayColor ?? Colors.blue.withAlpha(26)),
+            overlayColor: WidgetStatePropertyAll(overlayColor ?? primaryColor.withValues(alpha: 20)),
             shadowColor: const WidgetStatePropertyAll(Colors.transparent),
             elevation: WidgetStatePropertyAll(elevation),
-            shape: WidgetStatePropertyAll(shape ?? RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius ?? 24) )),
+            shape: WidgetStatePropertyAll(shape ?? RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius ?? 8.0) )),
             side: WidgetStatePropertyAll(side),
             minimumSize: const WidgetStatePropertyAll(Size(4, 4)),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           child: child ?? Center(
-            child: CustomText(label ?? "", fontSize: textSize ?? 8, color: textColor ?? Colors.white)
+            child: CustomText(label ?? "button", fontSize: textSize ?? 8, color: textColor ?? Colors.white)
           ),
           ),
     );

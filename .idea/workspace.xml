@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad2842bd-a144-45bb-8b76-b58f3261ded6" name="Changes" comment="Made changes to code. Changes in CHANGELOG.md" />
+    <list default="true" id="ad2842bd-a144-45bb-8b76-b58f3261ded6" name="Changes" comment="Made changes to code. Changes in CHANGELOG.md">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/widgets/custom_elevated_button.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/widgets/custom_elevated_button.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/widgets/custom_snackbar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/widgets/custom_snackbar.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/widgets/custom_textfield.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/widgets/custom_textfield.dart" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,7 +45,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Okikday/custom_widgets_toolkit.git&quot;,
-    &quot;accountId&quot;: &quot;6e35bd73-ef4a-48eb-89a6-317a5d0a50a4&quot;
+    &quot;accountId&quot;: &quot;cdd5caef-61ac-41e3-a625-2304bfa7eb9d&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{

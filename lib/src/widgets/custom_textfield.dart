@@ -1,11 +1,14 @@
+import 'dart:ui';
+
 import 'package:custom_widgets_toolkit/src/widgets/custom_text.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// A customizable text field widget that provides advanced styling and behavior options.
-/// 
+///
 /// The [CustomTextfield] widget wraps a [TextField] with extended customization such as:
-/// 
+///
 /// - **Custom Sizing:** Supports fixed pixel dimensions or screen-relative sizes.
 /// - **Custom Styling:** Allows control over borders, background color, text styles, etc.
 /// - **Icon Support:** Supports optional prefix and suffix icons. The suffix icon can be conditionally
@@ -15,7 +18,7 @@ import 'package:flutter/services.dart';
 /// - **Event Callbacks:** Provides callbacks for tap, tap outside, on changed, on submitted, and on
 ///   editing complete events.
 /// - **Advanced Input Control:** Supports input formatters, maximum length, cursor customization, and more.
-/// 
+///
 /// ## Example Usage
 ///
 /// ```dart
@@ -30,10 +33,10 @@ import 'package:flutter/services.dart';
 ///   onchanged: (text) => print("Current input: $text"),
 /// )
 /// ```
-/// 
-/// If you need to listen to changes in the suffix icon visibility, consider using a 
+///
+/// If you need to listen to changes in the suffix icon visibility, consider using a
 /// `ValueNotifier` and a `ValueListenableBuilder` as demonstrated in the implementation.
-/// 
+///
 /// Note: When using this widget in a stateful context, the widget manages its internal state
 /// (such as the suffix icon visibility) and rebuilds appropriately when those values change.
 
@@ -119,7 +122,11 @@ class CustomTextfield extends StatefulWidget {
   /// The border to use when the text field is focused.
   final InputBorder? focusedBorder;
 
+  /// The border to use when the text field contains error
+  final InputBorder? errorBorder;
+
   /// An external [TextEditingController]. If null, one is created automatically.
+  /// It is automatically disposed, so you don't need to dispose.
   final TextEditingController? controller;
 
   /// How the text should be aligned.
@@ -129,6 +136,7 @@ class CustomTextfield extends StatefulWidget {
   final EdgeInsets inputContentPadding;
 
   /// An external [FocusNode]. If null, one is created automatically.
+  /// It is automatically disposed, so you don't need to dispose it
   final FocusNode? focusNode;
 
   /// The maximum number of lines for the text field.
@@ -173,7 +181,114 @@ class CustomTextfield extends StatefulWidget {
   /// Callback for disposing additional resources.
   final Function(TextEditingController controller, FocusNode focusNode)? dispose2;
 
-  
+  final bool? readOnly;
+
+  /// Controls the undo and redo functionality for the text input.
+  final UndoHistoryController? undoController;
+
+  /// Specifies the action button on the keyboard (e.g., done, next, search).
+  final TextInputAction? textInputAction;
+
+  /// Configures how text capitalization is applied to the input.
+  final TextCapitalization textCapitalization;
+
+  /// Aligns text vertically within the input field.
+  final TextAlignVertical? textAlignVertical;
+
+  /// Defines strut style, which controls line height and spacing.
+  final StrutStyle? strutStyle;
+
+  /// Enables or disables automatic correction of text input.
+  final bool autocorrect;
+
+  /// Determines whether the text field should automatically gain focus.
+  final bool autofocus;
+
+  /// Provides autofill hints for password managers and autofill services.
+  final Iterable<String>? autofillHints;
+
+  /// Specifies whether the text field can request focus.
+  final bool canRequestFocus;
+
+  /// The color used to indicate an error in the text cursor.
+  final Color? cursorErrorColor;
+
+  /// A builder function to customize the context menu.
+  final Widget Function(BuildContext, EditableTextState)? contextMenuBuilder;
+
+  /// Defines the behavior when a drag gesture starts.
+  final DragStartBehavior dragStartBehavior;
+
+  /// Enables or disables personalized learning for the keyboard input.
+  final bool enableIMEPersonalizedLearning;
+
+  /// Determines whether interactive selection of text is enabled.
+  final bool? enableInteractiveSelection;
+
+  /// Suggests text completions while typing.
+  final bool enableSuggestions;
+
+  /// Whether the text field should expand to fill available space.
+  final bool expands;
+
+  /// An optional group identifier for text input components.
+  final Object? groupId;
+
+  /// Determines whether the text field should ignore pointer interactions.
+  final bool? ignorePointers;
+
+  /// The brightness of the keyboard when it appears.
+  final Brightness? keyboardAppearance;
+
+  /// Configures the magnifier that appears when selecting text.
+  final TextMagnifierConfiguration? magnifierConfiguration;
+
+  /// Specifies how the maximum text length should be enforced.
+  final MaxLengthEnforcement? maxLengthEnforcement;
+
+  /// Defines the mouse cursor to be displayed when hovering over the field.
+  final MouseCursor? mouseCursor;
+
+  /// The character used to obscure text when the input is hidden.
+  final String? obscuringCharacter;
+
+  /// A controller to manage scrolling within the text field.
+  final ScrollController? scrollController;
+
+  /// The padding around the text field when scrolling.
+  final EdgeInsets? scrollPadding;
+
+  /// Defines the physics for scrolling behavior.
+  final ScrollPhysics? scrollPhysics;
+
+  /// Controls how text selection is handled.
+  final TextSelectionControls? selectionControls;
+
+  /// Determines the height style of the text selection highlight.
+  final BoxHeightStyle? selectionHeightStyle;
+
+  /// Determines the width style of the text selection highlight.
+  final BoxWidthStyle? selectionWidthStyle;
+
+  /// Configures automatic smart dashes replacement.
+  final SmartDashesType? smartDashesType;
+
+  /// Configures automatic smart quotes replacement.
+  final SmartQuotesType? smartQuotesType;
+
+  /// Configures spell check behavior for the text input.
+  final SpellCheckConfiguration? spellCheckConfiguration;
+
+  /// Controls the visual states of the text input field.
+  final WidgetStatesController? statesController;
+
+  /// Defines the text direction (LTR or RTL).
+  final TextDirection? textDirection;
+
+  /// The TextField's input decoration, this overrides other properties in input decoration
+  final InputDecoration? inputDecoration;
+
+  final bool? alignLabelWithHint;
 
   const CustomTextfield({
     super.key,
@@ -220,6 +335,44 @@ class CustomTextfield extends StatefulWidget {
     this.showCursor,
     this.selectionColor,
     this.selectionHandleColor,
+    this.readOnly,
+    this.undoController,
+    this.textInputAction,
+    this.textCapitalization = TextCapitalization.none,
+    this.textAlignVertical,
+    this.strutStyle,
+    this.autocorrect = true,
+    this.autofocus = false,
+    this.autofillHints,
+    this.canRequestFocus = true,
+    this.cursorErrorColor,
+    this.contextMenuBuilder,
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.enableIMEPersonalizedLearning = true,
+    this.enableInteractiveSelection,
+    this.enableSuggestions = true,
+    this.expands = false,
+    this.groupId,
+    this.ignorePointers,
+    this.keyboardAppearance,
+    this.magnifierConfiguration,
+    this.maxLengthEnforcement,
+    this.mouseCursor,
+    this.obscuringCharacter,
+    this.scrollController,
+    this.scrollPadding,
+    this.scrollPhysics,
+    this.selectionControls,
+    this.selectionHeightStyle,
+    this.selectionWidthStyle,
+    this.smartDashesType,
+    this.smartQuotesType,
+    this.spellCheckConfiguration,
+    this.statesController,
+    this.textDirection,
+    this.inputDecoration,
+    this.errorBorder,
+    this.alignLabelWithHint,
   });
 
   @override
@@ -247,7 +400,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     showSuffixIcon = ValueNotifier(widget.alwaysShowSuffixIcon);
 
     if (widget.internalArgs != null) widget.internalArgs!(controller, focusNode);
-    
+
     // Update the suffix icon state initially
     refreshSuffixIconState();
   }
@@ -278,7 +431,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         newState = false;
       }
     }
-    if(showSuffixIcon.value != newState) showSuffixIcon.value = newState;
+    if (showSuffixIcon.value != newState) showSuffixIcon.value = newState;
   }
 
   @override
@@ -292,6 +445,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         minLines: 1,
         maxLines: widget.maxLines ?? 1,
         textAlign: widget.textAlign,
+        readOnly: widget.readOnly ?? false,
         obscureText: widget.obscureText,
         keyboardType: widget.keyboardType,
         controller: controller,
@@ -331,38 +485,76 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         showCursor: widget.showCursor,
         cursorRadius: const Radius.circular(12),
         inputFormatters: widget.inputFormatters,
-        decoration: InputDecoration(
-          counterText: "",
-          isDense: widget.isDense,
-          hintText: widget.hint,
-          labelText: widget.label,
-          labelStyle: widget.labelStyle ??
-              TextStyle(
-                color: Colors.blueGrey,
+        undoController: widget.undoController,
+        textInputAction: widget.textInputAction,
+        textCapitalization: widget.textCapitalization,
+        textAlignVertical: widget.textAlignVertical,
+        strutStyle: widget.strutStyle,
+        autocorrect: widget.autocorrect,
+        autofocus: widget.autofocus,
+        autofillHints: widget.autofillHints,
+        canRequestFocus: widget.canRequestFocus,
+        cursorErrorColor: widget.cursorErrorColor,
+        contextMenuBuilder: widget.contextMenuBuilder,
+        dragStartBehavior: widget.dragStartBehavior,
+        enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+        enableInteractiveSelection: widget.enableInteractiveSelection,
+        enableSuggestions: widget.enableSuggestions,
+        expands: widget.expands,
+        groupId: widget.groupId ?? EditableText,
+        ignorePointers: widget.ignorePointers,
+        keyboardAppearance: widget.keyboardAppearance,
+        magnifierConfiguration: widget.magnifierConfiguration,
+        maxLengthEnforcement: widget.maxLengthEnforcement,
+        mouseCursor: widget.mouseCursor,
+        obscuringCharacter: widget.obscuringCharacter ?? '•',
+        scrollController: widget.scrollController,
+        scrollPadding: widget.scrollPadding ?? const EdgeInsets.all(20),
+        scrollPhysics: widget.scrollPhysics,
+        selectionControls: widget.selectionControls,
+        selectionHeightStyle: widget.selectionHeightStyle ?? BoxHeightStyle.tight,
+        selectionWidthStyle: widget.selectionWidthStyle ?? BoxWidthStyle.tight,
+        smartDashesType: widget.smartDashesType,
+        smartQuotesType: widget.smartQuotesType,
+        spellCheckConfiguration: widget.spellCheckConfiguration,
+        statesController: widget.statesController,
+        textDirection: widget.textDirection,
+        decoration: widget.inputDecoration ??
+            InputDecoration(
+              counterText: "",
+              isDense: widget.isDense,
+              hintText: widget.hint,
+              labelText: widget.label,
+              labelStyle: widget.labelStyle ??
+                  TextStyle(
+                    color: Colors.blueGrey,
+                  ),
+              hintStyle: widget.hintStyle ??
+                  TextStyle(
+                    color: Colors.blueGrey,
+                  ),
+              contentPadding: widget.inputContentPadding,
+              border: widget.border ?? const OutlineInputBorder(),
+              focusedBorder: widget.focusedBorder,
+              enabledBorder: widget.enabledBorder,
+              disabledBorder: widget.disabledBorder,
+              errorBorder: widget.errorBorder,
+              alignLabelWithHint: widget.alignLabelWithHint,
+              constraints:
+                  widget.constraints ?? BoxConstraints.tightForFinite(width: widget.pixelWidth ?? 100, height: widget.pixelHeight ?? 48),
+              filled: widget.backgroundColor == null ? false : true,
+              fillColor: widget.backgroundColor,
+              prefixIcon: widget.prefixIcon,
+              suffixIcon: showSuffixIcon.value ? widget.suffixIcon! : null,
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 4,
+                minHeight: 4,
               ),
-          hintStyle: widget.hintStyle ??
-              TextStyle(
-                color: Colors.blueGrey,
+              suffixIconConstraints: const BoxConstraints(
+                minWidth: 4,
+                minHeight: 4,
               ),
-          contentPadding: widget.inputContentPadding,
-          border: widget.border ?? const OutlineInputBorder(),
-          focusedBorder: widget.focusedBorder,
-          enabledBorder: widget.enabledBorder,
-          disabledBorder: widget.disabledBorder,
-          constraints: widget.constraints ?? BoxConstraints.tightForFinite(width: widget.pixelWidth ?? 100, height: widget.pixelHeight ?? 48),
-          filled: widget.backgroundColor == null ? false : true,
-          fillColor: widget.backgroundColor,
-          prefixIcon: widget.prefixIcon,
-          suffixIcon: showSuffixIcon.value ? widget.suffixIcon! : null,
-          prefixIconConstraints: const BoxConstraints(
-            minWidth: 4,
-            minHeight: 4,
-          ),
-          suffixIconConstraints: const BoxConstraints(
-            minWidth: 4,
-            minHeight: 4,
-          ),
-        ),
+            ),
       ),
     );
   }
