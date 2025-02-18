@@ -80,8 +80,10 @@ class FrostyBackground extends StatefulWidget {
   State<FrostyBackground> createState() => _FrostyBackgroundState();
 }
 
-class _FrostyBackgroundState extends State<FrostyBackground> with SingleTickerProviderStateMixin {
+class _FrostyBackgroundState extends State<FrostyBackground> with TickerProviderStateMixin {
   late final AnimationController _controller;
+  late final AnimationController _blurController;
+  late final CurvedAnimation _curvedBlurAnimation;
   final List<CircleData> _circles = [];
   final Random _random = Random();
 
@@ -103,6 +105,8 @@ class _FrostyBackgroundState extends State<FrostyBackground> with SingleTickerPr
         setState(() {});
       })
       ..repeat();
+    _blurController = AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward(from: 0);
+    _curvedBlurAnimation = CurvedAnimation(parent: AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward(from: 0), curve: CustomCurves.bouncySpring, reverseCurve: CustomCurves.snappySpring);
   }
 
   void _initializeCircles(Size size) {
@@ -180,6 +184,7 @@ class _FrostyBackgroundState extends State<FrostyBackground> with SingleTickerPr
   @override
   void dispose() {
     _controller.dispose();
+    _blurController.dispose();
     super.dispose();
   }
 
@@ -196,9 +201,14 @@ class _FrostyBackgroundState extends State<FrostyBackground> with SingleTickerPr
           painter: _CirclePainter(circles: _circles),
         ),
         Container(color: bgColor),
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: widget.blurSigma, sigmaY: widget.blurSigma),
-          child: Container(color: Colors.transparent),
+        AnimatedBuilder(
+          animation: _curvedBlurAnimation,
+          builder: (context, child) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: widget.blurSigma * _curvedBlurAnimation.value, sigmaY: widget.blurSigma * _curvedBlurAnimation.value),
+              child: Container(color: Colors.transparent),
+            );
+          }
         ),
       ],
     );
@@ -483,7 +493,6 @@ class FrostyLoadingScaffold extends StatefulWidget {
   final List<Color>? particleColors;
   final List<Color>? circleColors;
   final bool canPop;
-  final Color? backgroundColor;
   final int particleCount;
   final double particleOpacity;
   final double gradientOpacity;
@@ -491,6 +500,8 @@ class FrostyLoadingScaffold extends StatefulWidget {
   final Color? msgTextColor;
   final double? msgTextSize;
   final TextStyle? msgTextStyle;
+  final Widget? loadingInfoWidget;
+  final Color? scaffoldBgColor;
 
   const FrostyLoadingScaffold(
       {super.key,
@@ -499,7 +510,6 @@ class FrostyLoadingScaffold extends StatefulWidget {
       this.gradientColors,
       this.particleColors,
       this.canPop = true,
-      this.backgroundColor,
       this.circleColors,
       this.particleCount = 1000,
       this.particleOpacity = 0.07,
@@ -507,7 +517,8 @@ class FrostyLoadingScaffold extends StatefulWidget {
       this.blurSigma = 4.0,
       this.msgTextColor,
       this.msgTextSize,
-      this.msgTextStyle});
+      this.msgTextStyle, this.loadingInfoWidget, this.scaffoldBgColor,
+      });
 
   @override
   State<FrostyLoadingScaffold> createState() => _FrostyLoadingScaffoldState();
@@ -542,7 +553,7 @@ class _FrostyLoadingScaffoldState extends State<FrostyLoadingScaffold> {
           statusBarColor: Colors.transparent,
         ),
         child: Scaffold(
-          backgroundColor: widget.backgroundColor ?? Colors.transparent,
+          backgroundColor: widget.scaffoldBgColor ?? Colors.transparent,
           body: Stack(
             children: [
               // Organic background effect
@@ -559,7 +570,7 @@ class _FrostyLoadingScaffoldState extends State<FrostyLoadingScaffold> {
                 circleColors: widget.circleColors,
               ),
               // Loading message
-              Center(
+              widget.loadingInfoWidget ??  Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: AnimatedSwitcher(
@@ -613,6 +624,9 @@ class NormalLoadingScaffold extends StatefulWidget {
   final Color? msgTextColor;
   final double? msgTextSize;
   final TextStyle? msgTextStyle;
+  final Widget? loadingInfoWidget;
+  final Color? scaffoldBgColor;
+  final double blurSigma;
 
   const NormalLoadingScaffold(
       {super.key,
@@ -623,25 +637,32 @@ class NormalLoadingScaffold extends StatefulWidget {
       this.adaptToScreenSize = false,
       this.msgTextColor,
       this.msgTextSize,
-      this.msgTextStyle});
+        this.blurSigma = 4.0,
+      this.msgTextStyle, this.loadingInfoWidget, this.scaffoldBgColor});
 
   @override
   State<NormalLoadingScaffold> createState() => _NormalLoadingScaffoldState();
 }
 
-class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> {
+class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> with TickerProviderStateMixin{
   int msgIndex = 0;
   late Timer _timer;
+  late final AnimationController _blurController;
+  late final CurvedAnimation _curvedBlurAnimation;
 
   @override
   void initState() {
     super.initState();
+    _blurController = AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward(from: 0);
+    _curvedBlurAnimation = CurvedAnimation(parent: AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward(from: 0), curve: CustomCurves.bouncySpring, reverseCurve: CustomCurves.snappySpring);
+
     _startTimer();
   }
 
   @override
   void dispose() {
     _timer.cancel();
+    _blurController.dispose();
     super.dispose();
   }
 
@@ -656,56 +677,62 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.sizeOf(context).width;
-
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final ThemeData themeData = Theme.of(context);
+    final isDarkMode = themeData.brightness == Brightness.dark;
+    final primaryColor = themeData.primaryColor;
 
     return PopScope(
       canPop: widget.canPop,
       child: Scaffold(
-        backgroundColor: widget.backgroundColor ?? Colors.transparent,
-        body: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-          child: Align(
-            alignment: Alignment.center,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                  color: widget.backgroundColor ?? (isDarkMode ? Colors.black : Colors.white),
-                  borderRadius: BorderRadius.circular(36),
-                  border: Border.fromBorderSide(BorderSide(color: Colors.blueGrey.withValues(alpha: 0.05))),
-                  boxShadow: [
-                    BoxShadow(offset: Offset.zero, blurRadius: 4.0, spreadRadius: 2.0, color: Colors.blueGrey.withValues(alpha: 0.2), blurStyle: BlurStyle.outer)
-                  ]),
-              child: SizedBox(
-                width: widget.adaptToScreenSize ? screenWidth * 0.6 : 240,
-                height: widget.adaptToScreenSize ? screenWidth * 0.4 : 160,
-                child: ClipRRect(
-                  clipBehavior: Clip.hardEdge,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        child: CircularProgressIndicator(
-                          strokeCap: StrokeCap.round,
-                          color: widget.progressIndicatorColor,
-                        ),
+        backgroundColor: widget.scaffoldBgColor ?? Colors.transparent,
+        body: AnimatedBuilder(
+          animation: _curvedBlurAnimation,
+          builder: (context, child) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: widget.blurSigma * _curvedBlurAnimation.value, sigmaY: widget.blurSigma * _curvedBlurAnimation.value),
+              child: widget.loadingInfoWidget ?? Align(
+                alignment: Alignment.center,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                      color: widget.backgroundColor ?? (isDarkMode ? Colors.black : Colors.white),
+                      borderRadius: BorderRadius.circular(36),
+                      border: Border.fromBorderSide(BorderSide(color: Colors.blueGrey.withValues(alpha: 0.05))),
+                      boxShadow: [
+                        BoxShadow(offset: Offset.zero, blurRadius: 4.0, spreadRadius: 2.0, color: Colors.blueGrey.withValues(alpha: 0.2), blurStyle: BlurStyle.outer)
+                      ]),
+                  child: SizedBox(
+                    width: widget.adaptToScreenSize ? screenWidth * 0.6 : 240,
+                    height: widget.adaptToScreenSize ? screenWidth * 0.4 : 160,
+                    child: ClipRRect(
+                      clipBehavior: Clip.hardEdge,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            child: CircularProgressIndicator(
+                              strokeCap: StrokeCap.round,
+                              color: widget.progressIndicatorColor ?? primaryColor,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                            child: CustomText(
+                              widget.msg ?? loadingMessages[msgIndex],
+                              color: widget.msgTextColor ?? Colors.blueGrey,
+                              fontSize: widget.msgTextSize ?? 14,
+                              style: widget.msgTextStyle,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                        child: CustomText(
-                          widget.msg ?? loadingMessages[msgIndex],
-                          color: widget.msgTextColor ?? Colors.blueGrey,
-                          fontSize: widget.msgTextSize ?? 14,
-                          style: widget.msgTextStyle,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          }
         ),
       ),
     );
@@ -742,6 +769,8 @@ class LoadingDialog {
     double particleOpacity = 0.07,
     double gradientOpacity = 0.07,
     double blurSigma = 4.0,
+        Color? scaffoldBgColor,
+        Widget? loadingInfoWidget
   }) {
     final pageRoute = PageRouteBuilder(
       opaque: false,
@@ -752,7 +781,8 @@ class LoadingDialog {
           return FrostyLoadingScaffold(
             msg: msg,
             canPop: canPop ?? true,
-            backgroundColor: backgroundColor,
+            scaffoldBgColor: scaffoldBgColor,
+            loadingInfoWidget: loadingInfoWidget,
             circleColors: animatedColors,
             gradientColors: gradientColors,
             particleColors: particleColors,
@@ -770,6 +800,8 @@ class LoadingDialog {
             canPop: canPop ?? false,
             progressIndicatorColor: progressIndicatorColor,
             backgroundColor: backgroundColor,
+            scaffoldBgColor: scaffoldBgColor,
+            loadingInfoWidget: loadingInfoWidget,
             adaptToScreenSize: adaptToScreenSize,
             msgTextColor: msgTextColor,
             msgTextSize: msgTextSize,

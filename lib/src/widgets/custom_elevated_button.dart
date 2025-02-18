@@ -53,7 +53,7 @@ class CustomElevatedButton extends StatelessWidget {
           onLongPress: onLongClick,
           style: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(backgroundColor ?? defaultBgColor),
-            padding: WidgetStatePropertyAll(contentPadding ?? EdgeInsets.zero),
+            padding: WidgetStatePropertyAll(contentPadding ?? EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0)),
             overlayColor: WidgetStatePropertyAll(overlayColor ?? primaryColor.withValues(alpha: 20)),
             shadowColor: const WidgetStatePropertyAll(Colors.transparent),
             elevation: WidgetStatePropertyAll(elevation),
@@ -63,7 +63,7 @@ class CustomElevatedButton extends StatelessWidget {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           child: child ?? Center(
-            child: CustomText(label ?? "button", fontSize: textSize ?? 8, color: textColor ?? Colors.white)
+            child: CustomText(label ?? "button", fontSize: textSize ?? 12, color: textColor, invertColor: true,)
           ),
           ),
     );

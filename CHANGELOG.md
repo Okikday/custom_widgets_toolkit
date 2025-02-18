@@ -47,10 +47,10 @@
 ## 0.0.35
 ### Added
 - **CustomSnackBar Helper Class:**  
-  Introduced a new helper class for displaying custom-styled SnackBars throughout the app.
+- **Introduced a new helper class for displaying custom-styled SnackBars throughout the app.**
   
 - **SnackBarVibe Enum:**  
-  Created an enumeration (`SnackBarVibe`) to represent different visual states: `error`, `neutral`, `success`, and `warning`.
+- **Created an enumeration (`SnackBarVibe`) to represent different visual states: `error`, `neutral`, `success`, and `warning`.**
 
 - **Theme-Aware Color Mapping:**  
   Added color maps for both light and dark modes.  
@@ -105,3 +105,9 @@
 ## 0.0.41
 - **Added more properties to CustomTextfield**
 - **Improved CustomElevatedButton, button's background color now automatically adapts to app's theme color**
+- **Added more widget to example file**
+
+## 0.0.42
+- **Fixed the scaffold background issue with the loading dialog and renamed for better usage**
+- **Added option for scaffold background color and an option to put a custom widget in the loading dialog**
+- **Adjusted CustomElevatedButton's default padding to be more usable on default settings**

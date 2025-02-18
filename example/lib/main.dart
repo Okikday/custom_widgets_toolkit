@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Curves & Physics Demo'),
@@ -38,7 +38,8 @@ class HomePage extends StatelessWidget {
               Tab(text: 'Curves Demo'),
               Tab(text: 'Scroll Physics Demo'),
               Tab(text: "Loading Dialog Demo",),
-              Tab(text: "Custom Snackbar Demo")
+              Tab(text: "Custom Snackbar Demo"),
+              Tab(text: "Custom Widgets Demo",)
             ],
           ),
         ),
@@ -47,7 +48,8 @@ class HomePage extends StatelessWidget {
             CurvesDemoPage(),
             ScrollPhysicsDemoPage(),
             LoadingDialogTestPage(),
-            CustomSnackBarTestPage()
+            CustomSnackBarTestPage(),
+            CustomWidgetsTestPage()
           ],
         ),
       ),
@@ -347,6 +349,370 @@ class CustomSnackBarTestPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+
+
+
+class CustomWidgetsTestPage extends StatefulWidget {
+  const CustomWidgetsTestPage({super.key});
+
+  @override
+  State<CustomWidgetsTestPage> createState() => _CustomWidgetsTestPageState();
+}
+
+class _CustomWidgetsTestPageState extends State<CustomWidgetsTestPage> {
+  // State variables for CustomElevatedButton
+  bool _isButtonEnabled = true;
+  double _buttonBorderRadius = 8.0;
+  double _buttonElevation = 4.0;
+  Color _buttonBackgroundColor = Colors.blueGrey;
+  Color _buttonTextColor = Colors.white;
+  double _buttonTextSize = 14.0;
+
+  // State variables for CustomText
+  String _customText = "Hello, World!";
+  double _textFontSize = 14.0;
+  Color _textColor = Colors.black;
+  bool _isTextBold = false;
+  bool _isTextItalic = false;
+  TextDecoration _textDecoration = TextDecoration.none;
+
+  // State variables for CustomTextfield
+  String _textFieldHint = "Enter text";
+  String _textFieldLabel = "Label";
+  bool _isTextFieldEnabled = true;
+  bool _isTextFieldObscure = false;
+  double _textFieldBorderRadius = 8.0;
+  Color _textFieldBackgroundColor = Colors.white;
+  Color _textFieldTextColor = Colors.black;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Custom Widgets Test Page'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // CustomElevatedButton Section
+            const Text(
+              'CustomElevatedButton',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            CustomElevatedButton(
+              label: _isButtonEnabled ? "Enabled Button" : "Disabled Button",
+              onClick: _isButtonEnabled ? () => print("Button Clicked") : null,
+              backgroundColor: _buttonBackgroundColor,
+              borderRadius: _buttonBorderRadius,
+              elevation: _buttonElevation,
+              textColor: _buttonTextColor,
+              textSize: _buttonTextSize,
+            ),
+            const SizedBox(height: 20),
+            _buildButtonControls(),
+
+            const Divider(height: 40),
+            // CustomText Section
+            const Text(
+              'CustomText',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            CustomText(
+              _customText,
+              fontSize: _textFontSize,
+              color: _textColor,
+              fontWeight: _isTextBold ? FontWeight.bold : FontWeight.normal,
+              fontStyle: _isTextItalic ? FontStyle.italic : FontStyle.normal,
+              textDecoration: _textDecoration,
+            ),
+            const SizedBox(height: 20),
+            _buildTextControls(),
+
+            const Divider(height: 40),
+            // CustomTextfield Section
+            const Text(
+              'CustomTextfield',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            CustomTextfield(
+              hint: _textFieldHint,
+              label: _textFieldLabel,
+              isEnabled: _isTextFieldEnabled,
+              obscureText: _isTextFieldObscure,
+              borderRadius: _textFieldBorderRadius,
+              backgroundColor: _textFieldBackgroundColor,
+              inputTextStyle: TextStyle(color: _textFieldTextColor),
+            ),
+            const SizedBox(height: 20),
+            _buildTextFieldControls(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButtonControls() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Text("Enabled:"),
+            Switch(
+              value: _isButtonEnabled,
+              onChanged: (value) => setState(() => _isButtonEnabled = value),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Border Radius:"),
+            Slider(
+              value: _buttonBorderRadius,
+              min: 0,
+              max: 50,
+              onChanged: (value) => setState(() => _buttonBorderRadius = value),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Elevation:"),
+            Slider(
+              value: _buttonElevation,
+              min: 0,
+              max: 10,
+              onChanged: (value) => setState(() => _buttonElevation = value),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Background Color:"),
+            DropdownButton<Color>(
+              value: _buttonBackgroundColor,
+              items: [
+                Colors.blueGrey,
+                Colors.blue,
+                Colors.red,
+                Colors.green,
+              ].map((color) => DropdownMenuItem(
+                value: color,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  color: color,
+                ),
+              )).toList(),
+              onChanged: (color) => setState(() => _buttonBackgroundColor = color!),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Text Color:"),
+            DropdownButton<Color>(
+              value: _buttonTextColor,
+              items: [
+                Colors.white,
+                Colors.black,
+                Colors.red,
+                Colors.green,
+              ].map((color) => DropdownMenuItem(
+                value: color,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  color: color,
+                ),
+              )).toList(),
+              onChanged: (color) => setState(() => _buttonTextColor = color!),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Text Size:"),
+            Slider(
+              value: _buttonTextSize,
+              min: 8,
+              max: 24,
+              onChanged: (value) => setState(() => _buttonTextSize = value),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextControls() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          decoration: const InputDecoration(labelText: "Text Content"),
+          onChanged: (value) => setState(() => _customText = value),
+        ),
+        Row(
+          children: [
+            const Text("Font Size:"),
+            Slider(
+              value: _textFontSize,
+              min: 8,
+              max: 24,
+              onChanged: (value) => setState(() => _textFontSize = value),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Text Color:"),
+            DropdownButton<Color>(
+              value: _textColor,
+              items: [
+                Colors.black,
+                Colors.blue,
+                Colors.red,
+                Colors.green,
+              ].map((color) => DropdownMenuItem(
+                value: color,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  color: color,
+                ),
+              )).toList(),
+              onChanged: (color) => setState(() => _textColor = color!),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Bold:"),
+            Switch(
+              value: _isTextBold,
+              onChanged: (value) => setState(() => _isTextBold = value),
+            ),
+            const Text("Italic:"),
+            Switch(
+              value: _isTextItalic,
+              onChanged: (value) => setState(() => _isTextItalic = value),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Decoration:"),
+            DropdownButton<TextDecoration>(
+              value: _textDecoration,
+              items: [
+                TextDecoration.none,
+                TextDecoration.underline,
+                TextDecoration.lineThrough,
+                TextDecoration.overline,
+              ].map((decoration) => DropdownMenuItem(
+                value: decoration,
+                child: Text(decoration.toString().split('.').last),
+              )).toList(),
+              onChanged: (decoration) => setState(() => _textDecoration = decoration!),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextFieldControls() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          decoration: const InputDecoration(labelText: "Hint Text"),
+          onChanged: (value) => setState(() => _textFieldHint = value),
+        ),
+        TextField(
+          decoration: const InputDecoration(labelText: "Label Text"),
+          onChanged: (value) => setState(() => _textFieldLabel = value),
+        ),
+        Row(
+          children: [
+            const Text("Enabled:"),
+            Switch(
+              value: _isTextFieldEnabled,
+              onChanged: (value) => setState(() => _isTextFieldEnabled = value),
+            ),
+            const Text("Obscure Text:"),
+            Switch(
+              value: _isTextFieldObscure,
+              onChanged: (value) => setState(() => _isTextFieldObscure = value),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Border Radius:"),
+            Slider(
+              value: _textFieldBorderRadius,
+              min: 0,
+              max: 50,
+              onChanged: (value) => setState(() => _textFieldBorderRadius = value),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Background Color:"),
+            DropdownButton<Color>(
+              value: _textFieldBackgroundColor,
+              items: [
+                Colors.white,
+                Colors.blueGrey,
+                Colors.blue,
+                Colors.red,
+              ].map((color) => DropdownMenuItem(
+                value: color,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  color: color,
+                ),
+              )).toList(),
+              onChanged: (color) => setState(() => _textFieldBackgroundColor = color!),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            const Text("Text Color:"),
+            DropdownButton<Color>(
+              value: _textFieldTextColor,
+              items: [
+                Colors.black,
+                Colors.blue,
+                Colors.red,
+                Colors.green,
+              ].map((color) => DropdownMenuItem(
+                value: color,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  color: color,
+                ),
+              )).toList(),
+              onChanged: (color) => setState(() => _textFieldTextColor = color!),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
