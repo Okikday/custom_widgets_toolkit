@@ -44,10 +44,11 @@ class CustomElevatedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color defaultBgColor = Colors.blueGrey;
+    final MediaQueryData mediaQueryData = MediaQuery.of(context);
     final Color primaryColor = Theme.of(context).primaryColor;
     return SizedBox(
-      width: screenWidth != null ? MediaQuery.of(context).size.width * (screenWidth! / 100) : pixelWidth,
-      height: screenHeight != null ? MediaQuery.of(context).size.height * (screenHeight! / 100) : pixelHeight,
+      width: screenWidth != null ? mediaQueryData.size.width * (screenWidth! / 100) : pixelWidth,
+      height: screenHeight != null ? mediaQueryData.size.height * (screenHeight! / 100) : pixelHeight,
       child: ElevatedButton(
           onPressed: onClick,
           onLongPress: onLongClick,

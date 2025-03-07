@@ -106,7 +106,7 @@ class _FrostyBackgroundState extends State<FrostyBackground> with TickerProvider
       })
       ..repeat();
     _blurController = AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward(from: 0);
-    _curvedBlurAnimation = CurvedAnimation(parent: AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward(from: 0), curve: CustomCurves.bouncySpring, reverseCurve: CustomCurves.snappySpring);
+    _curvedBlurAnimation = CurvedAnimation(parent: _blurController, curve: CustomCurves.bouncySpring, reverseCurve: CustomCurves.snappySpring);
   }
 
   void _initializeCircles(Size size) {
@@ -644,7 +644,7 @@ class NormalLoadingScaffold extends StatefulWidget {
   State<NormalLoadingScaffold> createState() => _NormalLoadingScaffoldState();
 }
 
-class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> with TickerProviderStateMixin{
+class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> with SingleTickerProviderStateMixin{
   int msgIndex = 0;
   late Timer _timer;
   late final AnimationController _blurController;
@@ -654,7 +654,7 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> with Tick
   void initState() {
     super.initState();
     _blurController = AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward(from: 0);
-    _curvedBlurAnimation = CurvedAnimation(parent: AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward(from: 0), curve: CustomCurves.bouncySpring, reverseCurve: CustomCurves.snappySpring);
+    _curvedBlurAnimation = CurvedAnimation(parent: _blurController, curve: CustomCurves.bouncySpring, reverseCurve: CustomCurves.snappySpring);
 
     _startTimer();
   }

@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 /// A collection of sizing constants for consistent UI layouts across the app.
 class ConstantSizing {
   // ---------------------------------------------------------------------------
@@ -126,9 +128,21 @@ class ConstantSizing {
   /// Standard height for form fields.
   static const double formFieldHeight = 56.0;
 
-  // ---------------------------------------------------------------------------
-  // Layout Constraints
-  // ---------------------------------------------------------------------------
-  /// Maximum content width to constrain layouts on larger screens.
-  static const double maxContentWidth = 800.0;
+  /// Row spacing
+  static const rowSpacingSmall = SizedBox(width: ConstantSizing.spaceSmall);
+  static const rowSpacingMedium = SizedBox(width: ConstantSizing.spaceMedium);
+  static const rowSpacingLarge = SizedBox(width: ConstantSizing.spaceLarge);
+  static const rowSpacingExtraLarge = SizedBox(width: ConstantSizing.spaceExtraLarge);
+  static const rowSpacingHuge = SizedBox(width: ConstantSizing.spaceHuge);
+
+  /// Column Spacing
+  static const columnSpacingSmall = SizedBox(height: ConstantSizing.spaceSmall);
+  static const columnSpacingMedium = SizedBox(height: ConstantSizing.spaceMedium);
+  static const columnSpacingLarge = SizedBox(height: ConstantSizing.spaceLarge);
+  static const columnSpacingExtraLarge = SizedBox(height: ConstantSizing.spaceExtraLarge);
+  static const columnSpacingHuge = SizedBox(height: ConstantSizing.spaceHuge);
+
+  // Custom Column Spacing
+  static SizedBox columnSpacing(double height)=> SizedBox(height: height,);
+  static SizedBox rowSpacing(double width)=> SizedBox(height: width,);
 }

@@ -111,3 +111,10 @@
 - **Fixed the scaffold background issue with the loading dialog and renamed for better usage**
 - **Added option for scaffold background color and an option to put a custom widget in the loading dialog**
 - **Adjusted CustomElevatedButton's default padding to be more usable on default settings**
+
+## 0.0.43
+- **Fixed little animation controller disposal error**
+
+## 0.0.44
+- **Added spacing widgets(ConstantSizing.rowSpacing..., ConstantSizing.columnSpacing...) for Rows, Columns or any other widget you might want to use it for**
+- **Adjusted CustomTextfield to use the the default set border or the border you set for it's focused state, or enabled state**

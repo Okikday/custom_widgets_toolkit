@@ -8,7 +8,10 @@
       <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/widgets/custom_elevated_button.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/widgets/custom_elevated_button.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/widgets/custom_textfield.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/widgets/custom_textfield.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/widgets/loading_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/widgets/loading_dialog.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -78,7 +81,7 @@
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/okikiola/FlutterProjects/custom_widgets_toolkit&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/okikiola/FlutterProjects/test_app&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
@@ -133,7 +136,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739868293471</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Made changes to code. Changes in CHANGELOG.md">
+      <option name="closed" value="true" />
+      <created>1739908484165</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1739908484165</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
