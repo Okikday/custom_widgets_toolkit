@@ -118,3 +118,7 @@
 ## 0.0.44
 - **Added spacing widgets(ConstantSizing.rowSpacing..., ConstantSizing.columnSpacing...) for Rows, Columns or any other widget you might want to use it for**
 - **Adjusted CustomTextfield to use the the default set border or the border you set for it's focused state, or enabled state**
+
+## 0.0.45
+- **Updated Colors on snackbar and added more arguments**
+- **Breaking change: removed SnackBarVibe.neutral**
