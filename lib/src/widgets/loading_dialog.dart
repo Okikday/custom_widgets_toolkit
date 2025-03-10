@@ -80,7 +80,8 @@ class FrostyBackground extends StatefulWidget {
   State<FrostyBackground> createState() => _FrostyBackgroundState();
 }
 
-class _FrostyBackgroundState extends State<FrostyBackground> with TickerProviderStateMixin {
+class _FrostyBackgroundState extends State<FrostyBackground>
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
   late final AnimationController _blurController;
   late final CurvedAnimation _curvedBlurAnimation;
@@ -92,28 +93,37 @@ class _FrostyBackgroundState extends State<FrostyBackground> with TickerProvider
     super.initState();
 
     // Ensure the system status bar is transparent.
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final size = MediaQuery.of(context).size;
       _initializeCircles(size);
     });
 
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 20))
-      ..addListener(() {
-        _updateCircles();
-        setState(() {});
-      })
-      ..repeat();
-    _blurController = AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward(from: 0);
-    _curvedBlurAnimation = CurvedAnimation(parent: _blurController, curve: CustomCurves.bouncySpring, reverseCurve: CustomCurves.snappySpring);
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 20))
+          ..addListener(() {
+            _updateCircles();
+            setState(() {});
+          })
+          ..repeat();
+    _blurController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..forward(from: 0);
+    _curvedBlurAnimation = CurvedAnimation(
+        parent: _blurController,
+        curve: CustomCurves.defaultIosSpring,
+        reverseCurve: CustomCurves.snappySpring);
   }
 
   void _initializeCircles(Size size) {
     _circles.clear();
     int count = 10 + _random.nextInt(6); // between 10 and 15 shapes.
     for (int i = 0; i < count; i++) {
-      double baseRadius = (size.width * 0.05) + _random.nextDouble() * (size.width * 0.15);
+      double baseRadius =
+          (size.width * 0.05) + _random.nextDouble() * (size.width * 0.15);
       // Only allow circles or 4-point stars.
       double shapeRoll = _random.nextDouble();
       ShapeType shape;
@@ -137,7 +147,8 @@ class _FrostyBackgroundState extends State<FrostyBackground> with TickerProvider
       );
       Color color;
       if (widget.circleColors != null && widget.circleColors!.isNotEmpty) {
-        color = widget.circleColors![_random.nextInt(widget.circleColors!.length)];
+        color =
+            widget.circleColors![_random.nextInt(widget.circleColors!.length)];
       } else {
         double hue = _random.nextDouble() * 360;
         double saturation = 0.3 + _random.nextDouble() * 0.4;
@@ -162,21 +173,26 @@ class _FrostyBackgroundState extends State<FrostyBackground> with TickerProvider
     final size = MediaQuery.of(context).size;
     for (var circle in _circles) {
       // Oscillate size using a sine wave.
-      circle.currentRadius = circle.baseRadius * (0.8 + 0.4 * sin(2 * pi * _controller.value + circle.phase));
+      circle.currentRadius = circle.baseRadius *
+          (0.8 + 0.4 * sin(2 * pi * _controller.value + circle.phase));
       circle.position += circle.drift;
       // Wrap horizontally.
       if (circle.position.dx < -circle.currentRadius) {
-        circle.position =
-            Offset(size.width + circle.currentRadius + _random.nextDouble() * 20, circle.position.dy + _random.nextDouble() * 20);
+        circle.position = Offset(
+            size.width + circle.currentRadius + _random.nextDouble() * 20,
+            circle.position.dy + _random.nextDouble() * 20);
       } else if (circle.position.dx > size.width + circle.currentRadius) {
-        circle.position = Offset(-circle.currentRadius - _random.nextDouble() * 20, circle.position.dy - _random.nextDouble() * 20);
+        circle.position = Offset(
+            -circle.currentRadius - _random.nextDouble() * 20,
+            circle.position.dy - _random.nextDouble() * 20);
       }
       // Wrap vertically.
       if (circle.position.dy < -circle.currentRadius) {
-        circle.position =
-            Offset(circle.position.dx + _random.nextDouble() * 20, size.height + circle.currentRadius + _random.nextDouble() * 20);
+        circle.position = Offset(circle.position.dx + _random.nextDouble() * 20,
+            size.height + circle.currentRadius + _random.nextDouble() * 20);
       } else if (circle.position.dy > size.height + circle.currentRadius) {
-        circle.position = Offset(circle.position.dx - _random.nextDouble() * 20, -circle.currentRadius - _random.nextDouble() * 20);
+        circle.position = Offset(circle.position.dx - _random.nextDouble() * 20,
+            -circle.currentRadius - _random.nextDouble() * 20);
       }
     }
   }
@@ -192,7 +208,9 @@ class _FrostyBackgroundState extends State<FrostyBackground> with TickerProvider
   Widget build(BuildContext context) {
     final Brightness brightness = MediaQuery.of(context).platformBrightness;
     // Use a very light background color (15% opacity).
-    final Color bgColor = brightness == Brightness.dark ? Colors.black.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.15);
+    final Color bgColor = brightness == Brightness.dark
+        ? Colors.black.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.15);
 
     return Stack(
       children: [
@@ -202,14 +220,15 @@ class _FrostyBackgroundState extends State<FrostyBackground> with TickerProvider
         ),
         Container(color: bgColor),
         AnimatedBuilder(
-          animation: _curvedBlurAnimation,
-          builder: (context, child) {
-            return BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: widget.blurSigma * _curvedBlurAnimation.value, sigmaY: widget.blurSigma * _curvedBlurAnimation.value),
-              child: Container(color: Colors.transparent),
-            );
-          }
-        ),
+            animation: _curvedBlurAnimation,
+            builder: (context, child) {
+              return BackdropFilter(
+                filter: ImageFilter.blur(
+                    sigmaX: widget.blurSigma * _curvedBlurAnimation.value,
+                    sigmaY: widget.blurSigma * _curvedBlurAnimation.value),
+                child: Container(color: Colors.transparent),
+              );
+            }),
       ],
     );
   }
@@ -236,7 +255,8 @@ class _CirclePainter extends CustomPainter {
     }
   }
 
-  void _drawStar(Canvas canvas, Offset center, double radius, int points, Paint paint) {
+  void _drawStar(
+      Canvas canvas, Offset center, double radius, int points, Paint paint) {
     final Path path = Path();
     final double angle = (2 * pi) / points;
     final double halfAngle = angle / 2;
@@ -285,10 +305,12 @@ class OrganicBackgroundEffect extends StatefulWidget {
   });
 
   @override
-  State<OrganicBackgroundEffect> createState() => _OrganicBackgroundEffectState();
+  State<OrganicBackgroundEffect> createState() =>
+      _OrganicBackgroundEffectState();
 }
 
-class _OrganicBackgroundEffectState extends State<OrganicBackgroundEffect> with TickerProviderStateMixin {
+class _OrganicBackgroundEffectState extends State<OrganicBackgroundEffect>
+    with TickerProviderStateMixin {
   late final AnimationController _pulseController;
   late final AnimationController _rotationController;
   final List<Particle> _particles = [];
@@ -333,7 +355,8 @@ class _OrganicBackgroundEffectState extends State<OrganicBackgroundEffect> with 
           _random.nextDouble() * size.width,
           _random.nextDouble() * size.height,
         ),
-        color: particleColors[_random.nextInt(particleColors.length)].withValues(alpha: widget.particleOpacity),
+        color: particleColors[_random.nextInt(particleColors.length)]
+            .withValues(alpha: widget.particleOpacity),
         size: 1 + _random.nextDouble() * 2,
         speed: 0.2 + _random.nextDouble() * 0.3,
         angle: _random.nextDouble() * 2 * pi,
@@ -356,7 +379,8 @@ class _OrganicBackgroundEffectState extends State<OrganicBackgroundEffect> with 
           children: [
             // Gradient background layer
             AnimatedBuilder(
-              animation: Listenable.merge([_pulseController, _rotationController]),
+              animation:
+                  Listenable.merge([_pulseController, _rotationController]),
               builder: (context, child) {
                 return CustomPaint(
                   size: Size(constraints.maxWidth, constraints.maxHeight),
@@ -434,7 +458,8 @@ class GradientPainter extends CustomPainter {
           ],
           [0, 1],
           TileMode.clamp,
-          Matrix4.rotationZ(rotationValue * pi * 2 + (i * pi / colors.length)).storage,
+          Matrix4.rotationZ(rotationValue * pi * 2 + (i * pi / colors.length))
+              .storage,
         );
 
       canvas.drawRect(rect, paint);
@@ -503,22 +528,24 @@ class FrostyLoadingScaffold extends StatefulWidget {
   final Widget? loadingInfoWidget;
   final Color? scaffoldBgColor;
 
-  const FrostyLoadingScaffold(
-      {super.key,
-      this.msg,
-      this.transitionDuration = const Duration(milliseconds: 600),
-      this.gradientColors,
-      this.particleColors,
-      this.canPop = true,
-      this.circleColors,
-      this.particleCount = 1000,
-      this.particleOpacity = 0.07,
-      this.gradientOpacity = 0.07,
-      this.blurSigma = 4.0,
-      this.msgTextColor,
-      this.msgTextSize,
-      this.msgTextStyle, this.loadingInfoWidget, this.scaffoldBgColor,
-      });
+  const FrostyLoadingScaffold({
+    super.key,
+    this.msg,
+    this.transitionDuration = const Duration(milliseconds: 600),
+    this.gradientColors,
+    this.particleColors,
+    this.canPop = true,
+    this.circleColors,
+    this.particleCount = 1000,
+    this.particleOpacity = 0.07,
+    this.gradientOpacity = 0.07,
+    this.blurSigma = 4.0,
+    this.msgTextColor,
+    this.msgTextSize,
+    this.msgTextStyle,
+    this.loadingInfoWidget,
+    this.scaffoldBgColor,
+  });
 
   @override
   State<FrostyLoadingScaffold> createState() => _FrostyLoadingScaffoldState();
@@ -570,43 +597,48 @@ class _FrostyLoadingScaffoldState extends State<FrostyLoadingScaffold> {
                 circleColors: widget.circleColors,
               ),
               // Loading message
-              widget.loadingInfoWidget ??  Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: AnimatedSwitcher(
-                    duration: widget.transitionDuration,
-                    transitionBuilder: (child, animation) {
-                      final offsetAnimation = Tween<Offset>(
-                        begin: const Offset(0, 0.5),
-                        end: Offset.zero,
-                      ).animate(CurvedAnimation(
-                        parent: animation,
-                        curve: Curves.decelerate,
-                      ));
-                      if (widget.msg == null || (widget.msg != null && widget.msg!.isEmpty)) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: SlideTransition(
-                            position: offsetAnimation,
-                            child: child,
-                          ),
-                        );
-                      }
-                      return child;
-                    },
-                    child: CustomText(
-                      widget.msg ?? loadingMessages[msgIndex],
-                      key: ValueKey<int>(msgIndex),
-                      color: widget.msgTextColor,
-                      fontSize: widget.msgTextSize ?? 18,
-                      style: widget.msgTextStyle,
-                      shadows: const [
-                        Shadow(color: Colors.black26, offset: Offset(0, 1), blurRadius: 4),
-                      ],
+              widget.loadingInfoWidget ??
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: AnimatedSwitcher(
+                        duration: widget.transitionDuration,
+                        transitionBuilder: (child, animation) {
+                          final offsetAnimation = Tween<Offset>(
+                            begin: const Offset(0, 0.5),
+                            end: Offset.zero,
+                          ).animate(CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.decelerate,
+                          ));
+                          if (widget.msg == null ||
+                              (widget.msg != null && widget.msg!.isEmpty)) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: SlideTransition(
+                                position: offsetAnimation,
+                                child: child,
+                              ),
+                            );
+                          }
+                          return child;
+                        },
+                        child: CustomText(
+                          widget.msg ?? loadingMessages[msgIndex],
+                          key: ValueKey<int>(msgIndex),
+                          color: widget.msgTextColor,
+                          fontSize: widget.msgTextSize ?? 18,
+                          style: widget.msgTextStyle,
+                          shadows: const [
+                            Shadow(
+                                color: Colors.black26,
+                                offset: Offset(0, 1),
+                                blurRadius: 4),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
             ],
           ),
         ),
@@ -637,14 +669,17 @@ class NormalLoadingScaffold extends StatefulWidget {
       this.adaptToScreenSize = false,
       this.msgTextColor,
       this.msgTextSize,
-        this.blurSigma = 4.0,
-      this.msgTextStyle, this.loadingInfoWidget, this.scaffoldBgColor});
+      this.blurSigma = 4.0,
+      this.msgTextStyle,
+      this.loadingInfoWidget,
+      this.scaffoldBgColor});
 
   @override
   State<NormalLoadingScaffold> createState() => _NormalLoadingScaffoldState();
 }
 
-class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> with SingleTickerProviderStateMixin{
+class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold>
+    with SingleTickerProviderStateMixin {
   int msgIndex = 0;
   late Timer _timer;
   late final AnimationController _blurController;
@@ -653,8 +688,14 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> with Sing
   @override
   void initState() {
     super.initState();
-    _blurController = AnimationController(vsync: this, duration: const Duration(milliseconds: 900),)..forward(from: 0);
-    _curvedBlurAnimation = CurvedAnimation(parent: _blurController, curve: CustomCurves.bouncySpring, reverseCurve: CustomCurves.snappySpring);
+    _blurController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..forward(from: 0);
+    _curvedBlurAnimation = CurvedAnimation(
+        parent: _blurController,
+        curve: CustomCurves.defaultIosSpring,
+        reverseCurve: CustomCurves.snappySpring);
 
     _startTimer();
   }
@@ -686,54 +727,71 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> with Sing
       child: Scaffold(
         backgroundColor: widget.scaffoldBgColor ?? Colors.transparent,
         body: AnimatedBuilder(
-          animation: _curvedBlurAnimation,
-          builder: (context, child) {
-            return BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: widget.blurSigma * _curvedBlurAnimation.value, sigmaY: widget.blurSigma * _curvedBlurAnimation.value),
-              child: widget.loadingInfoWidget ?? Align(
-                alignment: Alignment.center,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                      color: widget.backgroundColor ?? (isDarkMode ? Colors.black : Colors.white),
-                      borderRadius: BorderRadius.circular(36),
-                      border: Border.fromBorderSide(BorderSide(color: Colors.blueGrey.withValues(alpha: 0.05))),
-                      boxShadow: [
-                        BoxShadow(offset: Offset.zero, blurRadius: 4.0, spreadRadius: 2.0, color: Colors.blueGrey.withValues(alpha: 0.2), blurStyle: BlurStyle.outer)
-                      ]),
-                  child: SizedBox(
-                    width: widget.adaptToScreenSize ? screenWidth * 0.6 : 240,
-                    height: widget.adaptToScreenSize ? screenWidth * 0.4 : 160,
-                    child: ClipRRect(
-                      clipBehavior: Clip.hardEdge,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: CircularProgressIndicator(
-                              strokeCap: StrokeCap.round,
-                              color: widget.progressIndicatorColor ?? primaryColor,
+            animation: _curvedBlurAnimation,
+            builder: (context, child) {
+              return BackdropFilter(
+                filter: ImageFilter.blur(
+                    sigmaX: widget.blurSigma * _curvedBlurAnimation.value,
+                    sigmaY: widget.blurSigma * _curvedBlurAnimation.value),
+                child: widget.loadingInfoWidget ??
+                    Align(
+                      alignment: Alignment.center,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                            color: widget.backgroundColor ??
+                                (isDarkMode ? Colors.black : Colors.white),
+                            borderRadius: BorderRadius.circular(36),
+                            border: Border.fromBorderSide(BorderSide(
+                                color:
+                                    Colors.blueGrey.withValues(alpha: 0.05))),
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset.zero,
+                                  blurRadius: 4.0,
+                                  spreadRadius: 2.0,
+                                  color: Colors.blueGrey.withValues(alpha: 0.2),
+                                  blurStyle: BlurStyle.outer)
+                            ]),
+                        child: SizedBox(
+                          width: widget.adaptToScreenSize
+                              ? screenWidth * 0.6
+                              : 240,
+                          height: widget.adaptToScreenSize
+                              ? screenWidth * 0.4
+                              : 160,
+                          child: ClipRRect(
+                            clipBehavior: Clip.hardEdge,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.transparent,
+                                  child: CircularProgressIndicator(
+                                    strokeCap: StrokeCap.round,
+                                    color: widget.progressIndicatorColor ??
+                                        primaryColor,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                  child: CustomText(
+                                    widget.msg ?? loadingMessages[msgIndex],
+                                    color:
+                                        widget.msgTextColor ?? Colors.blueGrey,
+                                    fontSize: widget.msgTextSize ?? 14,
+                                    style: widget.msgTextStyle,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                            child: CustomText(
-                              widget.msg ?? loadingMessages[msgIndex],
-                              color: widget.msgTextColor ?? Colors.blueGrey,
-                              fontSize: widget.msgTextSize ?? 14,
-                              style: widget.msgTextStyle,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-            );
-          }
-        ),
+              );
+            }),
       ),
     );
   }
@@ -745,33 +803,31 @@ class LoadingDialog {
 
   /// Shows the loading dialog by pushing a custom route using [loadingDialogBuilder].
   /// It now takes the [BuildContext] as a required parameter.
-  static Future<T?> showLoadingDialog<T>(
-    BuildContext context, {
-    bool isAnimatedDialog = false,
-    String? msg,
-    Color? msgTextColor,
-    double? msgTextSize,
-    TextStyle? msgTextStyle,
-    bool? canPop,
-    Color? backgroundColor,
-    List<Color>? animatedColors,
-    Color? progressIndicatorColor,
-    Duration transitionDuration = const Duration(milliseconds: 500),
-    Duration reverseTransitionDuration = const Duration(milliseconds: 250),
-    Curve curve = Curves.ease,
+  static Future<T?> showLoadingDialog<T>(BuildContext context,
+      {bool isAnimatedDialog = false,
+      String? msg,
+      Color? msgTextColor,
+      double? msgTextSize,
+      TextStyle? msgTextStyle,
+      bool? canPop,
+      Color? backgroundColor,
+      List<Color>? animatedColors,
+      Color? progressIndicatorColor,
+      Duration transitionDuration = const Duration(milliseconds: 500),
+      Duration reverseTransitionDuration = const Duration(milliseconds: 250),
+      Curve curve = Curves.ease,
 
-    /// For non-animatedDialog
-    bool adaptToScreenSize = false,
-    // Extra parameters for the animated scaffold:
-    List<Color>? gradientColors,
-    List<Color>? particleColors,
-    int particleCount = 1000,
-    double particleOpacity = 0.07,
-    double gradientOpacity = 0.07,
-    double blurSigma = 4.0,
-        Color? scaffoldBgColor,
-        Widget? loadingInfoWidget
-  }) {
+      /// For non-animatedDialog
+      bool adaptToScreenSize = false,
+      // Extra parameters for the animated scaffold:
+      List<Color>? gradientColors,
+      List<Color>? particleColors,
+      int particleCount = 1000,
+      double particleOpacity = 0.07,
+      double gradientOpacity = 0.07,
+      double blurSigma = 4.0,
+      Color? scaffoldBgColor,
+      Widget? loadingInfoWidget}) {
     final pageRoute = PageRouteBuilder(
       opaque: false,
       transitionDuration: transitionDuration,
@@ -801,6 +857,7 @@ class LoadingDialog {
             progressIndicatorColor: progressIndicatorColor,
             backgroundColor: backgroundColor,
             scaffoldBgColor: scaffoldBgColor,
+            blurSigma: blurSigma,
             loadingInfoWidget: loadingInfoWidget,
             adaptToScreenSize: adaptToScreenSize,
             msgTextColor: msgTextColor,
@@ -812,7 +869,8 @@ class LoadingDialog {
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         // Always apply a fade transition using the provided curve.
         final Animation<double> fadeAnimation =
-            Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animation, curve: curve));
+            Tween<double>(begin: 0.0, end: 1.0)
+                .animate(CurvedAnimation(parent: animation, curve: curve));
 
         return FadeTransition(
           opacity: fadeAnimation,
@@ -838,7 +896,9 @@ class LoadingDialog {
     _currentLoadingRoute = pageRoute;
 
     // Push the route and clear the stored reference once it completes.
-    return Navigator.of(context).push<T>(pageRoute as Route<T>).whenComplete(() {
+    return Navigator.of(context)
+        .push<T>(pageRoute as Route<T>)
+        .whenComplete(() {
       _currentLoadingRoute = null;
     });
   }

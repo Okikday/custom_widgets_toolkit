@@ -122,3 +122,7 @@
 ## 0.0.45
 - **Updated Colors on snackbar and added more arguments**
 - **Breaking change: removed SnackBarVibe.neutral**
+
+## 0.0.46
+- **Fixed blurSigma not getting applied for non-animated Dialog**
+- **Note: You can use the LoadingDialog to display dialog for other things. Would deprecate for a CustomDialog in the future for utils such as Loading, Alert etc**

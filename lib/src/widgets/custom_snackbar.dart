@@ -45,6 +45,7 @@ class CustomSnackBar {
       Color? backgroundColor,
       TextStyle? textStyle,
       Widget? icon,
+      Widget? prefixIcon,
       Widget? contentWidget,
       DismissDirection? dismissDirection,
       ShapeBorder? shape,
@@ -104,7 +105,7 @@ class CustomSnackBar {
                     ? (scaffoldBackgroundColor.withValues(alpha: 0.25))
                     : bgColor),
         dismissDirection: dismissDirection ?? DismissDirection.vertical,
-        elevation: 64,
+        elevation: 48,
         shape: shape ??
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
@@ -127,6 +128,7 @@ class CustomSnackBar {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if(prefixIcon != null) prefixIcon,
                   // Expanded widget ensures the text takes up available space.
                   Expanded(
                     child: CustomText(

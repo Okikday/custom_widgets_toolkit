@@ -35,7 +35,7 @@ Add the package to your `pubspec.yaml`:
 dependencies:
   flutter:
     sdk: flutter
-  custom_widgets_toolkit: ^0.0.45 # Most stable version, can change to ^0.0.43 latest version
+  custom_widgets_toolkit: ^0.0.46
 ```
 
-- **You can make a request for a widget to add by sending a mail to okikday@gmail.com**
+- **You can make a request for a custom widget to add by sending a mail to okikday@gmail.com**
