@@ -12,9 +12,9 @@ This package provides a curated set of custom components and widgets that simpli
 ## Custom Components
 
 **`lib/src/others/`**
-- **constant_sizing.dart:** Predefined sizing constants for design consistency.
+- **constant_sizing.dart:** Predefined sizing constants for design consistency. e.g ConstantSizing.columnSpacingSmall, ConstantSizing.rowSpacing(12) => easy to use
 - **custom_scroll_physics.dart:** Tailored scroll behavior.
-- **custom_spring_curves.dart:** Spring-like animations for natural UI transitions.
+- **custom_curves.dart:** Spring-like curves and other smooth curves for natural UI transitions.
 
 ## Custom Widgets
 

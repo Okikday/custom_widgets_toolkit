@@ -218,7 +218,7 @@ class _FrostyBackgroundState extends State<FrostyBackground>
           size: MediaQuery.of(context).size,
           painter: _CirclePainter(circles: _circles),
         ),
-        Container(color: bgColor),
+        AnimatedContainer(duration: Durations.extralong1, color: bgColor),
         AnimatedBuilder(
             animation: _curvedBlurAnimation,
             builder: (context, child) {
@@ -580,66 +580,70 @@ class _FrostyLoadingScaffoldState extends State<FrostyLoadingScaffold> {
           statusBarColor: Colors.transparent,
         ),
         child: Scaffold(
-          backgroundColor: widget.scaffoldBgColor ?? Colors.transparent,
-          body: Stack(
-            children: [
-              // Organic background effect
-              OrganicBackgroundEffect(
-                gradientColors: widget.gradientColors,
-                particleColors: widget.particleColors,
-                particleCount: widget.particleCount,
-                particleOpacity: widget.particleOpacity,
-                gradientOpacity: widget.gradientOpacity,
-              ),
-              // Frosty background
-              FrostyBackground(
-                blurSigma: widget.blurSigma,
-                circleColors: widget.circleColors,
-              ),
-              // Loading message
-              widget.loadingInfoWidget ??
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: AnimatedSwitcher(
-                        duration: widget.transitionDuration,
-                        transitionBuilder: (child, animation) {
-                          final offsetAnimation = Tween<Offset>(
-                            begin: const Offset(0, 0.5),
-                            end: Offset.zero,
-                          ).animate(CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.decelerate,
-                          ));
-                          if (widget.msg == null ||
-                              (widget.msg != null && widget.msg!.isEmpty)) {
-                            return FadeTransition(
-                              opacity: animation,
-                              child: SlideTransition(
-                                position: offsetAnimation,
-                                child: child,
-                              ),
-                            );
-                          }
-                          return child;
-                        },
-                        child: CustomText(
-                          widget.msg ?? loadingMessages[msgIndex],
-                          key: ValueKey<int>(msgIndex),
-                          color: widget.msgTextColor,
-                          fontSize: widget.msgTextSize ?? 18,
-                          style: widget.msgTextStyle,
-                          shadows: const [
-                            Shadow(
-                                color: Colors.black26,
-                                offset: Offset(0, 1),
-                                blurRadius: 4),
-                          ],
+          backgroundColor: Colors.transparent,
+          body: AnimatedContainer(
+            duration: widget.transitionDuration,
+            color: widget.scaffoldBgColor ?? Colors.transparent,
+            child: Stack(
+              children: [
+                // Organic background effect
+                OrganicBackgroundEffect(
+                  gradientColors: widget.gradientColors,
+                  particleColors: widget.particleColors,
+                  particleCount: widget.particleCount,
+                  particleOpacity: widget.particleOpacity,
+                  gradientOpacity: widget.gradientOpacity,
+                ),
+                // Frosty background
+                FrostyBackground(
+                  blurSigma: widget.blurSigma,
+                  circleColors: widget.circleColors,
+                ),
+                // Loading message
+                widget.loadingInfoWidget ??
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: AnimatedSwitcher(
+                          duration: widget.transitionDuration,
+                          transitionBuilder: (child, animation) {
+                            final offsetAnimation = Tween<Offset>(
+                              begin: const Offset(0, 0.5),
+                              end: Offset.zero,
+                            ).animate(CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.decelerate,
+                            ));
+                            if (widget.msg == null ||
+                                (widget.msg != null && widget.msg!.isEmpty)) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: SlideTransition(
+                                  position: offsetAnimation,
+                                  child: child,
+                                ),
+                              );
+                            }
+                            return child;
+                          },
+                          child: CustomText(
+                            widget.msg ?? loadingMessages[msgIndex],
+                            key: ValueKey<int>(msgIndex),
+                            color: widget.msgTextColor,
+                            fontSize: widget.msgTextSize ?? 18,
+                            style: widget.msgTextStyle,
+                            shadows: const [
+                              Shadow(
+                                  color: Colors.black26,
+                                  offset: Offset(0, 1),
+                                  blurRadius: 4),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -684,6 +688,7 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold>
   late Timer _timer;
   late final AnimationController _blurController;
   late final CurvedAnimation _curvedBlurAnimation;
+  late final ColorTween _scaffoldBgColorTween;
 
   @override
   void initState() {
@@ -696,6 +701,9 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold>
         parent: _blurController,
         curve: CustomCurves.defaultIosSpring,
         reverseCurve: CustomCurves.snappySpring);
+    _scaffoldBgColorTween = ColorTween(
+        begin: Colors.blueGrey.withAlpha(10),
+        end: widget.scaffoldBgColor ?? Colors.blueGrey.withAlpha(10));
 
     _startTimer();
   }
@@ -724,74 +732,81 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold>
 
     return PopScope(
       canPop: widget.canPop,
-      child: Scaffold(
-        backgroundColor: widget.scaffoldBgColor ?? Colors.transparent,
-        body: AnimatedBuilder(
-            animation: _curvedBlurAnimation,
-            builder: (context, child) {
-              return BackdropFilter(
-                filter: ImageFilter.blur(
-                    sigmaX: widget.blurSigma * _curvedBlurAnimation.value,
-                    sigmaY: widget.blurSigma * _curvedBlurAnimation.value),
-                child: widget.loadingInfoWidget ??
-                    Align(
-                      alignment: Alignment.center,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                            color: widget.backgroundColor ??
-                                (isDarkMode ? Colors.black : Colors.white),
-                            borderRadius: BorderRadius.circular(36),
-                            border: Border.fromBorderSide(BorderSide(
-                                color:
-                                    Colors.blueGrey.withValues(alpha: 0.05))),
-                            boxShadow: [
-                              BoxShadow(
-                                  offset: Offset.zero,
-                                  blurRadius: 4.0,
-                                  spreadRadius: 2.0,
-                                  color: Colors.blueGrey.withValues(alpha: 0.2),
-                                  blurStyle: BlurStyle.outer)
-                            ]),
-                        child: SizedBox(
-                          width: widget.adaptToScreenSize
-                              ? screenWidth * 0.6
-                              : 240,
-                          height: widget.adaptToScreenSize
-                              ? screenWidth * 0.4
-                              : 160,
-                          child: ClipRRect(
-                            clipBehavior: Clip.hardEdge,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.transparent,
-                                  child: CircularProgressIndicator(
-                                    strokeCap: StrokeCap.round,
-                                    color: widget.progressIndicatorColor ??
-                                        primaryColor,
-                                  ),
+      child: TweenAnimationBuilder(
+        tween: _scaffoldBgColorTween,
+        duration: const Duration(milliseconds: 900),
+        builder: (context, color, child) {
+          return Scaffold(
+            backgroundColor: color,
+            body: AnimatedBuilder(
+                animation: _curvedBlurAnimation,
+                builder: (context, child) {
+                  return BackdropFilter(
+                    filter: ImageFilter.blur(
+                        sigmaX: widget.blurSigma * _curvedBlurAnimation.value,
+                        sigmaY: widget.blurSigma * _curvedBlurAnimation.value),
+                    child: widget.loadingInfoWidget ??
+                        Align(
+                          alignment: Alignment.center,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                color: widget.backgroundColor ??
+                                    (isDarkMode ? Colors.black : Colors.white),
+                                borderRadius: BorderRadius.circular(36),
+                                border: Border.fromBorderSide(BorderSide(
+                                    color: Colors.blueGrey
+                                        .withValues(alpha: 0.05))),
+                                boxShadow: [
+                                  BoxShadow(
+                                      offset: Offset.zero,
+                                      blurRadius: 4.0,
+                                      spreadRadius: 2.0,
+                                      color: Colors.blueGrey
+                                          .withValues(alpha: 0.2),
+                                      blurStyle: BlurStyle.outer)
+                                ]),
+                            child: SizedBox(
+                              width: widget.adaptToScreenSize
+                                  ? screenWidth * 0.6
+                                  : 240,
+                              height: widget.adaptToScreenSize
+                                  ? screenWidth * 0.4
+                                  : 160,
+                              child: ClipRRect(
+                                clipBehavior: Clip.hardEdge,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundColor: Colors.transparent,
+                                      child: CircularProgressIndicator(
+                                        strokeCap: StrokeCap.round,
+                                        color: widget.progressIndicatorColor ??
+                                            primaryColor,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          12, 8, 12, 8),
+                                      child: CustomText(
+                                        widget.msg ?? loadingMessages[msgIndex],
+                                        color: widget.msgTextColor ??
+                                            Colors.blueGrey,
+                                        fontSize: widget.msgTextSize ?? 14,
+                                        style: widget.msgTextStyle,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 16),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                                  child: CustomText(
-                                    widget.msg ?? loadingMessages[msgIndex],
-                                    color:
-                                        widget.msgTextColor ?? Colors.blueGrey,
-                                    fontSize: widget.msgTextSize ?? 14,
-                                    style: widget.msgTextStyle,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-              );
-            }),
+                  );
+                }),
+          );
+        },
       ),
     );
   }

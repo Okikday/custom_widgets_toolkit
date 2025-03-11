@@ -126,3 +126,7 @@
 ## 0.0.46
 - **Fixed blurSigma not getting applied for non-animated Dialog**
 - **Note: You can use the LoadingDialog to display dialog for other things. Would deprecate for a CustomDialog in the future for utils such as Loading, Alert etc**
+
+## 0.0.47
+- **Little fix to non-animated background color in LoadingDialog**
+-**Reminder: You can use the LoadingDialog to display dialog for other things. just use the loadingInfoWidget property**
