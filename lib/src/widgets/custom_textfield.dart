@@ -495,7 +495,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         autofillHints: widget.autofillHints,
         canRequestFocus: widget.canRequestFocus,
         cursorErrorColor: widget.cursorErrorColor,
-        contextMenuBuilder: widget.contextMenuBuilder,
+        contextMenuBuilder: widget.contextMenuBuilder ?? _defaultContextMenuBuilder,
         dragStartBehavior: widget.dragStartBehavior,
         enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
         enableInteractiveSelection: widget.enableInteractiveSelection,
@@ -558,4 +558,13 @@ class _CustomTextfieldState extends State<CustomTextfield> {
       ),
     );
   }
+
+    static Widget _defaultContextMenuBuilder(
+    BuildContext context,
+    EditableTextState editableTextState,
+  ) {
+    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
+  }
 }
+
+
