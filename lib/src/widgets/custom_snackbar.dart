@@ -65,7 +65,8 @@ class CustomSnackBar {
     };
 
     final Map<SnackBarVibe, Color> backgroundColors = {
-      for (final vibe in SnackBarVibe.values) vibe: mainColors[vibe]!.withValues(alpha: 0.2)
+      for (final vibe in SnackBarVibe.values)
+        vibe: mainColors[vibe]!.withValues(alpha: 0.2)
     };
 
     final Map<SnackBarVibe, IconData> icons = {
@@ -95,9 +96,11 @@ class CustomSnackBar {
         showCloseIcon: showCloseIcon,
         width: width,
         padding: padding,
-        behavior: SnackBarBehavior.floating, // Makes the SnackBar float above the UI.
+        behavior:
+            SnackBarBehavior.floating, // Makes the SnackBar float above the UI.
         duration: duration ?? const Duration(milliseconds: 2000),
-        margin: margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin:
+            margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         backgroundColor: backgroundColor ??
             (usePrimaryColor && vibe == SnackBarVibe.none
                 ? primaryColor.withValues(alpha: 0.3)
@@ -115,7 +118,8 @@ class CustomSnackBar {
                           (usePrimaryColor && vibe == SnackBarVibe.none
                               ? primaryColor.withValues(alpha: 0.75)
                               : vibe == SnackBarVibe.none
-                                  ? (scaffoldBackgroundColor.withValues(alpha: 0.75))
+                                  ? (scaffoldBackgroundColor.withValues(
+                                      alpha: 0.75))
                                   : bgColor.withValues(alpha: 0.75))),
                   width: 1),
             ),
@@ -128,14 +132,16 @@ class CustomSnackBar {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if(prefixIcon != null) prefixIcon,
+                  if (prefixIcon != null) prefixIcon,
                   // Expanded widget ensures the text takes up available space.
                   Expanded(
                     child: CustomText(
                       content,
                       style: textStyle ??
                           TextStyle(
-                            color: vibe == SnackBarVibe.none ? (isDarkMode ? Colors.black : Colors.white) : mainColor,
+                            color: vibe == SnackBarVibe.none
+                                ? (isDarkMode ? Colors.black : Colors.white)
+                                : mainColor,
                             fontSize: 16,
                           ),
                     ),
@@ -144,7 +150,9 @@ class CustomSnackBar {
                   icon ??
                       Icon(
                         iconData,
-                        color: vibe == SnackBarVibe.none ? (isDarkMode ? Colors.black : Colors.white) : mainColor,
+                        color: vibe == SnackBarVibe.none
+                            ? (isDarkMode ? Colors.black : Colors.white)
+                            : mainColor,
                       ),
                 ],
               ),

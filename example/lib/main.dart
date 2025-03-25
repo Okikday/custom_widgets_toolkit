@@ -37,9 +37,13 @@ class HomePage extends StatelessWidget {
             tabs: [
               Tab(text: 'Curves Demo'),
               Tab(text: 'Scroll Physics Demo'),
-              Tab(text: "Loading Dialog Demo",),
+              Tab(
+                text: "Loading Dialog Demo",
+              ),
               Tab(text: "Custom Snackbar Demo"),
-              Tab(text: "Custom Widgets Demo",)
+              Tab(
+                text: "Custom Widgets Demo",
+              )
             ],
           ),
         ),
@@ -70,29 +74,28 @@ class _CurvesDemoPageState extends State<CurvesDemoPage>
   late AnimationController _controller;
   late Animation<double> _animation;
 
-final List<MapEntry<String, Curve>> _curves = [
-  // Spring‑based curves:
-  MapEntry('Instant (Spring)', CustomCurves.instantSpring),
-  MapEntry('Default iOS (Spring)', CustomCurves.defaultIosSpring),
-  MapEntry('Bouncy (Spring)', CustomCurves.bouncySpring),
-  MapEntry('Snappy (Spring)', CustomCurves.snappySpring),
-  MapEntry('Interactive (Spring)', CustomCurves.interactiveSpring),
+  final List<MapEntry<String, Curve>> _curves = [
+    // Spring‑based curves:
+    MapEntry('Instant (Spring)', CustomCurves.instantSpring),
+    MapEntry('Default iOS (Spring)', CustomCurves.defaultIosSpring),
+    MapEntry('Bouncy (Spring)', CustomCurves.bouncySpring),
+    MapEntry('Snappy (Spring)', CustomCurves.snappySpring),
+    MapEntry('Interactive (Spring)', CustomCurves.interactiveSpring),
 
-  // Additional custom curves:
-  MapEntry('Linear', CustomCurves.linear),
-  MapEntry('Ease', CustomCurves.ease),
-  MapEntry('Decelerate', CustomCurves.decelerate),
-  MapEntry('FastSlowInOut', CustomCurves.fastSlowInOut),
-  MapEntry('Bounce Out', CustomCurves.bounceOut),
-  MapEntry('Bounce In', CustomCurves.bounceIn),
+    // Additional custom curves:
+    MapEntry('Linear', CustomCurves.linear),
+    MapEntry('Ease', CustomCurves.ease),
+    MapEntry('Decelerate', CustomCurves.decelerate),
+    MapEntry('FastSlowInOut', CustomCurves.fastSlowInOut),
+    MapEntry('Bounce Out', CustomCurves.bounceOut),
+    MapEntry('Bounce In', CustomCurves.bounceIn),
 
-  // Additional smooth easing curves:
-  MapEntry('Ease Out Sine', CustomCurves.easeOutSine),
-  MapEntry('Ease In Out Sine', CustomCurves.easeInOutSine),
-  MapEntry('Ease Out Circ', CustomCurves.easeOutCirc),
-  MapEntry('Ease In Out Circ', CustomCurves.easeInOutCirc),
-];
-
+    // Additional smooth easing curves:
+    MapEntry('Ease Out Sine', CustomCurves.easeOutSine),
+    MapEntry('Ease In Out Sine', CustomCurves.easeInOutSine),
+    MapEntry('Ease Out Circ', CustomCurves.easeOutCirc),
+    MapEntry('Ease In Out Circ', CustomCurves.easeInOutCirc),
+  ];
 
   int _selectedCurveIndex = 0;
 
@@ -242,7 +245,6 @@ class _ScrollPhysicsDemoPageState extends State<ScrollPhysicsDemoPage> {
   }
 }
 
-
 /// A test page that shows two buttons: one to show the LoadingDialog,
 /// and another to hide it.
 class LoadingDialogTestPage extends StatefulWidget {
@@ -293,7 +295,6 @@ class _LoadingDialogTestPageState extends State<LoadingDialogTestPage> {
     );
   }
 }
-
 
 /// A test page to display CustomSnackBar examples for each SnackBarVibe.
 class CustomSnackBarTestPage extends StatelessWidget {
@@ -352,9 +353,6 @@ class CustomSnackBarTestPage extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class CustomWidgetsTestPage extends StatefulWidget {
   const CustomWidgetsTestPage({super.key});
@@ -505,15 +503,18 @@ class _CustomWidgetsTestPageState extends State<CustomWidgetsTestPage> {
                 Colors.blue,
                 Colors.red,
                 Colors.green,
-              ].map((color) => DropdownMenuItem(
-                value: color,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  color: color,
-                ),
-              )).toList(),
-              onChanged: (color) => setState(() => _buttonBackgroundColor = color!),
+              ]
+                  .map((color) => DropdownMenuItem(
+                        value: color,
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          color: color,
+                        ),
+                      ))
+                  .toList(),
+              onChanged: (color) =>
+                  setState(() => _buttonBackgroundColor = color!),
             ),
           ],
         ),
@@ -527,14 +528,16 @@ class _CustomWidgetsTestPageState extends State<CustomWidgetsTestPage> {
                 Colors.black,
                 Colors.red,
                 Colors.green,
-              ].map((color) => DropdownMenuItem(
-                value: color,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  color: color,
-                ),
-              )).toList(),
+              ]
+                  .map((color) => DropdownMenuItem(
+                        value: color,
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          color: color,
+                        ),
+                      ))
+                  .toList(),
               onChanged: (color) => setState(() => _buttonTextColor = color!),
             ),
           ],
@@ -583,14 +586,16 @@ class _CustomWidgetsTestPageState extends State<CustomWidgetsTestPage> {
                 Colors.blue,
                 Colors.red,
                 Colors.green,
-              ].map((color) => DropdownMenuItem(
-                value: color,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  color: color,
-                ),
-              )).toList(),
+              ]
+                  .map((color) => DropdownMenuItem(
+                        value: color,
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          color: color,
+                        ),
+                      ))
+                  .toList(),
               onChanged: (color) => setState(() => _textColor = color!),
             ),
           ],
@@ -619,11 +624,14 @@ class _CustomWidgetsTestPageState extends State<CustomWidgetsTestPage> {
                 TextDecoration.underline,
                 TextDecoration.lineThrough,
                 TextDecoration.overline,
-              ].map((decoration) => DropdownMenuItem(
-                value: decoration,
-                child: Text(decoration.toString().split('.').last),
-              )).toList(),
-              onChanged: (decoration) => setState(() => _textDecoration = decoration!),
+              ]
+                  .map((decoration) => DropdownMenuItem(
+                        value: decoration,
+                        child: Text(decoration.toString().split('.').last),
+                      ))
+                  .toList(),
+              onChanged: (decoration) =>
+                  setState(() => _textDecoration = decoration!),
             ),
           ],
         ),
@@ -664,7 +672,8 @@ class _CustomWidgetsTestPageState extends State<CustomWidgetsTestPage> {
               value: _textFieldBorderRadius,
               min: 0,
               max: 50,
-              onChanged: (value) => setState(() => _textFieldBorderRadius = value),
+              onChanged: (value) =>
+                  setState(() => _textFieldBorderRadius = value),
             ),
           ],
         ),
@@ -678,15 +687,18 @@ class _CustomWidgetsTestPageState extends State<CustomWidgetsTestPage> {
                 Colors.blueGrey,
                 Colors.blue,
                 Colors.red,
-              ].map((color) => DropdownMenuItem(
-                value: color,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  color: color,
-                ),
-              )).toList(),
-              onChanged: (color) => setState(() => _textFieldBackgroundColor = color!),
+              ]
+                  .map((color) => DropdownMenuItem(
+                        value: color,
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          color: color,
+                        ),
+                      ))
+                  .toList(),
+              onChanged: (color) =>
+                  setState(() => _textFieldBackgroundColor = color!),
             ),
           ],
         ),
@@ -700,15 +712,18 @@ class _CustomWidgetsTestPageState extends State<CustomWidgetsTestPage> {
                 Colors.blue,
                 Colors.red,
                 Colors.green,
-              ].map((color) => DropdownMenuItem(
-                value: color,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  color: color,
-                ),
-              )).toList(),
-              onChanged: (color) => setState(() => _textFieldTextColor = color!),
+              ]
+                  .map((color) => DropdownMenuItem(
+                        value: color,
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          color: color,
+                        ),
+                      ))
+                  .toList(),
+              onChanged: (color) =>
+                  setState(() => _textFieldTextColor = color!),
             ),
           ],
         ),

@@ -18,7 +18,8 @@ class OrganicSearchEffect extends StatefulWidget {
   State<OrganicSearchEffect> createState() => _OrganicSearchEffectState();
 }
 
-class _OrganicSearchEffectState extends State<OrganicSearchEffect> with TickerProviderStateMixin {
+class _OrganicSearchEffectState extends State<OrganicSearchEffect>
+    with TickerProviderStateMixin {
   late final AnimationController _pulseController;
   late final AnimationController _rotationController;
   final List<Particle> _particles = [];
@@ -64,7 +65,7 @@ class _OrganicSearchEffectState extends State<OrganicSearchEffect> with TickerPr
           radius * sin(angle),
         ),
         color: colors[_random.nextInt(colors.length)]
-            .withValues(alpha:0.1 + _random.nextDouble() * 0.2),
+            .withValues(alpha: 0.1 + _random.nextDouble() * 0.2),
         size: 1 + _random.nextDouble() * 2,
         speed: 0.2 + _random.nextDouble() * 0.3,
         angle: angle,
@@ -88,7 +89,8 @@ class _OrganicSearchEffectState extends State<OrganicSearchEffect> with TickerPr
         children: [
           // Gradient background layer
           AnimatedBuilder(
-            animation: Listenable.merge([_pulseController, _rotationController]),
+            animation:
+                Listenable.merge([_pulseController, _rotationController]),
             builder: (context, child) {
               return CustomPaint(
                 size: Size(widget.size, widget.size),
@@ -158,8 +160,8 @@ class GradientPainter extends CustomPainter {
           center,
           radius,
           [
-            colors[i].withValues(alpha:0.3),
-            colors[(i + 1) % colors.length].withValues(alpha:0.3),
+            colors[i].withValues(alpha: 0.3),
+            colors[(i + 1) % colors.length].withValues(alpha: 0.3),
           ],
           [0, 1],
           TileMode.clamp,
@@ -192,10 +194,11 @@ class ParticlePainter extends CustomPainter {
       // Update particle position
       final angle = particle.angle + animationValue * 2 * pi * particle.speed;
       final radius = (particle.position - center).distance;
-      final newPosition = center + Offset(
-        radius * cos(angle),
-        radius * sin(angle),
-      );
+      final newPosition = center +
+          Offset(
+            radius * cos(angle),
+            radius * sin(angle),
+          );
 
       final paint = Paint()
         ..color = particle.color

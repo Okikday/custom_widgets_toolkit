@@ -11,11 +11,16 @@ class CustomCurves {
   // ========================================================================
   static const double _defaultDuration = 0.5;
 
-  static final Curve instantSpring = _createSpringCurve(durationSeconds: 0, bounce: 0, id: 'instantSpring');
-  static final Curve defaultIosSpring = _createSpringCurve(durationSeconds: 0.55, bounce: 0, id: 'defaultIosSpring');
-  static final Curve bouncySpring = _createSpringCurve(durationSeconds: _defaultDuration, bounce: 0.3, id: 'bouncySpring');
-  static final Curve snappySpring = _createSpringCurve(durationSeconds: _defaultDuration, bounce: 0.15, id: 'snappySpring');
-  static final Curve interactiveSpring = _createSpringCurve(durationSeconds: 0.15, bounce: 0.14, id: 'interactiveSpring');
+  static final Curve instantSpring =
+      _createSpringCurve(durationSeconds: 0, bounce: 0, id: 'instantSpring');
+  static final Curve defaultIosSpring = _createSpringCurve(
+      durationSeconds: 0.55, bounce: 0, id: 'defaultIosSpring');
+  static final Curve bouncySpring = _createSpringCurve(
+      durationSeconds: _defaultDuration, bounce: 0.3, id: 'bouncySpring');
+  static final Curve snappySpring = _createSpringCurve(
+      durationSeconds: _defaultDuration, bounce: 0.15, id: 'snappySpring');
+  static final Curve interactiveSpring = _createSpringCurve(
+      durationSeconds: 0.15, bounce: 0.14, id: 'interactiveSpring');
 
   // ========================================================================
   // Additional Custom Curves (using inline lambda functions)
@@ -159,7 +164,10 @@ class CustomCurves {
         final double zeta = damping / (2 * omega);
         if (zeta < 1) {
           final double omegaD = omega * sqrt(1 - zeta * zeta);
-          return 1 - exp(-zeta * omega * t) * (cos(omegaD * t) + (zeta / sqrt(1 - zeta * zeta)) * sin(omegaD * t));
+          return 1 -
+              exp(-zeta * omega * t) *
+                  (cos(omegaD * t) +
+                      (zeta / sqrt(1 - zeta * zeta)) * sin(omegaD * t));
         } else {
           // Critically damped or overdamped response.
           return 1 - exp(-omega * t) * (1 + omega * t);
@@ -192,7 +200,11 @@ class _LambdaCurve extends Curve {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is _LambdaCurve && runtimeType == other.runtimeType && id == other.id && durationSeconds == other.durationSeconds && bounce == other.bounce;
+      other is _LambdaCurve &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          durationSeconds == other.durationSeconds &&
+          bounce == other.bounce;
 
   @override
   int get hashCode => id.hashCode ^ durationSeconds.hashCode ^ bounce.hashCode;

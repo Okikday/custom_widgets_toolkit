@@ -67,9 +67,11 @@ class CustomScrollPhysics extends ScrollPhysics {
   }
 
   @override
-  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
+  Simulation? createBallisticSimulation(
+      ScrollMetrics position, double velocity) {
     // If we're nearly at rest and in bounds, no simulation is needed.
-    if ((velocity.abs() < toleranceFor(position).velocity) && !position.outOfRange) {
+    if ((velocity.abs() < toleranceFor(position).velocity) &&
+        !position.outOfRange) {
       return null;
     }
 

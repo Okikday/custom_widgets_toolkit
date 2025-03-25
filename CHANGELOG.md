@@ -130,3 +130,9 @@
 ## 0.0.47
 - **Little fix to non-animated background color in LoadingDialog**
 -**Reminder: You can use the LoadingDialog to display dialog for other things. just use the loadingInfoWidget property**
+
+## 0.0.48
+- **Fix toolbar now showing up in CustomTextField**
+
+## 0.0.49
+- **YOu can now parse the "enabled" and "delay" arguments in CustomElevatedButton**

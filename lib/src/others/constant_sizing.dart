@@ -132,17 +132,24 @@ class ConstantSizing {
   static const rowSpacingSmall = SizedBox(width: ConstantSizing.spaceSmall);
   static const rowSpacingMedium = SizedBox(width: ConstantSizing.spaceMedium);
   static const rowSpacingLarge = SizedBox(width: ConstantSizing.spaceLarge);
-  static const rowSpacingExtraLarge = SizedBox(width: ConstantSizing.spaceExtraLarge);
+  static const rowSpacingExtraLarge =
+      SizedBox(width: ConstantSizing.spaceExtraLarge);
   static const rowSpacingHuge = SizedBox(width: ConstantSizing.spaceHuge);
 
   /// Column Spacing
   static const columnSpacingSmall = SizedBox(height: ConstantSizing.spaceSmall);
-  static const columnSpacingMedium = SizedBox(height: ConstantSizing.spaceMedium);
+  static const columnSpacingMedium =
+      SizedBox(height: ConstantSizing.spaceMedium);
   static const columnSpacingLarge = SizedBox(height: ConstantSizing.spaceLarge);
-  static const columnSpacingExtraLarge = SizedBox(height: ConstantSizing.spaceExtraLarge);
+  static const columnSpacingExtraLarge =
+      SizedBox(height: ConstantSizing.spaceExtraLarge);
   static const columnSpacingHuge = SizedBox(height: ConstantSizing.spaceHuge);
 
   // Custom Column Spacing
-  static SizedBox columnSpacing(double height)=> SizedBox(height: height,);
-  static SizedBox rowSpacing(double width)=> SizedBox(height: width,);
+  static SizedBox columnSpacing(double height) => SizedBox(
+        height: height,
+      );
+  static SizedBox rowSpacing(double width) => SizedBox(
+        height: width,
+      );
 }

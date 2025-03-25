@@ -16,38 +16,38 @@ import 'package:flutter/material.dart';
 ///
 /// ## Customization Options
 ///
-/// - **Text Content:**  
+/// - **Text Content:**
 ///   The text to display is provided as the [data] parameter.
 ///
-/// - **Font Size and Adjustment:**  
+/// - **Font Size and Adjustment:**
 ///   Use [fontSize] to set the base size of the text and [adjustSize] to add a
 ///   further adjustment (e.g. for dynamic scaling).
 ///
-/// - **Color Handling:**  
+/// - **Color Handling:**
 ///   [color] sets the default text color; [darkColor] overrides [color] in dark mode.
 ///   If [invertColor] is true, the widget uses the opposite of the expected color
 ///   based on the current brightness.
 ///
-/// - **Typography:**  
+/// - **Typography:**
 ///   Customize the text using [fontFamily], [fontWeight], [fontStyle], and [fontFamilyFallback].
 ///
-/// - **Text Decorations:**  
+/// - **Text Decorations:**
 ///   Control underlines, overlines, etc., with [textDecoration], [decorationColor],
 ///   and [decorationStyle]. [decorationThickness] also allows you to adjust the thickness.
 ///
-/// - **Spacing and Shadows:**  
+/// - **Spacing and Shadows:**
 ///   Use [letterSpacing] and [wordSpacing] for spacing adjustments, and [shadows] to add drop shadows.
 ///
-/// - **Layout Options:**  
+/// - **Layout Options:**
 ///   The widget accepts parameters such as [height] for line height, [backgroundColor],
 ///   [inputContentPadding] (if used in a similar context), and more advanced typography
 ///   features like [fontFeatures], [fontVariations], and [leadingDistribution].
 ///
-/// - **Additional Styling:**  
+/// - **Additional Styling:**
 ///   Optional parameters like [selectionColor], [strutStyle], [textAlign], [textDirection],
 ///   [locale], [textScaleFactor], and [textScaler] offer further control over text rendering.
 ///
-/// - **Miscellaneous:**  
+/// - **Miscellaneous:**
 ///   Other parameters like [package], [debugLabel], and [semanticsLabel] provide additional
 ///   customization and accessibility support.
 ///
@@ -237,9 +237,13 @@ class CustomText extends StatelessWidget {
   /// taking into account the current platform brightness. If no [style] is provided,
   /// a default style is computed. In dark mode, [darkColor] (if specified) is used.
   TextStyle effectiveStyle(BuildContext context) {
-    final bool isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    final bool isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
 
-    Color resolvedColor = color ?? (isDarkMode ? (invertColor ? Colors.black : Colors.white) : (invertColor ? Colors.white : Colors.black));
+    Color resolvedColor = color ??
+        (isDarkMode
+            ? (invertColor ? Colors.black : Colors.white)
+            : (invertColor ? Colors.white : Colors.black));
     if (darkColor != null && isDarkMode) resolvedColor = darkColor!;
 
     return style ??

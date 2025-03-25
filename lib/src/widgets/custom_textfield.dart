@@ -176,10 +176,12 @@ class CustomTextfield extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
 
   /// Callback to pass internal arguments (controller and focus node) for custom usage.
-  final Function(TextEditingController controller, FocusNode focusNode)? internalArgs;
+  final Function(TextEditingController controller, FocusNode focusNode)?
+      internalArgs;
 
   /// Callback for disposing additional resources.
-  final Function(TextEditingController controller, FocusNode focusNode)? dispose2;
+  final Function(TextEditingController controller, FocusNode focusNode)?
+      dispose2;
 
   final bool? readOnly;
 
@@ -389,7 +391,8 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     super.initState();
 
     // Use widget's controller or create a new one
-    controller = widget.controller ?? TextEditingController(text: widget.defaultText);
+    controller =
+        widget.controller ?? TextEditingController(text: widget.defaultText);
     // Use widget's focusNode or create a new one
     focusNode = widget.focusNode ?? FocusNode();
 
@@ -399,7 +402,8 @@ class _CustomTextfieldState extends State<CustomTextfield> {
 
     showSuffixIcon = ValueNotifier(widget.alwaysShowSuffixIcon);
 
-    if (widget.internalArgs != null) widget.internalArgs!(controller, focusNode);
+    if (widget.internalArgs != null)
+      widget.internalArgs!(controller, focusNode);
 
     // Update the suffix icon state initially
     refreshSuffixIconState();
@@ -439,7 +443,9 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     return Theme(
       data: Theme.of(context).copyWith(
           textSelectionTheme: TextSelectionThemeData(
-              cursorColor: widget.cursorColor, selectionColor: widget.selectionColor, selectionHandleColor: widget.selectionHandleColor)),
+              cursorColor: widget.cursorColor,
+              selectionColor: widget.selectionColor,
+              selectionHandleColor: widget.selectionHandleColor)),
       child: TextField(
         enabled: widget.isEnabled,
         minLines: 1,
@@ -454,30 +460,36 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         onEditingComplete: () {
           refreshSuffixIconState();
           if (widget.onEditingComplete != null) widget.onEditingComplete!();
-          if (widget.internalArgs != null) widget.internalArgs!(controller, focusNode);
+          if (widget.internalArgs != null)
+            widget.internalArgs!(controller, focusNode);
         },
         onSubmitted: (value) {
           refreshSuffixIconState();
           if (widget.onSubmitted != null) widget.onSubmitted!(value);
-          if (widget.internalArgs != null) widget.internalArgs!(controller, focusNode);
+          if (widget.internalArgs != null)
+            widget.internalArgs!(controller, focusNode);
         },
         onChanged: (text) {
           refreshSuffixIconState();
           if (widget.onchanged != null) widget.onchanged!(text);
-          if (widget.internalArgs != null) widget.internalArgs!(controller, focusNode);
+          if (widget.internalArgs != null)
+            widget.internalArgs!(controller, focusNode);
         },
         onTap: () {
           refreshSuffixIconState();
           if (widget.ontap != null) widget.ontap!();
-          if (widget.internalArgs != null) widget.internalArgs!(controller, focusNode);
+          if (widget.internalArgs != null)
+            widget.internalArgs!(controller, focusNode);
         },
         onTapOutside: (e) {
           refreshSuffixIconState();
           if (widget.onTapOutside == null) focusNode.unfocus();
           if (widget.onTapOutside != null) widget.onTapOutside!();
-          if (widget.internalArgs != null && focusNode.hasFocus) widget.internalArgs!(controller, focusNode);
+          if (widget.internalArgs != null && focusNode.hasFocus)
+            widget.internalArgs!(controller, focusNode);
         },
-        style: widget.inputTextStyle ?? const CustomText("").effectiveStyle(context),
+        style: widget.inputTextStyle ??
+            const CustomText("").effectiveStyle(context),
         cursorColor: widget.cursorColor,
         cursorHeight: widget.cursorHeight,
         cursorWidth: widget.cursorWidth ?? 2.0,
@@ -495,7 +507,8 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         autofillHints: widget.autofillHints,
         canRequestFocus: widget.canRequestFocus,
         cursorErrorColor: widget.cursorErrorColor,
-        contextMenuBuilder: widget.contextMenuBuilder ?? _defaultContextMenuBuilder,
+        contextMenuBuilder:
+            widget.contextMenuBuilder ?? _defaultContextMenuBuilder,
         dragStartBehavior: widget.dragStartBehavior,
         enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
         enableInteractiveSelection: widget.enableInteractiveSelection,
@@ -512,7 +525,8 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         scrollPadding: widget.scrollPadding ?? const EdgeInsets.all(20),
         scrollPhysics: widget.scrollPhysics,
         selectionControls: widget.selectionControls,
-        selectionHeightStyle: widget.selectionHeightStyle ?? BoxHeightStyle.tight,
+        selectionHeightStyle:
+            widget.selectionHeightStyle ?? BoxHeightStyle.tight,
         selectionWidthStyle: widget.selectionWidthStyle ?? BoxWidthStyle.tight,
         smartDashesType: widget.smartDashesType,
         smartQuotesType: widget.smartQuotesType,
@@ -534,14 +548,24 @@ class _CustomTextfieldState extends State<CustomTextfield> {
                     color: Colors.blueGrey,
                   ),
               contentPadding: widget.inputContentPadding,
-              border: widget.border ?? OutlineInputBorder(borderRadius: BorderRadius.circular(widget.borderRadius)),
-              focusedBorder: widget.focusedBorder ?? widget.border ?? OutlineInputBorder(borderRadius: BorderRadius.circular(widget.borderRadius)),
-              enabledBorder: widget.enabledBorder ?? widget.border ?? OutlineInputBorder(borderRadius: BorderRadius.circular(widget.borderRadius)),
+              border: widget.border ??
+                  OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(widget.borderRadius)),
+              focusedBorder: widget.focusedBorder ??
+                  widget.border ??
+                  OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(widget.borderRadius)),
+              enabledBorder: widget.enabledBorder ??
+                  widget.border ??
+                  OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(widget.borderRadius)),
               disabledBorder: widget.disabledBorder,
               errorBorder: widget.errorBorder,
               alignLabelWithHint: widget.alignLabelWithHint,
-              constraints:
-                  widget.constraints ?? BoxConstraints.tightForFinite(width: widget.pixelWidth ?? 100, height: widget.pixelHeight ?? 48),
+              constraints: widget.constraints ??
+                  BoxConstraints.tightForFinite(
+                      width: widget.pixelWidth ?? 100,
+                      height: widget.pixelHeight ?? 48),
               filled: widget.backgroundColor == null ? false : true,
               fillColor: widget.backgroundColor,
               prefixIcon: widget.prefixIcon,
@@ -559,12 +583,11 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     );
   }
 
-    static Widget _defaultContextMenuBuilder(
+  static Widget _defaultContextMenuBuilder(
     BuildContext context,
     EditableTextState editableTextState,
   ) {
-    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
+    return AdaptiveTextSelectionToolbar.editableText(
+        editableTextState: editableTextState);
   }
 }
-
-

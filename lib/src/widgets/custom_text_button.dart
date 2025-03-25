@@ -10,9 +10,9 @@ class CustomTextButton extends StatelessWidget {
   final double? borderRadius;
   final double? textSize;
   final double? pixelHeight; // Height in pixels
-  final double? pixelWidth;  // Width in pixels
+  final double? pixelWidth; // Width in pixels
   final double? screenHeight; // Height as a percentage of screen height
-  final double? screenWidth;  // Width as a percentage of screen width
+  final double? screenWidth; // Width as a percentage of screen width
   final Color? textColor;
   final EdgeInsets? contentPadding;
   final double? iconSpacing; // Optional spacing between icon and label
@@ -40,7 +40,8 @@ class CustomTextButton extends StatelessWidget {
   Widget build(BuildContext context) {
     // Define the button style.
     final ButtonStyle buttonStyle = ButtonStyle(
-      backgroundColor: WidgetStatePropertyAll(backgroundColor ?? Colors.transparent),
+      backgroundColor:
+          WidgetStatePropertyAll(backgroundColor ?? Colors.transparent),
       padding: WidgetStatePropertyAll(contentPadding),
       overlayColor: WidgetStatePropertyAll(Colors.blue.withAlpha(26)),
       shape: WidgetStatePropertyAll(

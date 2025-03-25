@@ -42,8 +42,7 @@ class CustomTextSpanData {
   final TextOverflow? overflow;
 
   CustomTextSpanData(
-    this.data,
-    {
+    this.data, {
     this.fontSize = 12.0,
     this.adjustSize = 0.0,
     this.color,
@@ -71,14 +70,13 @@ class CustomTextSpanData {
     this.debugLabel,
     this.recognizer,
     this.children,
-
     this.mouseCursor,
     this.onEnter,
     this.onExit,
     this.semanticsLabel,
     this.spellOut,
     this.locale,
-    this.overflow, 
+    this.overflow,
   });
 
   /// Converts this data object into a [TextSpan].
@@ -87,7 +85,8 @@ class CustomTextSpanData {
   TextSpan toTextSpan(TextStyle baseStyle) {
     // Determine dark mode without requiring a context.
     final bool isDarkMode =
-        WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark;
+        WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+            Brightness.dark;
     Color resolvedColor = color ??
         (isDarkMode
             ? (invertColor ? Colors.black : Colors.white)
@@ -191,7 +190,8 @@ class CustomRichText extends StatelessWidget {
       } else if (child is InlineSpan) {
         return child;
       } else {
-        throw Exception('Children must be either CustomTextSpanData or InlineSpan');
+        throw Exception(
+            'Children must be either CustomTextSpanData or InlineSpan');
       }
     }).toList();
 
