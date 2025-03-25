@@ -1,5 +1,4 @@
 import 'package:custom_widgets_toolkit/custom_widgets_toolkit.dart';
-import 'package:custom_widgets_toolkit/src/others/custom_curves.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -326,10 +325,6 @@ class CustomSnackBarTestPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => _showSnackBar(context, SnackBarVibe.error),
               child: const Text('Error SnackBar'),
-            ),
-            ElevatedButton(
-              onPressed: () => _showSnackBar(context, SnackBarVibe.neutral),
-              child: const Text('Neutral SnackBar'),
             ),
             ElevatedButton(
               onPressed: () => _showSnackBar(context, SnackBarVibe.success),

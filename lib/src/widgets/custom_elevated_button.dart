@@ -103,9 +103,9 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
   /// If the button is disabled, a delay is already in progress, or no callback is provided,
   /// the tap is ignored. Otherwise, it sets the [_isDelaying] flag, waits for the delay duration,
   /// then executes the callback and resets the flag.
-  void _handleTap(void Function()? callback) async {
+  dynamic _handleTap(void Function()? callback) async {
     // Check if the button is enabled, not already delaying, and has a valid callback.
-    if (!widget.enabled || _isDelaying || callback == null) return;
+    if (!widget.enabled || _isDelaying || callback == null) return null;
 
     // Mark the button as in delaying state to ignore subsequent taps.
     if (widget.delay != Duration.zero) {
@@ -127,6 +127,7 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
         });
       }
     }
+    return;
   }
 
   @override
@@ -142,8 +143,12 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
           ? mediaQueryData.size.height * (widget.screenHeight! / 100)
           : widget.pixelHeight,
       child: ElevatedButton(
-        onPressed: () => _handleTap(widget.onClick),
-        onLongPress: () => _handleTap(widget.onLongClick),
+        onPressed: (widget.enabled && widget.onClick != null)
+            ? () => _handleTap(widget.onClick)
+            : null,
+        onLongPress: (widget.enabled && widget.onClick != null)
+            ? () => _handleTap(widget.onLongClick)
+            : null,
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(widget.backgroundColor ??
               (widget.enabled ? defaultBgColor : Colors.grey)),

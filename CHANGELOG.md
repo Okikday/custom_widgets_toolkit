@@ -135,4 +135,7 @@
 - **Fix toolbar now showing up in CustomTextField**
 
 ## 0.0.49
-- **YOu can now parse the "enabled" and "delay" arguments in CustomElevatedButton**
+- **You can now parse the "enabled" and "delay" arguments in CustomElevatedButton**
+
+## 0.0.50
+- **Adjusted for when custom elevated button's onClick argument isn't parsed**
