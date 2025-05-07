@@ -139,3 +139,9 @@
 
 ## 0.0.50
 - **Adjusted for when custom elevated button's onClick argument isn't parsed**
+
+## 0.0.51
+- **Fixed where rowSpacing applies for height instead**
+
+## 0.0.52
+- **Fixed [CustomTextButton] where onClick and onLongClick doesn't work**

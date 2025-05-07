@@ -150,6 +150,6 @@ class ConstantSizing {
         height: height,
       );
   static SizedBox rowSpacing(double width) => SizedBox(
-        height: width,
+        width: width,
       );
 }

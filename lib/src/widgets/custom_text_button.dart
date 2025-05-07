@@ -5,8 +5,8 @@ class CustomTextButton extends StatelessWidget {
   final Widget? child;
   final Widget? icon; // Optional icon
   final Color? backgroundColor;
-  final VoidCallback? onClick;
-  final VoidCallback? onLongClick;
+  final void Function()? onClick;
+  final void Function()? onLongClick;
   final double? borderRadius;
   final double? textSize;
   final double? pixelHeight; // Height in pixels
