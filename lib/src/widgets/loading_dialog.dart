@@ -294,6 +294,10 @@ class OrganicBackgroundEffect extends StatefulWidget {
   final int particleCount;
   final double particleOpacity;
   final double gradientOpacity;
+  final Duration pulseDuration;
+  final Duration rotationDuration;
+  final Duration? pulseReverseDuration;
+  final Duration? rotationReverseDuration;
 
   const OrganicBackgroundEffect({
     super.key,
@@ -301,7 +305,12 @@ class OrganicBackgroundEffect extends StatefulWidget {
     this.particleColors,
     this.particleCount = 1000,
     this.particleOpacity = 0.07,
-    this.gradientOpacity = 0.07,
+    this.gradientOpacity = 0.07, 
+    this.pulseDuration = const Duration(milliseconds: 3000), 
+    this.rotationDuration = const Duration(milliseconds: 10000), 
+    this.pulseReverseDuration, 
+    this.rotationReverseDuration,
+    
   });
 
   @override
@@ -331,12 +340,14 @@ class _OrganicBackgroundEffectState extends State<OrganicBackgroundEffect>
 
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3000),
+      duration: widget.pulseDuration,
+      reverseDuration: widget.pulseReverseDuration
     )..repeat(reverse: true);
 
     _rotationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 10000),
+      duration: widget.rotationDuration,
+      reverseDuration: widget.rotationReverseDuration
     )..repeat();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -612,7 +623,7 @@ class _FrostyLoadingScaffoldState extends State<FrostyLoadingScaffold> {
                               end: Offset.zero,
                             ).animate(CurvedAnimation(
                               parent: animation,
-                              curve: Curves.decelerate,
+                              curve: CustomCurves.decelerate,
                             ));
                             if (widget.msg == null ||
                                 (widget.msg != null && widget.msg!.isEmpty)) {
@@ -663,6 +674,10 @@ class NormalLoadingScaffold extends StatefulWidget {
   final Widget? loadingInfoWidget;
   final Color? scaffoldBgColor;
   final double blurSigma;
+  final Duration transitionDuration;
+  final Duration reverseTransitionDuration;
+  /// Use CustomCurves
+  final Curve? curve;
 
   const NormalLoadingScaffold(
       {super.key,
@@ -676,7 +691,11 @@ class NormalLoadingScaffold extends StatefulWidget {
       this.blurSigma = 4.0,
       this.msgTextStyle,
       this.loadingInfoWidget,
-      this.scaffoldBgColor});
+      this.scaffoldBgColor,
+      this.curve,
+      this.transitionDuration = Durations.medium4,
+      this.reverseTransitionDuration = Durations.medium1
+      });
 
   @override
   State<NormalLoadingScaffold> createState() => _NormalLoadingScaffoldState();
@@ -695,12 +714,13 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold>
     super.initState();
     _blurController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: widget.transitionDuration,
+      reverseDuration: widget.reverseTransitionDuration,
     )..forward(from: 0);
     _curvedBlurAnimation = CurvedAnimation(
         parent: _blurController,
-        curve: CustomCurves.defaultIosSpring,
-        reverseCurve: CustomCurves.snappySpring);
+        curve: widget.curve ?? CustomCurves.decelerate,
+        reverseCurve: widget.curve);
     _scaffoldBgColorTween = ColorTween(
         begin: Colors.blueGrey.withAlpha(10),
         end: widget.scaffoldBgColor ?? Colors.blueGrey.withAlpha(10));
@@ -734,7 +754,8 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold>
       canPop: widget.canPop,
       child: TweenAnimationBuilder(
         tween: _scaffoldBgColorTween,
-        duration: const Duration(milliseconds: 900),
+        duration: widget.transitionDuration,
+        curve: widget.curve ?? CustomCurves.decelerate,
         builder: (context, color, child) {
           return Scaffold(
             backgroundColor: color,
@@ -828,9 +849,10 @@ class LoadingDialog {
       Color? backgroundColor,
       List<Color>? animatedColors,
       Color? progressIndicatorColor,
-      Duration transitionDuration = const Duration(milliseconds: 500),
-      Duration reverseTransitionDuration = const Duration(milliseconds: 250),
-      Curve curve = Curves.ease,
+      Duration transitionDuration = Durations.medium4,
+      Duration reverseTransitionDuration = Durations.medium1,
+      /// Use CustomCurves to prevent unexpected behavior
+      Curve? curve,
 
       /// For non-animatedDialog
       bool adaptToScreenSize = false,
@@ -852,6 +874,7 @@ class LoadingDialog {
           return FrostyLoadingScaffold(
             msg: msg,
             canPop: canPop ?? true,
+            transitionDuration: transitionDuration,
             scaffoldBgColor: scaffoldBgColor,
             loadingInfoWidget: loadingInfoWidget,
             circleColors: animatedColors,
@@ -878,6 +901,9 @@ class LoadingDialog {
             msgTextColor: msgTextColor,
             msgTextSize: msgTextSize,
             msgTextStyle: msgTextStyle,
+            transitionDuration: transitionDuration,
+            reverseTransitionDuration: reverseTransitionDuration,
+            curve: curve ?? CustomCurves.decelerate,
           );
         }
       },
@@ -885,22 +911,14 @@ class LoadingDialog {
         // Always apply a fade transition using the provided curve.
         final Animation<double> fadeAnimation =
             Tween<double>(begin: 0.0, end: 1.0)
-                .animate(CurvedAnimation(parent: animation, curve: curve));
+                .animate(CurvedAnimation(parent: animation, curve: curve ?? CustomCurves.decelerate));
 
         return FadeTransition(
           opacity: fadeAnimation,
           child: Builder(
             builder: (context) {
-              // When the route is popping, apply an additional scale effect:
-              // Scale = 1.0 when animation.value == 1 and 1.5 when animation.value == 0.
-              double scale = 1.0;
-              if (animation.status == AnimationStatus.reverse) {
-                scale = 1.0 + (1 - animation.value) * 0.5;
-              }
-              return Transform.scale(
-                scale: scale,
-                child: child,
-              );
+              
+              return child;
             },
           ),
         );

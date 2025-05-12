@@ -68,7 +68,7 @@ class CustomTextfield extends StatefulWidget {
   /// Callback when the text field is tapped.
   final void Function()? ontap;
 
-  /// Callback when a tap outside the text field is detected.
+  /// Callback when a tap outside the text field is detected. Adjust this to prevent keyboard from automatically unfocusing
   final void Function()? onTapOutside;
 
   /// Callback when the text changes.
@@ -460,33 +460,42 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         onEditingComplete: () {
           refreshSuffixIconState();
           if (widget.onEditingComplete != null) widget.onEditingComplete!();
-          if (widget.internalArgs != null)
+          if (widget.internalArgs != null){
             widget.internalArgs!(controller, focusNode);
+          }
+            
         },
         onSubmitted: (value) {
           refreshSuffixIconState();
           if (widget.onSubmitted != null) widget.onSubmitted!(value);
-          if (widget.internalArgs != null)
+          if (widget.internalArgs != null){
             widget.internalArgs!(controller, focusNode);
+          }
+            
         },
         onChanged: (text) {
           refreshSuffixIconState();
           if (widget.onchanged != null) widget.onchanged!(text);
-          if (widget.internalArgs != null)
+          if (widget.internalArgs != null){
             widget.internalArgs!(controller, focusNode);
+          }
+            
         },
         onTap: () {
           refreshSuffixIconState();
           if (widget.ontap != null) widget.ontap!();
-          if (widget.internalArgs != null)
+          if (widget.internalArgs != null){
             widget.internalArgs!(controller, focusNode);
+          }
+            
         },
         onTapOutside: (e) {
           refreshSuffixIconState();
           if (widget.onTapOutside == null) focusNode.unfocus();
           if (widget.onTapOutside != null) widget.onTapOutside!();
-          if (widget.internalArgs != null && focusNode.hasFocus)
+          if (widget.internalArgs != null && focusNode.hasFocus){
             widget.internalArgs!(controller, focusNode);
+          }
         },
         style: widget.inputTextStyle ??
             const CustomText("").effectiveStyle(context),

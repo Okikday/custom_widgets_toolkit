@@ -134,7 +134,6 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
   Widget build(BuildContext context) {
     final Color defaultBgColor = Colors.blueGrey;
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
-    final Color primaryColor = Theme.of(context).primaryColor;
     return SizedBox(
       width: widget.screenWidth != null
           ? mediaQueryData.size.width * (widget.screenWidth! / 100)
@@ -155,7 +154,7 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
           padding: WidgetStatePropertyAll(widget.contentPadding ??
               EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0)),
           overlayColor: WidgetStatePropertyAll(
-              widget.overlayColor ?? primaryColor.withValues(alpha: 20)),
+              widget.overlayColor ?? Colors.blueGrey.withAlpha(100)),
           shadowColor: const WidgetStatePropertyAll(Colors.transparent),
           elevation: WidgetStatePropertyAll(widget.elevation),
           shape: WidgetStatePropertyAll(widget.shape ??

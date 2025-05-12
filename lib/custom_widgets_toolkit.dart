@@ -13,5 +13,5 @@ export 'src/widgets/custom_rich_text.dart'
 export 'src/widgets/custom_text_button.dart' show CustomTextButton;
 export 'src/widgets/custom_text.dart' show CustomText;
 export 'src/widgets/custom_textfield.dart' show CustomTextfield;
-export 'src/widgets/loading_dialog.dart' show LoadingDialog;
+export 'src/widgets/loading_dialog.dart' show LoadingDialog, OrganicBackgroundEffect;
 export 'src/widgets/custom_snackbar.dart' show CustomSnackBar, SnackBarVibe;

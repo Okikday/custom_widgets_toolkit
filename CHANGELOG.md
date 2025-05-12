@@ -145,3 +145,8 @@
 
 ## 0.0.52
 - **Fixed [CustomTextButton] where onClick and onLongClick doesn't work**
+
+## 0.0.53
+- **Adjusted the overlayColor for [CustomElevatedButton].**
+- **Exposed the [OrganicEffectBackground]**
+- **Adjusted LoadingDialog sync duration to match duration arguments parsed**
