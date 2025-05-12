@@ -154,3 +154,6 @@
 # 0.0.54
 - **Added [PageAnimation] -> You can use it to animate your pages without external package or dependency. Can customize Transition with TransitionType enum**
 - **Applied it to LoadingDialog for flexibility**
+
+# 0.0.55
+- **Fixed LoadingDialog backgroundColor not getting applied**
