@@ -4,6 +4,7 @@ library;
 export 'src/others/constant_sizing.dart' show ConstantSizing;
 export 'src/others/custom_scroll_physics.dart' show CustomScrollPhysics;
 export 'src/others/custom_curves.dart' show CustomCurves;
+export 'src/others/page_animation.dart' show TransitionType, PageAnimation, CustomTransitionPage, TransitionBuilder;
 
 // exports of custom widgets
 

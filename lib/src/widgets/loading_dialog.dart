@@ -305,12 +305,11 @@ class OrganicBackgroundEffect extends StatefulWidget {
     this.particleColors,
     this.particleCount = 1000,
     this.particleOpacity = 0.07,
-    this.gradientOpacity = 0.07, 
-    this.pulseDuration = const Duration(milliseconds: 3000), 
-    this.rotationDuration = const Duration(milliseconds: 10000), 
-    this.pulseReverseDuration, 
+    this.gradientOpacity = 0.07,
+    this.pulseDuration = const Duration(milliseconds: 3000),
+    this.rotationDuration = const Duration(milliseconds: 10000),
+    this.pulseReverseDuration,
     this.rotationReverseDuration,
-    
   });
 
   @override
@@ -339,16 +338,16 @@ class _OrganicBackgroundEffectState extends State<OrganicBackgroundEffect>
     super.initState();
 
     _pulseController = AnimationController(
-      vsync: this,
-      duration: widget.pulseDuration,
-      reverseDuration: widget.pulseReverseDuration
-    )..repeat(reverse: true);
+        vsync: this,
+        duration: widget.pulseDuration,
+        reverseDuration: widget.pulseReverseDuration)
+      ..repeat(reverse: true);
 
     _rotationController = AnimationController(
-      vsync: this,
-      duration: widget.rotationDuration,
-      reverseDuration: widget.rotationReverseDuration
-    )..repeat();
+        vsync: this,
+        duration: widget.rotationDuration,
+        reverseDuration: widget.rotationReverseDuration)
+      ..repeat();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeParticles();
@@ -676,6 +675,7 @@ class NormalLoadingScaffold extends StatefulWidget {
   final double blurSigma;
   final Duration transitionDuration;
   final Duration reverseTransitionDuration;
+
   /// Use CustomCurves
   final Curve? curve;
 
@@ -694,8 +694,7 @@ class NormalLoadingScaffold extends StatefulWidget {
       this.scaffoldBgColor,
       this.curve,
       this.transitionDuration = Durations.medium4,
-      this.reverseTransitionDuration = Durations.medium1
-      });
+      this.reverseTransitionDuration = Durations.medium1});
 
   @override
   State<NormalLoadingScaffold> createState() => _NormalLoadingScaffoldState();
@@ -850,7 +849,8 @@ class LoadingDialog {
       List<Color>? animatedColors,
       Color? progressIndicatorColor,
       Duration transitionDuration = Durations.medium4,
-      Duration reverseTransitionDuration = Durations.medium1,
+      Duration reverseTransitionDuration = Durations.medium2,
+
       /// Use CustomCurves to prevent unexpected behavior
       Curve? curve,
 
@@ -864,66 +864,53 @@ class LoadingDialog {
       double gradientOpacity = 0.07,
       double blurSigma = 4.0,
       Color? scaffoldBgColor,
-      Widget? loadingInfoWidget}) {
-    final pageRoute = PageRouteBuilder(
-      opaque: false,
-      transitionDuration: transitionDuration,
-      reverseTransitionDuration: reverseTransitionDuration,
-      pageBuilder: (context, animation, secondaryAnimation) {
-        if (isAnimatedDialog) {
-          return FrostyLoadingScaffold(
-            msg: msg,
-            canPop: canPop ?? true,
-            transitionDuration: transitionDuration,
-            scaffoldBgColor: scaffoldBgColor,
-            loadingInfoWidget: loadingInfoWidget,
-            circleColors: animatedColors,
-            gradientColors: gradientColors,
-            particleColors: particleColors,
-            particleCount: particleCount,
-            particleOpacity: particleOpacity,
-            gradientOpacity: gradientOpacity,
-            blurSigma: blurSigma,
-            msgTextColor: msgTextColor,
-            msgTextSize: msgTextSize,
-            msgTextStyle: msgTextStyle,
-          );
-        } else {
-          return NormalLoadingScaffold(
-            msg: msg,
-            canPop: canPop ?? false,
-            progressIndicatorColor: progressIndicatorColor,
-            backgroundColor: backgroundColor,
-            scaffoldBgColor: scaffoldBgColor,
-            blurSigma: blurSigma,
-            loadingInfoWidget: loadingInfoWidget,
-            adaptToScreenSize: adaptToScreenSize,
-            msgTextColor: msgTextColor,
-            msgTextSize: msgTextSize,
-            msgTextStyle: msgTextStyle,
-            transitionDuration: transitionDuration,
-            reverseTransitionDuration: reverseTransitionDuration,
-            curve: curve ?? CustomCurves.decelerate,
-          );
-        }
-      },
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        // Always apply a fade transition using the provided curve.
-        final Animation<double> fadeAnimation =
-            Tween<double>(begin: 0.0, end: 1.0)
-                .animate(CurvedAnimation(parent: animation, curve: curve ?? CustomCurves.decelerate));
+      Widget? loadingInfoWidget,
+      TransitionType transitionType = TransitionType.cupertinoDialog,
+      }) {
+    final Widget scaffold;
+    if (isAnimatedDialog) {
+      scaffold = FrostyLoadingScaffold(
+        msg: msg,
+        canPop: canPop ?? true,
+        transitionDuration: transitionDuration,
+        scaffoldBgColor: scaffoldBgColor,
+        loadingInfoWidget: loadingInfoWidget,
+        circleColors: animatedColors,
+        gradientColors: gradientColors,
+        particleColors: particleColors,
+        particleCount: particleCount,
+        particleOpacity: particleOpacity,
+        gradientOpacity: gradientOpacity,
+        blurSigma: blurSigma,
+        msgTextColor: msgTextColor,
+        msgTextSize: msgTextSize,
+        msgTextStyle: msgTextStyle,
+      );
+    } else {
+      scaffold = NormalLoadingScaffold(
+        msg: msg,
+        canPop: canPop ?? false,
+        progressIndicatorColor: progressIndicatorColor,
+        backgroundColor: backgroundColor,
+        scaffoldBgColor: scaffoldBgColor,
+        blurSigma: blurSigma,
+        loadingInfoWidget: loadingInfoWidget,
+        adaptToScreenSize: adaptToScreenSize,
+        msgTextColor: msgTextColor,
+        msgTextSize: msgTextSize,
+        msgTextStyle: msgTextStyle,
+        transitionDuration: transitionDuration,
+        reverseTransitionDuration: reverseTransitionDuration,
+        curve: curve ?? CustomCurves.decelerate,
+      );
+    }
 
-        return FadeTransition(
-          opacity: fadeAnimation,
-          child: Builder(
-            builder: (context) {
-              
-              return child;
-            },
-          ),
+    final pageRoute = PageAnimation.pageRouteBuilder(scaffold,
+        type: transitionType,
+        duration: transitionDuration,
+        reverseDuration: reverseTransitionDuration,
+        opaque: false,
         );
-      },
-    );
 
     // Store the route reference.
     _currentLoadingRoute = pageRoute;

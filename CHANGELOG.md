@@ -150,3 +150,7 @@
 - **Adjusted the overlayColor for [CustomElevatedButton].**
 - **Exposed the [OrganicEffectBackground]**
 - **Adjusted LoadingDialog sync duration to match duration arguments parsed**
+
+# 0.0.54
+- **Added [PageAnimation] -> You can use it to animate your pages without external package or dependency. Can customize Transition with TransitionType enum**
+- **Applied it to LoadingDialog for flexibility**
