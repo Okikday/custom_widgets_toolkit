@@ -157,3 +157,6 @@
 
 # 0.0.55
 - **Fixed LoadingDialog backgroundColor not getting applied**
+
+# 0.0.56
+- **Added more PageAnimations**

@@ -9,6 +9,8 @@
 library;
 
 
+import 'dart:math' as math;
+
 import 'package:custom_widgets_toolkit/custom_widgets_toolkit.dart';
 import 'package:flutter/widgets.dart';
 
@@ -28,6 +30,33 @@ enum TransitionType {
   topLevel,
   uptown,
   zoom,
+  
+    // Flip transitions
+  flipX,
+  flipY,
+
+  // Scale from corners/edges
+  scaleFromTopLeft,
+  scaleFromTopLeftWithFade,
+  scaleFromTopCenter,
+  scaleFromTopCenterWithFade,
+  scaleFromTopRight,
+  scaleFromTopRightWithFade,
+
+  scaleFromCenter,
+  scaleFromCenterWithFade,
+
+  scaleFromBottomLeft,
+  scaleFromBottomLeftWithFade,
+  scaleFromBottomCenter,
+  scaleFromBottomCenterWithFade,
+  scaleFromBottomRight,
+  scaleFromBottomRightWithFade,
+
+  scaleFromLeftCenter,
+  scaleFromLeftCenterWithFade,
+  scaleFromRightCenter,
+  scaleFromRightCenterWithFade,
 }
 
 
@@ -105,6 +134,26 @@ class PageAnimation {
       allowSnapshotting: allowSnapshotting,
     );
   }
+
+  // Helper for scale transitions
+static TransitionBuilder _scaleBuilder(Alignment alignment, Curve curve, {bool fade = false}) {
+  return (context, animation, secondary, child) {
+    final curveTween = CurveTween(curve: curve);
+    final scale = animation.drive(
+      Tween<double>(begin: 0.0, end: 1.0)
+        .chain(curveTween),
+    );
+    Widget scaled = ScaleTransition(
+      scale: scale,
+      alignment: alignment,
+      child: child,
+    );
+    if (!fade) return scaled;
+
+    final opacity = animation.drive(curveTween);
+    return FadeTransition(opacity: opacity, child: scaled);
+  };
+}
 
 
   static TransitionBuilder _transitionBuilder(TransitionType type, Curve curve) {
@@ -191,6 +240,86 @@ class PageAnimation {
           final fade = animation.drive(CurveTween(curve: curve));
           return FadeTransition(opacity: fade, child: ScaleTransition(scale: scale, child: child));
         };
+
+      // Flip transitions
+    case TransitionType.flipX:
+      return (context, animation, secondary, child) {
+        return AnimatedBuilder(
+          animation: animation,
+          child: child,
+          builder: (ctx, ch) {
+            final angle = animation.value * math.pi; // 0 → π
+            return Transform(
+              transform: Matrix4.rotationX(angle),
+              alignment: Alignment.center,
+              child: ch,
+            );
+          },
+        );
+      };
+
+    case TransitionType.flipY:
+      return (context, animation, secondary, child) {
+        return AnimatedBuilder(
+          animation: animation,
+          child: child,
+          builder: (ctx, ch) {
+            final angle = animation.value * math.pi;
+            return Transform(
+              transform: Matrix4.rotationY(angle),
+              alignment: Alignment.center,
+              child: ch,
+            );
+          },
+        );
+      };
+
+    // Scale-from-… (no fade)
+    case TransitionType.scaleFromTopLeft:
+      return _scaleBuilder(Alignment.topLeft, curve);
+    case TransitionType.scaleFromTopCenter:
+      return _scaleBuilder(Alignment.topCenter, curve);
+    case TransitionType.scaleFromTopRight:
+      return _scaleBuilder(Alignment.topRight, curve);
+
+    case TransitionType.scaleFromCenter:
+      return _scaleBuilder(Alignment.center, curve);
+
+    case TransitionType.scaleFromBottomLeft:
+      return _scaleBuilder(Alignment.bottomLeft, curve);
+    case TransitionType.scaleFromBottomCenter:
+      return _scaleBuilder(Alignment.bottomCenter, curve);
+    case TransitionType.scaleFromBottomRight:
+      return _scaleBuilder(Alignment.bottomRight, curve);
+
+    case TransitionType.scaleFromLeftCenter:
+      return _scaleBuilder(Alignment.centerLeft, curve);
+    case TransitionType.scaleFromRightCenter:
+      return _scaleBuilder(Alignment.centerRight, curve);
+
+    // Scale-from-… with fade
+    case TransitionType.scaleFromTopLeftWithFade:
+      return _scaleBuilder(Alignment.topLeft, curve, fade: true);
+    case TransitionType.scaleFromTopCenterWithFade:
+      return _scaleBuilder(Alignment.topCenter, curve, fade: true);
+    case TransitionType.scaleFromTopRightWithFade:
+      return _scaleBuilder(Alignment.topRight, curve, fade: true);
+
+    case TransitionType.scaleFromCenterWithFade:
+      return _scaleBuilder(Alignment.center, curve, fade: true);
+
+    case TransitionType.scaleFromBottomLeftWithFade:
+      return _scaleBuilder(Alignment.bottomLeft, curve, fade: true);
+    case TransitionType.scaleFromBottomCenterWithFade:
+      return _scaleBuilder(Alignment.bottomCenter, curve, fade: true);
+    case TransitionType.scaleFromBottomRightWithFade:
+      return _scaleBuilder(Alignment.bottomRight, curve, fade: true);
+
+    case TransitionType.scaleFromLeftCenterWithFade:
+      return _scaleBuilder(Alignment.centerLeft, curve, fade: true);
+    case TransitionType.scaleFromRightCenterWithFade:
+      return _scaleBuilder(Alignment.centerRight, curve, fade: true);
+
     }
   }
 }
