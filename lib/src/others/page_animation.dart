@@ -36,27 +36,27 @@ enum TransitionType {
   flipY,
 
   // Scale from corners/edges
-  scaleFromTopLeft,
-  scaleFromTopLeftWithFade,
-  scaleFromTopCenter,
-  scaleFromTopCenterWithFade,
-  scaleFromTopRight,
-  scaleFromTopRightWithFade,
+  levelFromTopLeft,
+  levelFromTopLeftWithFade,
+  levelFromTopCenter,
+  levelFromTopCenterWithFade,
+  levelFromTopRight,
+  levelFromTopRightWithFade,
 
-  scaleFromCenter,
-  scaleFromCenterWithFade,
+  levelFromCenter,
+  levelFromCenterWithFade,
 
-  scaleFromBottomLeft,
-  scaleFromBottomLeftWithFade,
-  scaleFromBottomCenter,
-  scaleFromBottomCenterWithFade,
-  scaleFromBottomRight,
-  scaleFromBottomRightWithFade,
+  levelFromBottomLeft,
+  levelFromBottomLeftWithFade,
+  levelFromBottomCenter,
+  levelFromBottomCenterWithFade,
+  levelFromBottomRight,
+  levelFromBottomRightWithFade,
 
-  scaleFromLeftCenter,
-  scaleFromLeftCenterWithFade,
-  scaleFromRightCenter,
-  scaleFromRightCenterWithFade,
+  levelFromLeftCenter,
+  levelFromLeftCenterWithFade,
+  levelFromRightCenter,
+  levelFromRightCenterWithFade,
 }
 
 
@@ -140,7 +140,7 @@ static TransitionBuilder _scaleBuilder(Alignment alignment, Curve curve, {bool f
   return (context, animation, secondary, child) {
     final curveTween = CurveTween(curve: curve);
     final scale = animation.drive(
-      Tween<double>(begin: 0.0, end: 1.0)
+      Tween<double>(begin: 0.8, end: 1.0)
         .chain(curveTween),
     );
     Widget scaled = ScaleTransition(
@@ -275,49 +275,49 @@ static TransitionBuilder _scaleBuilder(Alignment alignment, Curve curve, {bool f
       };
 
     // Scale-from-… (no fade)
-    case TransitionType.scaleFromTopLeft:
+    case TransitionType.levelFromTopLeft:
       return _scaleBuilder(Alignment.topLeft, curve);
-    case TransitionType.scaleFromTopCenter:
+    case TransitionType.levelFromTopCenter:
       return _scaleBuilder(Alignment.topCenter, curve);
-    case TransitionType.scaleFromTopRight:
+    case TransitionType.levelFromTopRight:
       return _scaleBuilder(Alignment.topRight, curve);
 
-    case TransitionType.scaleFromCenter:
+    case TransitionType.levelFromCenter:
       return _scaleBuilder(Alignment.center, curve);
 
-    case TransitionType.scaleFromBottomLeft:
+    case TransitionType.levelFromBottomLeft:
       return _scaleBuilder(Alignment.bottomLeft, curve);
-    case TransitionType.scaleFromBottomCenter:
+    case TransitionType.levelFromBottomCenter:
       return _scaleBuilder(Alignment.bottomCenter, curve);
-    case TransitionType.scaleFromBottomRight:
+    case TransitionType.levelFromBottomRight:
       return _scaleBuilder(Alignment.bottomRight, curve);
 
-    case TransitionType.scaleFromLeftCenter:
+    case TransitionType.levelFromLeftCenter:
       return _scaleBuilder(Alignment.centerLeft, curve);
-    case TransitionType.scaleFromRightCenter:
+    case TransitionType.levelFromRightCenter:
       return _scaleBuilder(Alignment.centerRight, curve);
 
     // Scale-from-… with fade
-    case TransitionType.scaleFromTopLeftWithFade:
+    case TransitionType.levelFromTopLeftWithFade:
       return _scaleBuilder(Alignment.topLeft, curve, fade: true);
-    case TransitionType.scaleFromTopCenterWithFade:
+    case TransitionType.levelFromTopCenterWithFade:
       return _scaleBuilder(Alignment.topCenter, curve, fade: true);
-    case TransitionType.scaleFromTopRightWithFade:
+    case TransitionType.levelFromTopRightWithFade:
       return _scaleBuilder(Alignment.topRight, curve, fade: true);
 
-    case TransitionType.scaleFromCenterWithFade:
+    case TransitionType.levelFromCenterWithFade:
       return _scaleBuilder(Alignment.center, curve, fade: true);
 
-    case TransitionType.scaleFromBottomLeftWithFade:
+    case TransitionType.levelFromBottomLeftWithFade:
       return _scaleBuilder(Alignment.bottomLeft, curve, fade: true);
-    case TransitionType.scaleFromBottomCenterWithFade:
+    case TransitionType.levelFromBottomCenterWithFade:
       return _scaleBuilder(Alignment.bottomCenter, curve, fade: true);
-    case TransitionType.scaleFromBottomRightWithFade:
+    case TransitionType.levelFromBottomRightWithFade:
       return _scaleBuilder(Alignment.bottomRight, curve, fade: true);
 
-    case TransitionType.scaleFromLeftCenterWithFade:
+    case TransitionType.levelFromLeftCenterWithFade:
       return _scaleBuilder(Alignment.centerLeft, curve, fade: true);
-    case TransitionType.scaleFromRightCenterWithFade:
+    case TransitionType.levelFromRightCenterWithFade:
       return _scaleBuilder(Alignment.centerRight, curve, fade: true);
 
     }
