@@ -445,12 +445,13 @@ class _CustomTextfieldState extends State<CustomTextfield> {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = Theme.of(context);
     return Theme(
-      data: Theme.of(context).copyWith(
+      data: themeData.copyWith(
           textSelectionTheme: TextSelectionThemeData(
               cursorColor: widget.cursorColor,
               selectionColor: widget.selectionColor,
-              selectionHandleColor: widget.selectionHandleColor)),
+              selectionHandleColor: widget.selectionHandleColor ?? themeData.primaryColor)),
       child: TextField(
         enabled: widget.isEnabled,
         minLines: widget.minLines,
@@ -468,7 +469,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
           if (widget.internalArgs != null){
             widget.internalArgs!(controller, focusNode);
           }
-            
+
         },
         onSubmitted: (value) {
           refreshSuffixIconState();
@@ -476,7 +477,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
           if (widget.internalArgs != null){
             widget.internalArgs!(controller, focusNode);
           }
-            
+
         },
         onChanged: (text) {
           refreshSuffixIconState();
@@ -484,7 +485,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
           if (widget.internalArgs != null){
             widget.internalArgs!(controller, focusNode);
           }
-            
+
         },
         onTap: () {
           refreshSuffixIconState();
@@ -492,7 +493,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
           if (widget.internalArgs != null){
             widget.internalArgs!(controller, focusNode);
           }
-            
+
         },
         onTapOutside: (e) {
           refreshSuffixIconState();
@@ -522,7 +523,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         canRequestFocus: widget.canRequestFocus,
         cursorErrorColor: widget.cursorErrorColor,
         contextMenuBuilder:
-            widget.contextMenuBuilder ?? _defaultContextMenuBuilder,
+        widget.contextMenuBuilder ?? _defaultContextMenuBuilder,
         dragStartBehavior: widget.dragStartBehavior,
         enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
         enableInteractiveSelection: widget.enableInteractiveSelection,
@@ -540,7 +541,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         scrollPhysics: widget.scrollPhysics,
         selectionControls: widget.selectionControls,
         selectionHeightStyle:
-            widget.selectionHeightStyle ?? BoxHeightStyle.tight,
+        widget.selectionHeightStyle ?? BoxHeightStyle.tight,
         selectionWidthStyle: widget.selectionWidthStyle ?? BoxWidthStyle.tight,
         smartDashesType: widget.smartDashesType,
         smartQuotesType: widget.smartQuotesType,
@@ -576,10 +577,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
               disabledBorder: widget.disabledBorder,
               errorBorder: widget.errorBorder,
               alignLabelWithHint: widget.alignLabelWithHint,
-              constraints: widget.constraints ??
-                  BoxConstraints.tightForFinite(
-                      width: widget.pixelWidth ?? 100,
-                      height: widget.pixelHeight ?? 48),
+              constraints: widget.constraints,
               filled: widget.backgroundColor == null ? false : true,
               fillColor: widget.backgroundColor,
               prefixIcon: widget.prefixIcon,

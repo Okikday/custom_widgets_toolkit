@@ -163,3 +163,6 @@
 
 ## 0.0.57
 - **Added arguments for minLines in CustomTextfield**
+
+## 0.0.58
+- **Removed limits to CustomTextfield width and height**
