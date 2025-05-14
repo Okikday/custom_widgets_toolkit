@@ -160,3 +160,6 @@
 
 # 0.0.56
 - **Added more PageAnimations**
+
+## 0.0.57
+- **Added arguments for minLines in CustomTextfield**

@@ -139,6 +139,9 @@ class CustomTextfield extends StatefulWidget {
   /// It is automatically disposed, so you don't need to dispose it
   final FocusNode? focusNode;
 
+  /// The minimun number of lines for the text field.
+  final int minLines;
+
   /// The maximum number of lines for the text field.
   final int? maxLines;
 
@@ -322,6 +325,7 @@ class CustomTextfield extends StatefulWidget {
     this.textAlign = TextAlign.start,
     this.inputContentPadding = EdgeInsets.zero,
     this.focusNode,
+    this.minLines = 1,
     this.maxLines,
     this.isEnabled = true,
     this.cursorColor = Colors.white,
@@ -402,8 +406,9 @@ class _CustomTextfieldState extends State<CustomTextfield> {
 
     showSuffixIcon = ValueNotifier(widget.alwaysShowSuffixIcon);
 
-    if (widget.internalArgs != null)
+    if (widget.internalArgs != null) {
       widget.internalArgs!(controller, focusNode);
+    }
 
     // Update the suffix icon state initially
     refreshSuffixIconState();
@@ -448,7 +453,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
               selectionHandleColor: widget.selectionHandleColor)),
       child: TextField(
         enabled: widget.isEnabled,
-        minLines: 1,
+        minLines: widget.minLines,
         maxLines: widget.maxLines ?? 1,
         textAlign: widget.textAlign,
         readOnly: widget.readOnly ?? false,
