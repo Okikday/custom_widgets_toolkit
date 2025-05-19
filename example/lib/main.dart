@@ -258,7 +258,6 @@ class _LoadingDialogTestPageState extends State<LoadingDialogTestPage> {
   void _showDialog(BuildContext context) {
     LoadingDialog.showLoadingDialog(
       context,
-      isAnimatedDialog: false,
       msg: 'Please wait...',
       canPop: true,
     );

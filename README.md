@@ -15,6 +15,7 @@ This package provides a curated set of custom components and widgets that simpli
 - **constant_sizing.dart:** Predefined sizing constants for design consistency. e.g ConstantSizing.columnSpacingSmall, ConstantSizing.rowSpacing(12) => easy to use
 - **custom_scroll_physics.dart:** Tailored scroll behavior.
 - **custom_curves.dart:** Spring-like curves and other smooth curves for natural UI transitions.
+- **page_animation.dart:** It is used to animate pages using [buildCustomTransitionPage] or [pageRouteBuilder] which can be used with normal route or GoRouter
 
 ## Custom Widgets
 
@@ -35,5 +36,5 @@ Add the package to your `pubspec.yaml`:
 dependencies:
   flutter:
     sdk: flutter
-  custom_widgets_toolkit: ^0.0.58
+  custom_widgets_toolkit: ^0.0.60
 ```

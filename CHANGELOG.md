@@ -166,3 +166,10 @@
 
 ## 0.0.58
 - **Removed limits to CustomTextfield width and height**
+
+## 0.0.59
+- **Adjust [CustomTextfield] allow counterText arguments, also allowing to use [CustomTextfield().getEffectiveInputDecoration()] to get the default inputDecoration which can be used alongside copyWith or another textfield**
+
+
+## 0.0.60
+- **Breaking changes, removed isAnimatedDialog under LoadingDialog. more simplified**

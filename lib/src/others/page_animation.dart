@@ -1,4 +1,3 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -7,7 +6,6 @@
 /// To be used instead of MaterialPage or CupertinoPage, which provide
 /// their own transitions.
 library;
-
 
 import 'dart:math' as math;
 
@@ -30,10 +28,6 @@ enum TransitionType {
   topLevel,
   uptown,
   zoom,
-  
-    // Flip transitions
-  flipX,
-  flipY,
 
   // Scale from corners/edges
   levelFromTopLeft,
@@ -59,16 +53,14 @@ enum TransitionType {
   levelFromRightCenterWithFade,
 }
 
-
 /// Signature for transition builder functions.
 /// Receives primary and secondary animations plus the child widget.
-typedef TransitionBuilder =
-    Widget Function(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child);
+typedef TransitionBuilder = Widget Function(
+    BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child);
 
 /// Centralized utility for creating animated page transitions
 /// without external dependencies.
 class PageAnimation {
-
   /// Single entry-point: builds a [CustomTransitionPage] by TransitionType type
   /// Returns a [CustomTransitionPage] wrapping [child], with
   /// animation determined by [type] and [curve].
@@ -136,25 +128,23 @@ class PageAnimation {
   }
 
   // Helper for scale transitions
-static TransitionBuilder _scaleBuilder(Alignment alignment, Curve curve, {bool fade = false}) {
-  return (context, animation, secondary, child) {
-    final curveTween = CurveTween(curve: curve);
-    final scale = animation.drive(
-      Tween<double>(begin: 0.8, end: 1.0)
-        .chain(curveTween),
-    );
-    Widget scaled = ScaleTransition(
-      scale: scale,
-      alignment: alignment,
-      child: child,
-    );
-    if (!fade) return scaled;
+  static TransitionBuilder _scaleBuilder(Alignment alignment, Curve curve, {bool fade = false}) {
+    return (context, animation, secondary, child) {
+      final curveTween = CurveTween(curve: curve);
+      final scale = animation.drive(
+        Tween<double>(begin: 0.8, end: 1.0).chain(curveTween),
+      );
+      Widget scaled = ScaleTransition(
+        scale: scale,
+        alignment: alignment,
+        child: child,
+      );
+      if (!fade) return scaled;
 
-    final opacity = animation.drive(curveTween);
-    return FadeTransition(opacity: opacity, child: scaled);
-  };
-}
-
+      final opacity = animation.drive(curveTween);
+      return FadeTransition(opacity: opacity, child: scaled);
+    };
+  }
 
   static TransitionBuilder _transitionBuilder(TransitionType type, Curve curve) {
     switch (type) {
@@ -241,89 +231,54 @@ static TransitionBuilder _scaleBuilder(Alignment alignment, Curve curve, {bool f
           return FadeTransition(opacity: fade, child: ScaleTransition(scale: scale, child: child));
         };
 
-      // Flip transitions
-    case TransitionType.flipX:
-      return (context, animation, secondary, child) {
-        return AnimatedBuilder(
-          animation: animation,
-          child: child,
-          builder: (ctx, ch) {
-            final angle = animation.value * math.pi; // 0 → π
-            return Transform(
-              transform: Matrix4.rotationX(angle),
-              alignment: Alignment.center,
-              child: ch,
-            );
-          },
-        );
-      };
+      // Scale-from-… (no fade)
+      case TransitionType.levelFromTopLeft:
+        return _scaleBuilder(Alignment.topLeft, curve);
+      case TransitionType.levelFromTopCenter:
+        return _scaleBuilder(Alignment.topCenter, curve);
+      case TransitionType.levelFromTopRight:
+        return _scaleBuilder(Alignment.topRight, curve);
 
-    case TransitionType.flipY:
-      return (context, animation, secondary, child) {
-        return AnimatedBuilder(
-          animation: animation,
-          child: child,
-          builder: (ctx, ch) {
-            final angle = animation.value * math.pi;
-            return Transform(
-              transform: Matrix4.rotationY(angle),
-              alignment: Alignment.center,
-              child: ch,
-            );
-          },
-        );
-      };
+      case TransitionType.levelFromCenter:
+        return _scaleBuilder(Alignment.center, curve);
 
-    // Scale-from-… (no fade)
-    case TransitionType.levelFromTopLeft:
-      return _scaleBuilder(Alignment.topLeft, curve);
-    case TransitionType.levelFromTopCenter:
-      return _scaleBuilder(Alignment.topCenter, curve);
-    case TransitionType.levelFromTopRight:
-      return _scaleBuilder(Alignment.topRight, curve);
+      case TransitionType.levelFromBottomLeft:
+        return _scaleBuilder(Alignment.bottomLeft, curve);
+      case TransitionType.levelFromBottomCenter:
+        return _scaleBuilder(Alignment.bottomCenter, curve);
+      case TransitionType.levelFromBottomRight:
+        return _scaleBuilder(Alignment.bottomRight, curve);
 
-    case TransitionType.levelFromCenter:
-      return _scaleBuilder(Alignment.center, curve);
+      case TransitionType.levelFromLeftCenter:
+        return _scaleBuilder(Alignment.centerLeft, curve);
+      case TransitionType.levelFromRightCenter:
+        return _scaleBuilder(Alignment.centerRight, curve);
 
-    case TransitionType.levelFromBottomLeft:
-      return _scaleBuilder(Alignment.bottomLeft, curve);
-    case TransitionType.levelFromBottomCenter:
-      return _scaleBuilder(Alignment.bottomCenter, curve);
-    case TransitionType.levelFromBottomRight:
-      return _scaleBuilder(Alignment.bottomRight, curve);
+      // Scale-from-… with fade
+      case TransitionType.levelFromTopLeftWithFade:
+        return _scaleBuilder(Alignment.topLeft, curve, fade: true);
+      case TransitionType.levelFromTopCenterWithFade:
+        return _scaleBuilder(Alignment.topCenter, curve, fade: true);
+      case TransitionType.levelFromTopRightWithFade:
+        return _scaleBuilder(Alignment.topRight, curve, fade: true);
 
-    case TransitionType.levelFromLeftCenter:
-      return _scaleBuilder(Alignment.centerLeft, curve);
-    case TransitionType.levelFromRightCenter:
-      return _scaleBuilder(Alignment.centerRight, curve);
+      case TransitionType.levelFromCenterWithFade:
+        return _scaleBuilder(Alignment.center, curve, fade: true);
 
-    // Scale-from-… with fade
-    case TransitionType.levelFromTopLeftWithFade:
-      return _scaleBuilder(Alignment.topLeft, curve, fade: true);
-    case TransitionType.levelFromTopCenterWithFade:
-      return _scaleBuilder(Alignment.topCenter, curve, fade: true);
-    case TransitionType.levelFromTopRightWithFade:
-      return _scaleBuilder(Alignment.topRight, curve, fade: true);
+      case TransitionType.levelFromBottomLeftWithFade:
+        return _scaleBuilder(Alignment.bottomLeft, curve, fade: true);
+      case TransitionType.levelFromBottomCenterWithFade:
+        return _scaleBuilder(Alignment.bottomCenter, curve, fade: true);
+      case TransitionType.levelFromBottomRightWithFade:
+        return _scaleBuilder(Alignment.bottomRight, curve, fade: true);
 
-    case TransitionType.levelFromCenterWithFade:
-      return _scaleBuilder(Alignment.center, curve, fade: true);
-
-    case TransitionType.levelFromBottomLeftWithFade:
-      return _scaleBuilder(Alignment.bottomLeft, curve, fade: true);
-    case TransitionType.levelFromBottomCenterWithFade:
-      return _scaleBuilder(Alignment.bottomCenter, curve, fade: true);
-    case TransitionType.levelFromBottomRightWithFade:
-      return _scaleBuilder(Alignment.bottomRight, curve, fade: true);
-
-    case TransitionType.levelFromLeftCenterWithFade:
-      return _scaleBuilder(Alignment.centerLeft, curve, fade: true);
-    case TransitionType.levelFromRightCenterWithFade:
-      return _scaleBuilder(Alignment.centerRight, curve, fade: true);
-
+      case TransitionType.levelFromLeftCenterWithFade:
+        return _scaleBuilder(Alignment.centerLeft, curve, fade: true);
+      case TransitionType.levelFromRightCenterWithFade:
+        return _scaleBuilder(Alignment.centerRight, curve, fade: true);
     }
   }
 }
-
 
 /// A stub implementation of GoRouter's `CustomTransitionPage` to avoid dependencies on go_router. Replace with the real import when needed.
 
@@ -418,17 +373,15 @@ class CustomTransitionPage<T> extends Page<T> {
   /// primary animation runs from 0.0 to 1.0. When the Navigator pops the
   /// topmost route, e.g. because the use pressed the back button, the primary
   /// animation runs from 1.0 to 0.0.
-  final Widget Function(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) transitionsBuilder;
+  final Widget Function(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child)
+      transitionsBuilder;
 
   @override
-  Route<T> createRoute(BuildContext context) =>
-      _CustomTransitionPageRoute<T>(this);
+  Route<T> createRoute(BuildContext context) => _CustomTransitionPageRoute<T>(this);
 }
 
 class _CustomTransitionPageRoute<T> extends PageRoute<T> {
-  _CustomTransitionPageRoute(CustomTransitionPage<T> page)
-      : super(settings: page);
+  _CustomTransitionPageRoute(CustomTransitionPage<T> page) : super(settings: page);
 
   CustomTransitionPage<T> get _page => settings as CustomTransitionPage<T>;
 
@@ -458,10 +411,10 @@ class _CustomTransitionPageRoute<T> extends PageRoute<T> {
 
   @override
   Widget buildPage(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      ) =>
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) =>
       Semantics(
         scopesRoute: true,
         explicitChildNodes: true,
@@ -470,11 +423,11 @@ class _CustomTransitionPageRoute<T> extends PageRoute<T> {
 
   @override
   Widget buildTransitions(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child,
-      ) =>
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) =>
       _page.transitionsBuilder(
         context,
         animation,
@@ -493,15 +446,12 @@ class NoTransitionPage<T> extends CustomTransitionPage<T> {
     super.restorationId,
     super.key,
   }) : super(
-    transitionsBuilder: _transitionsBuilder,
-    transitionDuration: Duration.zero,
-    reverseTransitionDuration: Duration.zero,
-  );
+          transitionsBuilder: _transitionsBuilder,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+        );
 
   static Widget _transitionsBuilder(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) =>
+          BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) =>
       child;
 }

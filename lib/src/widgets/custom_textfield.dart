@@ -179,12 +179,10 @@ class CustomTextfield extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
 
   /// Callback to pass internal arguments (controller and focus node) for custom usage.
-  final Function(TextEditingController controller, FocusNode focusNode)?
-      internalArgs;
+  final Function(TextEditingController controller, FocusNode focusNode)? internalArgs;
 
   /// Callback for disposing additional resources.
-  final Function(TextEditingController controller, FocusNode focusNode)?
-      dispose2;
+  final Function(TextEditingController controller, FocusNode focusNode)? dispose2;
 
   final bool? readOnly;
 
@@ -295,6 +293,8 @@ class CustomTextfield extends StatefulWidget {
 
   final bool? alignLabelWithHint;
 
+  final String? counterText;
+
   const CustomTextfield({
     super.key,
     this.hint,
@@ -379,6 +379,7 @@ class CustomTextfield extends StatefulWidget {
     this.inputDecoration,
     this.errorBorder,
     this.alignLabelWithHint,
+    this.counterText = ""
   });
 
   @override
@@ -395,8 +396,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     super.initState();
 
     // Use widget's controller or create a new one
-    controller =
-        widget.controller ?? TextEditingController(text: widget.defaultText);
+    controller = widget.controller ?? TextEditingController(text: widget.defaultText);
     // Use widget's focusNode or create a new one
     focusNode = widget.focusNode ?? FocusNode();
 
@@ -443,6 +443,43 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     if (showSuffixIcon.value != newState) showSuffixIcon.value = newState;
   }
 
+  InputDecoration getEffectiveInputDecoration(BuildContext context) {
+    return InputDecoration(
+      counterText: widget.counterText,
+      isDense: widget.isDense,
+      hintText: widget.hint,
+      labelText: widget.label,
+      labelStyle: widget.labelStyle ??
+          TextStyle(
+            color: Colors.blueGrey,
+          ),
+      hintStyle: widget.hintStyle ??
+          TextStyle(
+            color: Colors.blueGrey,
+          ),
+      contentPadding: widget.inputContentPadding,
+      border: widget.border ?? OutlineInputBorder(borderRadius: BorderRadius.circular(widget.borderRadius)),
+      focusedBorder: widget.focusedBorder ?? widget.border ?? OutlineInputBorder(borderRadius: BorderRadius.circular(widget.borderRadius)),
+      enabledBorder: widget.enabledBorder ?? widget.border ?? OutlineInputBorder(borderRadius: BorderRadius.circular(widget.borderRadius)),
+      disabledBorder: widget.disabledBorder,
+      errorBorder: widget.errorBorder,
+      alignLabelWithHint: widget.alignLabelWithHint,
+      constraints: widget.constraints,
+      filled: widget.backgroundColor == null ? false : true,
+      fillColor: widget.backgroundColor,
+      prefixIcon: widget.prefixIcon,
+      suffixIcon: showSuffixIcon.value ? widget.suffixIcon! : null,
+      prefixIconConstraints: const BoxConstraints(
+        minWidth: 4,
+        minHeight: 4,
+      ),
+      suffixIconConstraints: const BoxConstraints(
+        minWidth: 4,
+        minHeight: 4,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -466,45 +503,40 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         onEditingComplete: () {
           refreshSuffixIconState();
           if (widget.onEditingComplete != null) widget.onEditingComplete!();
-          if (widget.internalArgs != null){
+          if (widget.internalArgs != null) {
             widget.internalArgs!(controller, focusNode);
           }
-
         },
         onSubmitted: (value) {
           refreshSuffixIconState();
           if (widget.onSubmitted != null) widget.onSubmitted!(value);
-          if (widget.internalArgs != null){
+          if (widget.internalArgs != null) {
             widget.internalArgs!(controller, focusNode);
           }
-
         },
         onChanged: (text) {
           refreshSuffixIconState();
           if (widget.onchanged != null) widget.onchanged!(text);
-          if (widget.internalArgs != null){
+          if (widget.internalArgs != null) {
             widget.internalArgs!(controller, focusNode);
           }
-
         },
         onTap: () {
           refreshSuffixIconState();
           if (widget.ontap != null) widget.ontap!();
-          if (widget.internalArgs != null){
+          if (widget.internalArgs != null) {
             widget.internalArgs!(controller, focusNode);
           }
-
         },
         onTapOutside: (e) {
           refreshSuffixIconState();
           if (widget.onTapOutside == null) focusNode.unfocus();
           if (widget.onTapOutside != null) widget.onTapOutside!();
-          if (widget.internalArgs != null && focusNode.hasFocus){
+          if (widget.internalArgs != null && focusNode.hasFocus) {
             widget.internalArgs!(controller, focusNode);
           }
         },
-        style: widget.inputTextStyle ??
-            const CustomText("").effectiveStyle(context),
+        style: widget.inputTextStyle ?? const CustomText("").effectiveStyle(context),
         cursorColor: widget.cursorColor,
         cursorHeight: widget.cursorHeight,
         cursorWidth: widget.cursorWidth ?? 2.0,
@@ -522,8 +554,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         autofillHints: widget.autofillHints,
         canRequestFocus: widget.canRequestFocus,
         cursorErrorColor: widget.cursorErrorColor,
-        contextMenuBuilder:
-        widget.contextMenuBuilder ?? _defaultContextMenuBuilder,
+        contextMenuBuilder: widget.contextMenuBuilder ?? _defaultContextMenuBuilder,
         dragStartBehavior: widget.dragStartBehavior,
         enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
         enableInteractiveSelection: widget.enableInteractiveSelection,
@@ -540,57 +571,14 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         scrollPadding: widget.scrollPadding ?? const EdgeInsets.all(20),
         scrollPhysics: widget.scrollPhysics,
         selectionControls: widget.selectionControls,
-        selectionHeightStyle:
-        widget.selectionHeightStyle ?? BoxHeightStyle.tight,
+        selectionHeightStyle: widget.selectionHeightStyle ?? BoxHeightStyle.tight,
         selectionWidthStyle: widget.selectionWidthStyle ?? BoxWidthStyle.tight,
         smartDashesType: widget.smartDashesType,
         smartQuotesType: widget.smartQuotesType,
         spellCheckConfiguration: widget.spellCheckConfiguration,
         statesController: widget.statesController,
         textDirection: widget.textDirection,
-        decoration: widget.inputDecoration ??
-            InputDecoration(
-              counterText: "",
-              isDense: widget.isDense,
-              hintText: widget.hint,
-              labelText: widget.label,
-              labelStyle: widget.labelStyle ??
-                  TextStyle(
-                    color: Colors.blueGrey,
-                  ),
-              hintStyle: widget.hintStyle ??
-                  TextStyle(
-                    color: Colors.blueGrey,
-                  ),
-              contentPadding: widget.inputContentPadding,
-              border: widget.border ??
-                  OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(widget.borderRadius)),
-              focusedBorder: widget.focusedBorder ??
-                  widget.border ??
-                  OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(widget.borderRadius)),
-              enabledBorder: widget.enabledBorder ??
-                  widget.border ??
-                  OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(widget.borderRadius)),
-              disabledBorder: widget.disabledBorder,
-              errorBorder: widget.errorBorder,
-              alignLabelWithHint: widget.alignLabelWithHint,
-              constraints: widget.constraints,
-              filled: widget.backgroundColor == null ? false : true,
-              fillColor: widget.backgroundColor,
-              prefixIcon: widget.prefixIcon,
-              suffixIcon: showSuffixIcon.value ? widget.suffixIcon! : null,
-              prefixIconConstraints: const BoxConstraints(
-                minWidth: 4,
-                minHeight: 4,
-              ),
-              suffixIconConstraints: const BoxConstraints(
-                minWidth: 4,
-                minHeight: 4,
-              ),
-            ),
+        decoration: widget.inputDecoration ?? getEffectiveInputDecoration(context),
       ),
     );
   }
@@ -599,7 +587,6 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     BuildContext context,
     EditableTextState editableTextState,
   ) {
-    return AdaptiveTextSelectionToolbar.editableText(
-        editableTextState: editableTextState);
+    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
   }
 }
