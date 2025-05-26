@@ -179,3 +179,7 @@
 - **Changed default TransitionType for [LoadingDialog] to [TransitionType.none]**
 - **Removed ordinary levelFrom... TransitionType for the ones withFade**
 - **Added scaleFrom... TransitionType(s)**
+
+## 0.0.62
+- **Changed default TransitionType for [LoadingDialog] to [TransitionType.fade] for minimalism**
+- **Improved performance on LoadingDialog**
