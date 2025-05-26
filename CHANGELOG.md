@@ -173,3 +173,9 @@
 
 ## 0.0.60
 - **Breaking changes, removed isAnimatedDialog under LoadingDialog. more simplified**
+
+## 0.0.61
+- **Breaking changes, blurSigma in [LoadingDialog] is now of type Offset instead of double**
+- **Changed default TransitionType for [LoadingDialog] to [TransitionType.none]**
+- **Removed ordinary levelFrom... TransitionType for the ones withFade**
+- **Added scaleFrom... TransitionType(s)**

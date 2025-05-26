@@ -221,7 +221,7 @@ class NormalLoadingScaffold extends StatefulWidget {
   final TextStyle? msgTextStyle;
   final Widget? loadingInfoWidget;
   final Color? scaffoldBgColor;
-  final double blurSigma;
+  final Offset blurSigma;
   final Duration transitionDuration;
   final Duration reverseTransitionDuration;
 
@@ -237,7 +237,7 @@ class NormalLoadingScaffold extends StatefulWidget {
     this.adaptToScreenSize = false,
     this.msgTextColor,
     this.msgTextSize,
-    this.blurSigma = 4.0,
+    this.blurSigma = const Offset(2.0, 2.0),
     this.msgTextStyle,
     this.loadingInfoWidget,
     this.scaffoldBgColor,
@@ -299,8 +299,8 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> with Sing
               builder: (context, child) {
                 return BackdropFilter(
                   filter: ImageFilter.blur(
-                    sigmaX: widget.blurSigma * _curvedBlurAnimation.value,
-                    sigmaY: widget.blurSigma * _curvedBlurAnimation.value,
+                    sigmaX: widget.blurSigma.dx * _curvedBlurAnimation.value,
+                    sigmaY: widget.blurSigma.dy * _curvedBlurAnimation.value,
                   ),
                   child:
                       widget.loadingInfoWidget ??
@@ -385,10 +385,10 @@ class LoadingDialog {
 
     /// For non-animatedDialog
     bool adaptToScreenSize = false,
-    double blurSigma = 4.0,
+    Offset blurSigma = const Offset(2.0, 2.0),
     Color? barrierColor,
     Widget? loadingInfoWidget,
-    TransitionType transitionType = TransitionType.cupertinoDialog,
+    TransitionType transitionType = TransitionType.none,
   }) {
     final Widget scaffold = NormalLoadingScaffold(
       msg: msg,
