@@ -183,3 +183,8 @@
 ## 0.0.62
 - **Changed default TransitionType for [LoadingDialog] to [TransitionType.fade] for minimalism**
 - **Improved performance on LoadingDialog**
+
+
+## 0.0.63
+- **Improved performance for LoadingDialog**
+- **Removed blur by default on LoadingDialog background**

@@ -162,16 +162,15 @@ class GradientPainter extends CustomPainter {
 
     // Create multiple gradient layers with different rotations
     for (int i = 0; i < colors.length; i++) {
-      final paint =
-          Paint()
-            ..shader = ui.Gradient.linear(
-              Offset(size.width * 0.5, 0),
-              Offset(size.width * 0.5, size.height),
-              [colors[i].withValues(alpha: opacity), colors[(i + 1) % colors.length].withValues(alpha: opacity)],
-              [0, 1],
-              TileMode.clamp,
-              Matrix4.rotationZ(rotationValue * pi * 2 + (i * pi / colors.length)).storage,
-            );
+      final paint = Paint()
+        ..shader = ui.Gradient.linear(
+          Offset(size.width * 0.5, 0),
+          Offset(size.width * 0.5, size.height),
+          [colors[i].withValues(alpha: opacity), colors[(i + 1) % colors.length].withValues(alpha: opacity)],
+          [0, 1],
+          TileMode.clamp,
+          Matrix4.rotationZ(rotationValue * pi * 2 + (i * pi / colors.length)).storage,
+        );
 
       canvas.drawRect(rect, paint);
     }
@@ -196,11 +195,10 @@ class ParticlePainter extends CustomPainter {
 
       particle.position = Offset((particle.position.dx + dx) % size.width, (particle.position.dy + dy) % size.height);
 
-      final paint =
-          Paint()
-            ..color = particle.color
-            ..strokeWidth = particle.size
-            ..strokeCap = StrokeCap.round;
+      final paint = Paint()
+        ..color = particle.color
+        ..strokeWidth = particle.size
+        ..strokeCap = StrokeCap.round;
 
       canvas.drawPoints(ui.PointMode.points, [particle.position], paint);
     }
@@ -286,84 +284,86 @@ class _NormalLoadingScaffoldState extends State<NormalLoadingScaffold> with Sing
     final primaryColor = themeData.primaryColor;
 
     return PopScope(
-      canPop: widget.canPop,
-      onPopInvokedWithResult: (didPop, result){
-        _blurController.reverse();
-      },
-      child: TweenAnimationBuilder(
-        tween: _scaffoldBgColorTween,
-        duration: widget.transitionDuration,
-        curve: widget.curve ?? CustomCurves.decelerate,
-        builder: (context, color, child) {
-          return Scaffold(
-            backgroundColor: color,
-            body: RepaintBoundary(
+        canPop: widget.canPop,
+        onPopInvokedWithResult: (didPop, result) {
+          if (widget.canPop) _blurController.reverse();
+        },
+        child: RepaintBoundary(
+          child: AnimatedBuilder(
+            animation: _blurController,
+            builder: (context, child) {
+              final Color? color = _scaffoldBgColorTween.evaluate(_blurController);
+              return Scaffold(
+                backgroundColor: color,
+                body: child,
+              );
+            },
+            child: RepaintBoundary(
               child: AnimatedBuilder(
                 animation: _curvedBlurAnimation,
                 builder: (context, child) {
-                  return BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: _curvedBlurAnimation.value.dx,
-                      sigmaY: _curvedBlurAnimation.value.dy,
-                    ),
-                    child:
-                        widget.loadingInfoWidget ??
-                        Align(
-                          alignment: Alignment.center,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: widget.backgroundColor ?? (isDarkMode ? Colors.black : Colors.white),
-                              borderRadius: BorderRadius.circular(36),
-                              border: Border.fromBorderSide(BorderSide(color: Colors.blueGrey.withValues(alpha: 0.05))),
-                              boxShadow: [
-                                BoxShadow(
-                                  offset: Offset.zero,
-                                  blurRadius: 4.0,
-                                  spreadRadius: 2.0,
-                                  color: Colors.blueGrey.withValues(alpha: 0.2),
-                                  blurStyle: BlurStyle.outer,
-                                ),
-                              ],
-                            ),
-                            child: SizedBox(
-                              width: widget.adaptToScreenSize ? screenWidth * 0.6 : 240,
-                              height: widget.adaptToScreenSize ? screenWidth * 0.4 : 160,
-                              child: ClipRRect(
-                                clipBehavior: Clip.hardEdge,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundColor: Colors.transparent,
-                                      child: CircularProgressIndicator(
-                                        strokeCap: StrokeCap.round,
-                                        color: widget.progressIndicatorColor ?? primaryColor,
+                  return RepaintBoundary(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: _curvedBlurAnimation.value.dx,
+                        sigmaY: _curvedBlurAnimation.value.dy,
+                      ),
+                      child: widget.loadingInfoWidget ??
+                          Align(
+                            alignment: Alignment.center,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: widget.backgroundColor ?? (isDarkMode ? Colors.black : Colors.white),
+                                borderRadius: BorderRadius.circular(36),
+                                border: Border.fromBorderSide(BorderSide(color: Colors.blueGrey.withValues(alpha: 0.05))),
+                                boxShadow: [
+                                  BoxShadow(
+                                    offset: Offset.zero,
+                                    blurRadius: 4.0,
+                                    spreadRadius: 2.0,
+                                    color: Colors.blueGrey.withValues(alpha: 0.2),
+                                    blurStyle: BlurStyle.outer,
+                                  ),
+                                ],
+                              ),
+                              child: SizedBox(
+                                width: widget.adaptToScreenSize ? screenWidth * 0.6 : 240,
+                                height: widget.adaptToScreenSize ? screenWidth * 0.4 : 160,
+                                child: ClipRRect(
+                                  clipBehavior: Clip.hardEdge,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.transparent,
+                                        child: CircularProgressIndicator(
+                                          strokeCap: StrokeCap.round,
+                                          color: widget.progressIndicatorColor ?? primaryColor,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                                      child: CustomText(
-                                        widget.msg ?? "Just a moment...",
-                                        color: widget.msgTextColor ?? Colors.blueGrey,
-                                        fontSize: widget.msgTextSize ?? 14,
-                                        style: widget.msgTextStyle,
+                                      const SizedBox(height: 16),
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                        child: CustomText(
+                                          widget.msg ?? "Just a moment...",
+                                          color: widget.msgTextColor ?? Colors.blueGrey,
+                                          fontSize: widget.msgTextSize ?? 14,
+                                          style: widget.msgTextStyle,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
+                    ),
                   );
                 },
               ),
             ),
-          );
-        },
-      ),
-    );
+          ),
+        ));
   }
 }
 
@@ -390,7 +390,7 @@ class LoadingDialog {
 
     /// For non-animatedDialog
     bool adaptToScreenSize = false,
-    Offset blurSigma = const Offset(2.0, 2.0),
+    Offset blurSigma = Offset.zero,
     Color? barrierColor,
     Widget? loadingInfoWidget,
     TransitionType transitionType = TransitionType.fade,
