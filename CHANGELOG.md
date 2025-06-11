@@ -190,7 +190,11 @@
 - **Removed blur by default on LoadingDialog background**
 
 
-## 0.0.65
+## 0.0.64
 - **Breaking Changes**
 - **Removed the dispose2 in CustomTextfield. Added an autoDispose toggle whether to automatically clear assigned Controller/FocusNode(Clears by default)**
 - **Replaced LoadingDialog with CustomDialog. Do not update if your project relies on LoadingDialog**
+
+
+## 0.0.65
+- **Adjusted the CustomDialog use instance in order to allow multiple dialogs, hiding dialogs and to prevent confusion**

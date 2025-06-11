@@ -4,11 +4,14 @@ import 'package:custom_widgets_toolkit/src/widgets/dialog/loading_container_view
 import 'package:flutter/material.dart';
 
 class CustomDialog {
-  // Static reference to the current loading dialog route.
-  static PageRoute? _currentLoadingRoute;
-  static PageRoute? _currentRoute;
+  // Singleton instance
+  CustomDialog._internal();
+  static final CustomDialog instance = CustomDialog._internal();
 
-  static Future<T?> showDialog<T>(
+  // Static reference to the current route.
+  PageRoute? _currentRoute;
+
+  Future<T?> show<T>(
     BuildContext context, {
     bool canPop = true,
     Duration transitionDuration = Durations.medium4,
@@ -47,7 +50,7 @@ class CustomDialog {
 
   /// Shows the loading dialog by pushing a custom route using [loadingDialogBuilder].
   /// It now takes the [BuildContext] as a required parameter.
-  static Future<T?> showLoadingDialog<T>(
+  Future<T?> showLoadingDialog<T>(
     BuildContext context, {
     String msg = "Just a moment...",
     Color? msgTextColor,
@@ -98,33 +101,22 @@ class CustomDialog {
     );
 
     // Store the route reference.
-    _currentLoadingRoute = pageRoute;
+    _currentRoute = pageRoute;
 
     // Push the route and clear the stored reference once it completes.
     return Navigator.of(context).push<T>(pageRoute as Route<T>).whenComplete(() {
-      _currentLoadingRoute = null;
+      _currentRoute = null;
     });
   }
 
-  /// Hides the loading dialog by popping the current route if it exists.
+  /// Hides the dialog by popping the current route if it exists.
   /// If the dialog has already been popped or the context is no longer valid,
   /// this function will do nothing.
-  static void hideLoadingDialog(BuildContext context) {
-    if (_currentLoadingRoute != null) {
-      // Check if the Navigator can pop before calling pop.
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-      _currentLoadingRoute = null;
-    }
-  }
 
-  static void hideDialog(BuildContext context) {
-    if (_currentRoute != null) {
-      // Check if the Navigator can pop before calling pop.
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
+  /// Hides the current dialog if present
+  void hideDialog(BuildContext context) {
+    if (_currentRoute != null && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
       _currentRoute = null;
     }
   }
