@@ -181,9 +181,6 @@ class CustomTextfield extends StatefulWidget {
   /// Callback to pass internal arguments (controller and focus node) for custom usage.
   final Function(TextEditingController controller, FocusNode focusNode)? internalArgs;
 
-  /// Callback for disposing additional resources.
-  final Function(TextEditingController controller, FocusNode focusNode)? dispose2;
-
   final bool? readOnly;
 
   /// Controls the undo and redo functionality for the text input.
@@ -295,6 +292,10 @@ class CustomTextfield extends StatefulWidget {
 
   final String? counterText;
 
+  /// Whether to Automatically dispose the TextEditingController and FocusNode internally
+  /// Only works for the TextEditingController or FocusNode you assign to CustomTextfield
+  final bool autoDispose;
+
   const CustomTextfield({
     super.key,
     this.hint,
@@ -332,7 +333,6 @@ class CustomTextfield extends StatefulWidget {
     this.maxLength,
     this.inputFormatters,
     this.internalArgs,
-    this.dispose2,
     this.isDense,
     this.constraints,
     this.cursorHeight,
@@ -379,7 +379,8 @@ class CustomTextfield extends StatefulWidget {
     this.inputDecoration,
     this.errorBorder,
     this.alignLabelWithHint,
-    this.counterText = ""
+    this.counterText = "",
+    this.autoDispose = true,
   });
 
   @override
@@ -396,6 +397,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     super.initState();
 
     // Use widget's controller or create a new one
+
     controller = widget.controller ?? TextEditingController(text: widget.defaultText);
     // Use widget's focusNode or create a new one
     focusNode = widget.focusNode ?? FocusNode();
@@ -419,11 +421,18 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     // Remove listeners
     controller.removeListener(refreshSuffixIconState);
     focusNode.removeListener(refreshSuffixIconState);
-    if (widget.dispose2 != null) widget.dispose2!(controller, focusNode);
 
     // Dispose controller, focusNode and state variables
-    controller.dispose();
-    focusNode.dispose();
+    if (widget.controller != null) {
+      if (widget.autoDispose) controller.dispose();
+    } else {
+      controller.dispose();
+    }
+    if (widget.focusNode != null) {
+      if (widget.autoDispose) focusNode.dispose();
+    } else {
+      focusNode.dispose();
+    }
     showSuffixIcon.dispose();
     super.dispose();
   }
