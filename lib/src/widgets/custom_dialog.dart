@@ -16,7 +16,7 @@ class CustomDialog {
 
     /// Use CustomCurves to prevent unexpected behavior
     Curve? curve,
-    Offset blurSigma = Offset.zero,
+    Offset? blurSigma,
     Color? barrierColor,
     TransitionType transitionType = TransitionType.fade,
   }) {
@@ -63,7 +63,7 @@ class CustomDialog {
 
     /// For non-animatedDialog
     bool adaptToScreenSize = false,
-    Offset blurSigma = Offset.zero,
+    Offset? blurSigma,
     Color? barrierColor,
     TransitionType transitionType = TransitionType.fade,
   }) {

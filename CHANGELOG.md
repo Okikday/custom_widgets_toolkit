@@ -213,3 +213,7 @@
 ## 0.0.69
 - **Due to errors popping up, CustomDialog will use just one instance to be safer**
 - **Stable**
+
+
+## 0.0.70
+- **Improved CustomDialog performance to only use blur when only assigned**

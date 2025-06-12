@@ -6,7 +6,7 @@ class EmulatedDialog extends StatefulWidget {
   final bool canPop;
   final bool adaptToScreenSize;
   final Color? barrierColor;
-  final Offset blurSigma;
+  final Offset? blurSigma;
   final Widget child;
   final Duration transitionDuration;
   final Duration reverseTransitionDuration;
@@ -18,7 +18,7 @@ class EmulatedDialog extends StatefulWidget {
     super.key,
     this.canPop = false,
     this.adaptToScreenSize = false,
-    this.blurSigma = const Offset(2.0, 2.0),
+    this.blurSigma,
     required this.child,
     this.barrierColor,
     this.curve,
@@ -33,7 +33,7 @@ class EmulatedDialog extends StatefulWidget {
 class _EmulatedDialogState extends State<EmulatedDialog> with SingleTickerProviderStateMixin {
   int msgIndex = 0;
   late final AnimationController _blurController;
-  late final Animation<Offset> _curvedBlurAnimation;
+  Animation<Offset>? _curvedBlurAnimation;
   late final ColorTween _scaffoldBgColorTween;
 
   @override
@@ -44,11 +44,13 @@ class _EmulatedDialogState extends State<EmulatedDialog> with SingleTickerProvid
       duration: widget.transitionDuration,
       reverseDuration: widget.reverseTransitionDuration,
     )..forward(from: 0);
-    _curvedBlurAnimation = Tween<Offset>(begin: Offset.zero, end: widget.blurSigma).animate(CurvedAnimation(
-      parent: _blurController,
-      curve: widget.curve ?? CustomCurves.decelerate,
-      reverseCurve: widget.curve,
-    ));
+    _curvedBlurAnimation = widget.blurSigma == null
+        ? null
+        : Tween<Offset>(begin: Offset.zero, end: widget.blurSigma).animate(CurvedAnimation(
+            parent: _blurController,
+            curve: widget.curve ?? CustomCurves.decelerate,
+            reverseCurve: widget.curve,
+          ));
     _scaffoldBgColorTween = ColorTween(begin: Colors.blueGrey.withAlpha(10), end: widget.barrierColor ?? Colors.blueGrey.withAlpha(10));
   }
 
@@ -60,7 +62,6 @@ class _EmulatedDialogState extends State<EmulatedDialog> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-
     return PopScope(
         canPop: widget.canPop,
         onPopInvokedWithResult: (didPop, result) {
@@ -77,21 +78,22 @@ class _EmulatedDialogState extends State<EmulatedDialog> with SingleTickerProvid
               );
             },
             child: RepaintBoundary(
-              child: AnimatedBuilder(
-                animation: _curvedBlurAnimation,
-                builder: (context, child) {
-                  return RepaintBoundary(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(
-                        sigmaX: _curvedBlurAnimation.value.dx,
-                        sigmaY: _curvedBlurAnimation.value.dy,
-                      ),
-                      child: widget.child,
-                    ),
-                  );
-                },
-              ),
-            ),
+                child: (widget.blurSigma != null && _curvedBlurAnimation != null)
+                    ? AnimatedBuilder(
+                        animation: _curvedBlurAnimation!,
+                        builder: (context, child) {
+                          return RepaintBoundary(
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: _curvedBlurAnimation!.value.dx,
+                                sigmaY: _curvedBlurAnimation!.value.dy,
+                              ),
+                              child: widget.child,
+                            ),
+                          );
+                        },
+                      )
+                    : widget.child),
           ),
         ));
   }
