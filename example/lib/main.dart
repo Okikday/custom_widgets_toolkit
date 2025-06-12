@@ -256,7 +256,7 @@ class LoadingDialogTestPage extends StatefulWidget {
 class _LoadingDialogTestPageState extends State<LoadingDialogTestPage> {
   /// Shows the loading dialog using the LoadingDialog helper.
   void _showDialog(BuildContext context) {
-    CustomDialog.instance.showLoadingDialog(
+    CustomDialog.showLoadingDialog(
       context,
       msg: 'Please wait...',
       canPop: true,
@@ -265,7 +265,7 @@ class _LoadingDialogTestPageState extends State<LoadingDialogTestPage> {
 
   /// Hides the loading dialog if it is still active.
   void _hideDialog(BuildContext context) {
-    CustomDialog.instance.hideDialog(context);
+    CustomDialog.hide(context);
   }
 
   @override

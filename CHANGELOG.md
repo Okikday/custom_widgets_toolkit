@@ -198,3 +198,18 @@
 
 ## 0.0.65
 - **Adjusted the CustomDialog use instance in order to allow multiple dialogs, hiding dialogs and to prevent confusion**
+
+
+## 0.0.66
+- **Breaking code changes**
+- **Fixed bug with CustomDialog where Dialog gets stuck. Can now hideLast or hideAll Dialogs**
+
+## 0.0.67
+- **Fixed bug where the hideAll doesn't close all**
+
+## 0.0.68
+- **Caught possible errors**
+
+## 0.0.69
+- **Due to errors popping up, CustomDialog will use just one instance to be safer**
+- **Stable**

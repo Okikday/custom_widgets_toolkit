@@ -4,15 +4,12 @@ import 'package:custom_widgets_toolkit/src/widgets/dialog/loading_container_view
 import 'package:flutter/material.dart';
 
 class CustomDialog {
-  // Singleton instance
-  CustomDialog._internal();
-  static final CustomDialog instance = CustomDialog._internal();
-
   // Static reference to the current route.
-  PageRoute? _currentRoute;
+  static PageRoute? _currentRoute;
 
-  Future<T?> show<T>(
+  static Future<T?> show<T>(
     BuildContext context, {
+    required Widget child,
     bool canPop = true,
     Duration transitionDuration = Durations.medium4,
     Duration reverseTransitionDuration = Durations.medium2,
@@ -21,7 +18,6 @@ class CustomDialog {
     Curve? curve,
     Offset blurSigma = Offset.zero,
     Color? barrierColor,
-    required Widget child,
     TransitionType transitionType = TransitionType.fade,
   }) {
     final scaffold = EmulatedDialog(
@@ -50,7 +46,7 @@ class CustomDialog {
 
   /// Shows the loading dialog by pushing a custom route using [loadingDialogBuilder].
   /// It now takes the [BuildContext] as a required parameter.
-  Future<T?> showLoadingDialog<T>(
+  static Future<T?> showLoadingDialog<T>(
     BuildContext context, {
     String msg = "Just a moment...",
     Color? msgTextColor,
@@ -113,10 +109,12 @@ class CustomDialog {
   /// If the dialog has already been popped or the context is no longer valid,
   /// this function will do nothing.
 
-  /// Hides the current dialog if present
-  void hideDialog(BuildContext context) {
-    if (_currentRoute != null && Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
+  static void hide(BuildContext context) {
+    if (_currentRoute != null) {
+      // Check if the Navigator can pop before calling pop.
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
       _currentRoute = null;
     }
   }
