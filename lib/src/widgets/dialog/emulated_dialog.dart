@@ -77,24 +77,39 @@ class _EmulatedDialogState extends State<EmulatedDialog> with SingleTickerProvid
                 body: child,
               );
             },
-            child: RepaintBoundary(
-                child: (widget.blurSigma != null && _curvedBlurAnimation != null)
-                    ? AnimatedBuilder(
-                        animation: _curvedBlurAnimation!,
-                        builder: (context, child) {
-                          return RepaintBoundary(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(
-                                sigmaX: _curvedBlurAnimation!.value.dx,
-                                sigmaY: _curvedBlurAnimation!.value.dy,
-                              ),
-                              child: widget.child,
-                            ),
-                          );
-                        },
-                      )
-                    : widget.child),
+            child: (widget.blurSigma != null && _curvedBlurAnimation != null)
+                ? BlurredBackground(curvedBlurAnimation: _curvedBlurAnimation, widget: widget)
+                : widget.child,
           ),
         ));
+  }
+}
+
+class BlurredBackground extends StatelessWidget {
+  const BlurredBackground({
+    super.key,
+    required Animation<Offset>? curvedBlurAnimation,
+    required this.widget,
+  }) : _curvedBlurAnimation = curvedBlurAnimation;
+
+  final Animation<Offset>? _curvedBlurAnimation;
+  final EmulatedDialog widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _curvedBlurAnimation!,
+      builder: (context, child) {
+        return RepaintBoundary(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: _curvedBlurAnimation!.value.dx,
+              sigmaY: _curvedBlurAnimation!.value.dy,
+            ),
+            child: widget.child,
+          ),
+        );
+      },
+    );
   }
 }

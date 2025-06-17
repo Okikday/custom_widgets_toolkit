@@ -399,6 +399,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
     // Use widget's controller or create a new one
 
     controller = widget.controller ?? TextEditingController(text: widget.defaultText);
+    if (widget.defaultText.isNotEmpty) controller.text = widget.defaultText;
     // Use widget's focusNode or create a new one
     focusNode = widget.focusNode ?? FocusNode();
 

@@ -26,6 +26,10 @@ class CustomElevatedButton extends StatefulWidget {
   /// Callback executed when the button is long pressed.
   final void Function()? onLongClick;
 
+  final void Function(bool)? onHover;
+
+  final void Function(bool)? onFocusChange;
+
   /// Border radius for rounded corners.
   final double? borderRadius;
 
@@ -67,27 +71,50 @@ class CustomElevatedButton extends StatefulWidget {
   /// before executing the callback. During the delay, further taps are ignored.
   final Duration delay;
 
-  const CustomElevatedButton(
-      {super.key,
-      this.label,
-      this.child,
-      this.onClick,
-      this.onLongClick,
-      this.backgroundColor,
-      this.elevation,
-      this.borderRadius,
-      this.textSize,
-      this.pixelHeight,
-      this.pixelWidth,
-      this.screenHeight,
-      this.screenWidth,
-      this.textColor,
-      this.side,
-      this.shape,
-      this.overlayColor,
-      this.contentPadding,
-      this.enabled = true,
-      this.delay = Duration.zero});
+  final Size? minimumSize;
+
+  final Size? maximumSize;
+
+  final Size? fixedSize;
+
+  final FocusNode? focusNode;
+  final bool autofocus;
+  final Clip? clipBehavior;
+  final WidgetStatesController? statesController;
+  final ButtonStyle? buttonStyle;
+
+  const CustomElevatedButton({
+    super.key,
+    this.label,
+    this.child,
+    this.onClick,
+    this.onLongClick,
+    this.onHover,
+    this.onFocusChange,
+    this.backgroundColor,
+    this.elevation,
+    this.borderRadius,
+    this.textSize,
+    this.pixelHeight,
+    this.pixelWidth,
+    this.screenHeight,
+    this.screenWidth,
+    this.textColor,
+    this.side,
+    this.shape,
+    this.overlayColor,
+    this.contentPadding,
+    this.enabled = true,
+    this.delay = Duration.zero,
+    this.minimumSize,
+    this.maximumSize,
+    this.fixedSize,
+    this.autofocus = false,
+    this.clipBehavior,
+    this.focusNode,
+    this.statesController,
+    this.buttonStyle,
+  });
 
   @override
   State<CustomElevatedButton> createState() => _CustomElevatedButtonState();
@@ -135,36 +162,32 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
     final Color defaultBgColor = Colors.blueGrey;
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
     return SizedBox(
-      width: widget.screenWidth != null
-          ? mediaQueryData.size.width * (widget.screenWidth! / 100)
-          : widget.pixelWidth,
-      height: widget.screenHeight != null
-          ? mediaQueryData.size.height * (widget.screenHeight! / 100)
-          : widget.pixelHeight,
+      width: widget.screenWidth != null ? mediaQueryData.size.width * (widget.screenWidth! / 100) : widget.pixelWidth,
+      height: widget.screenHeight != null ? mediaQueryData.size.height * (widget.screenHeight! / 100) : widget.pixelHeight,
       child: ElevatedButton(
-        onPressed: (widget.enabled && widget.onClick != null)
-            ? () => _handleTap(widget.onClick)
-            : null,
-        onLongPress: (widget.enabled && widget.onClick != null)
-            ? () => _handleTap(widget.onLongClick)
-            : null,
-        style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(widget.backgroundColor ??
-              (widget.enabled ? defaultBgColor : Colors.grey)),
-          padding: WidgetStatePropertyAll(widget.contentPadding ??
-              EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0)),
-          overlayColor: WidgetStatePropertyAll(
-              widget.overlayColor ?? Colors.blueGrey.withAlpha(100)),
-          shadowColor: const WidgetStatePropertyAll(Colors.transparent),
-          elevation: WidgetStatePropertyAll(widget.elevation),
-          shape: WidgetStatePropertyAll(widget.shape ??
-              RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(widget.borderRadius ?? 8.0))),
-          side: WidgetStatePropertyAll(widget.side),
-          minimumSize: const WidgetStatePropertyAll(Size(4, 4)),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
+        autofocus: widget.autofocus,
+        clipBehavior: widget.clipBehavior,
+        statesController: widget.statesController,
+        focusNode: widget.focusNode,
+        onHover: widget.onHover == null ? null : (value) => widget.onHover!(value),
+        onFocusChange: widget.onFocusChange == null ? null : (value) => widget.onFocusChange!(value),
+        onPressed: (widget.enabled && widget.onClick != null) ? () => _handleTap(widget.onClick) : null,
+        onLongPress: (widget.enabled && widget.onClick != null) ? () => _handleTap(widget.onLongClick) : null,
+        style: widget.buttonStyle ??
+            ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(widget.backgroundColor ?? (widget.enabled ? defaultBgColor : Colors.grey)),
+              padding: WidgetStatePropertyAll(widget.contentPadding ?? EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0)),
+              overlayColor: WidgetStatePropertyAll(widget.overlayColor ?? Colors.blueGrey.withAlpha(100)),
+              shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+              elevation: WidgetStatePropertyAll(widget.elevation),
+              shape: WidgetStatePropertyAll(
+                  widget.shape ?? RoundedRectangleBorder(borderRadius: BorderRadius.circular(widget.borderRadius ?? 8.0))),
+              side: WidgetStatePropertyAll(widget.side),
+              minimumSize: WidgetStatePropertyAll(widget.minimumSize ?? Size(4, 4)),
+              maximumSize: WidgetStatePropertyAll(widget.maximumSize),
+              fixedSize: WidgetStatePropertyAll(widget.fixedSize),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
         child: widget.child ??
             Center(
                 child: CustomText(

@@ -217,3 +217,4 @@
 
 ## 0.0.70
 - **Improved CustomDialog performance to only use blur when only assigned**
+- **Added more properties to CustomElevatedButton**
