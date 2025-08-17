@@ -159,7 +159,7 @@ class _CustomElevatedButtonState extends State<CustomElevatedButton> {
 
   @override
   Widget build(BuildContext context) {
-    final Color defaultBgColor = Colors.blueGrey;
+    final Color defaultBgColor = Theme.of(context).primaryColor;
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
     return SizedBox(
       width: widget.screenWidth != null ? mediaQueryData.size.width * (widget.screenWidth! / 100) : widget.pixelWidth,

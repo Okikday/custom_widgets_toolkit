@@ -36,5 +36,5 @@ Add the package to your `pubspec.yaml`:
 dependencies:
   flutter:
     sdk: flutter
-  custom_widgets_toolkit: ^0.0.70
+  custom_widgets_toolkit: ^0.0.73
 ```

@@ -157,27 +157,30 @@ class CustomRichText extends StatelessWidget {
   final MouseCursor? mouseCursor;
   final void Function(PointerEnterEvent)? onEnter;
   final void Function(PointerExitEvent)? onExit;
+  final TextStyle? style;
+  final bool? spellOut;
 
-  const CustomRichText({
-    super.key,
-    required this.children,
-    this.textAlign = TextAlign.start,
-    this.overflow = TextOverflow.visible,
-    this.maxLines,
-    this.textDirection,
-    this.softWrap = true,
-    this.textScaler = TextScaler.noScaling,
-    this.locale,
-    this.strutStyle,
-    this.textWidthBasis = TextWidthBasis.parent,
-    this.textHeightBehavior,
-    this.selectionRegistrar,
-    this.selectionColor,
-    this.recognizer,
-    this.mouseCursor,
-    this.onEnter,
-    this.onExit,
-  });
+  const CustomRichText(
+      {super.key,
+      required this.children,
+      this.textAlign = TextAlign.start,
+      this.overflow = TextOverflow.visible,
+      this.maxLines,
+      this.textDirection,
+      this.softWrap = true,
+      this.textScaler = TextScaler.noScaling,
+      this.locale,
+      this.strutStyle,
+      this.textWidthBasis = TextWidthBasis.parent,
+      this.textHeightBehavior,
+      this.selectionRegistrar,
+      this.selectionColor,
+      this.recognizer,
+      this.mouseCursor,
+      this.onEnter,
+      this.onExit,
+      this.style,
+      this.spellOut});
 
   @override
   Widget build(BuildContext context) {
@@ -197,8 +200,14 @@ class CustomRichText extends StatelessWidget {
 
     return RichText(
       text: TextSpan(
-        children: inlineSpans,
-      ),
+          children: inlineSpans,
+          style: style,
+          onEnter: onEnter,
+          onExit: onExit,
+          mouseCursor: mouseCursor,
+          locale: locale,
+          recognizer: recognizer,
+          spellOut: spellOut),
       textAlign: textAlign,
       overflow: overflow,
       maxLines: maxLines,

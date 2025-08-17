@@ -19,6 +19,8 @@ class CustomDialog {
     Offset? blurSigma,
     Color? barrierColor,
     TransitionType transitionType = TransitionType.fade,
+    bool opaque = false,
+    bool fullscreenDialog = false,
   }) {
     final scaffold = EmulatedDialog(
         canPop: canPop,
@@ -33,7 +35,8 @@ class CustomDialog {
       type: transitionType,
       duration: transitionDuration,
       reverseDuration: reverseTransitionDuration,
-      opaque: false,
+      opaque: opaque,
+      fullscreenDialog: fullscreenDialog
     );
 
     _currentRoute = pageRoute;

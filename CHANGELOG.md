@@ -217,4 +217,14 @@
 
 ## 0.0.70
 - **Improved CustomDialog performance to only use blur when only assigned**
+
+
+## 0.0.71
 - **Added more properties to CustomElevatedButton**
+
+## 0.0.72
+- **Added more properties for CustomDialog**
+
+## 0.0.73
+- **Allowed ButtonStyle on CustomTextButton**
+- **Fixed CustomRichText onEnter, onExit and mourseCursor**

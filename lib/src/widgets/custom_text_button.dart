@@ -16,6 +16,7 @@ class CustomTextButton extends StatelessWidget {
   final Color? textColor;
   final EdgeInsets? contentPadding;
   final double? iconSpacing; // Optional spacing between icon and label
+  final ButtonStyle? buttonStyle;
 
   const CustomTextButton({
     super.key,
@@ -34,23 +35,25 @@ class CustomTextButton extends StatelessWidget {
     this.textColor,
     this.contentPadding,
     this.iconSpacing,
+    this.buttonStyle,
   });
 
   @override
   Widget build(BuildContext context) {
     // Define the button style.
-    final ButtonStyle buttonStyle = ButtonStyle(
-      backgroundColor:
-          WidgetStatePropertyAll(backgroundColor ?? Colors.transparent),
-      padding: WidgetStatePropertyAll(contentPadding),
-      overlayColor: WidgetStatePropertyAll(Colors.blue.withAlpha(26)),
-      shape: WidgetStatePropertyAll(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 24),
-        ),
-      ),
-      minimumSize: WidgetStatePropertyAll(const Size(4, 4)),
-    );
+    final ButtonStyle buttonStyle = this.buttonStyle ??
+        ButtonStyle(
+          backgroundColor:
+              WidgetStatePropertyAll(backgroundColor ?? Colors.transparent),
+          padding: WidgetStatePropertyAll(contentPadding),
+          overlayColor: WidgetStatePropertyAll(Colors.blue.withAlpha(26)),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius ?? 24),
+            ),
+          ),
+          minimumSize: WidgetStatePropertyAll(const Size(4, 4)),
+        );
 
     // Determine the content for the button.
     Widget buttonContent;
