@@ -2,65 +2,559 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// Page with custom transition functionality.
-/// To be used instead of MaterialPage or CupertinoPage, which provide
-/// their own transitions.
-library;
-
 import 'package:custom_widgets_toolkit/custom_widgets_toolkit.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
-/// Enumerates all supported transition types, modeled after GetX styles.
-enum TransitionType {
-  none,
-  cupertino,
-  cupertinoDialog,
-  download,
-  fade,
-  fadeIn,
-  leftToRight,
-  leftToRightWithFade,
-  native,
-  rightToLeft,
-  rightToLeftWithFade,
-  size,
-  topLevel,
-  uptown,
-  zoom,
+typedef TransitionBuilder = Widget Function(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+);
 
-  // Scale from corners/edges
-  levelFromTopLeftWithFade,
-  levelFromTopCenterWithFade,
-  levelFromTopRightWithFade,
-  levelFromCenterWithFade,
-  levelFromBottomLeftWithFade,
-  levelFromBottomCenterWithFade,
-  levelFromBottomRightWithFade,
-  levelFromLeftCenterWithFade,
-  levelFromRightCenterWithFade,
+/// Parameterized, ergonomic transition descriptor with optimized performance.
+abstract class TransitionType {
+  const TransitionType();
 
-  scaleFromTopLeft,
-  scaleFromTopCenter,
-  scaleFromTopRight,
-  scaleFromCenter,
-  scaleFromBottomLeft,
-  scaleFromBottomCenter,
-  scaleFromBottomRight,
-  scaleFromLeftCenter,
-  scaleFromRightCenter,
+  /// Build the transitionsBuilder used by PageRouteBuilder / CustomTransitionPage.
+  TransitionBuilder builder(Curve curve);
+
+  // Preset singletons with const constructors for memory efficiency
+  static const TransitionType none = _NoneTransition();
+  static const TransitionType cupertino = _CupertinoTransition();
+  static const TransitionType cupertinoDialog = _CupertinoDialogTransition();
+  static const TransitionType download = _DownloadTransition();
+  static const TransitionType fade = _FadeTransition();
+  static const TransitionType fadeIn = _FadeTransition();
+  static const TransitionType leftToRight = _LeftToRightTransition();
+  static const TransitionType leftToRightWithFade =
+      _LeftToRightWithFadeTransition();
+  static const TransitionType native = _NativeTransition();
+  static const TransitionType rightToLeft = _RightToLeftTransition();
+  static const TransitionType rightToLeftWithFade =
+      _RightToLeftWithFadeTransition();
+  static const TransitionType size = _SizeTransitionPreset();
+  static const TransitionType topLevel = _TopLevelTransition();
+  static const TransitionType uptown = _UptownTransition();
+  static const TransitionType zoom = _ZoomTransition();
+
+  /// Creates a configurable slide transition with optional fade and parallax effects.
+  factory TransitionType.slide({
+    Offset? begin,
+    Offset? end,
+    bool fade = false,
+    bool parallax = true,
+  }) =>
+      _SlideTransition(
+        begin: begin ?? const Offset(1, 0),
+        end: end ?? Offset.zero,
+        fade: fade,
+        parallax: parallax,
+      );
+
+  /// Creates a scale transition with customizable alignment and optional fade.
+  factory TransitionType.scale({
+    double from = 0.8,
+    double to = 1.0,
+    Alignment alignment = Alignment.center,
+    bool fade = false,
+  }) =>
+      _ScaleTransition(
+        from: from,
+        to: to,
+        alignment: alignment,
+        fade: fade,
+      );
+
+  /// Creates a uniform scale transition with optional fade.
+  factory TransitionType.scaleXY({
+    double from = 0.8,
+    double to = 1.0,
+    bool fade = false,
+  }) =>
+      _ScaleXYTransition(
+        from: from,
+        to: to,
+        fade: fade,
+      );
+
+  /// Creates a paired transition where incoming and outgoing routes have different animations.
+  factory TransitionType.paired({
+    required TransitionType incoming,
+    required TransitionType outgoing,
+  }) =>
+      _PairedTransition(
+        incoming: incoming,
+        outgoing: outgoing,
+      );
 }
 
-/// Signature for transition builder functions.
-/// Receives primary and secondary animations plus the child widget.
-typedef TransitionBuilder = Widget Function(
-    BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child);
+// Private implementations with optimized const constructors
 
-/// Centralized utility for creating animated page transitions
-/// without external dependencies.
+final class _NoneTransition extends TransitionType {
+  const _NoneTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) => _buildNone;
+
+  static Widget _buildNone(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondary,
+    Widget child,
+  ) =>
+      child;
+}
+
+final class _FadeTransition extends TransitionType {
+  const _FadeTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final curveTween = CurveTween(curve: curve);
+    return (context, animation, secondary, child) => FadeTransition(
+          opacity: animation.drive(curveTween),
+          child: child,
+        );
+  }
+}
+
+final class _LeftToRightTransition extends TransitionType {
+  const _LeftToRightTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final slideTween = Tween<Offset>(
+      begin: const Offset(-1, 0),
+      end: Offset.zero,
+    ).chain(CurveTween(curve: curve));
+
+    return (context, animation, secondary, child) => SlideTransition(
+          position: animation.drive(slideTween),
+          child: child,
+        );
+  }
+}
+
+final class _LeftToRightWithFadeTransition extends TransitionType {
+  const _LeftToRightWithFadeTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final slideTween = Tween<Offset>(
+      begin: const Offset(-1, 0),
+      end: Offset.zero,
+    ).chain(CurveTween(curve: curve));
+    final curveTween = CurveTween(curve: curve);
+
+    return (context, animation, secondary, child) => SlideTransition(
+          position: animation.drive(slideTween),
+          child: FadeTransition(
+            opacity: animation.drive(curveTween),
+            child: child,
+          ),
+        );
+  }
+}
+
+final class _RightToLeftTransition extends TransitionType {
+  const _RightToLeftTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final slideTween = Tween<Offset>(
+      begin: const Offset(1, 0),
+      end: Offset.zero,
+    ).chain(CurveTween(curve: curve));
+
+    return (context, animation, secondary, child) => SlideTransition(
+          position: animation.drive(slideTween),
+          child: child,
+        );
+  }
+}
+
+final class _RightToLeftWithFadeTransition extends TransitionType {
+  const _RightToLeftWithFadeTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final slideTween = Tween<Offset>(
+      begin: const Offset(1, 0),
+      end: Offset.zero,
+    ).chain(CurveTween(curve: curve));
+    final curveTween = CurveTween(curve: curve);
+
+    return (context, animation, secondary, child) => SlideTransition(
+          position: animation.drive(slideTween),
+          child: FadeTransition(
+            opacity: animation.drive(curveTween),
+            child: child,
+          ),
+        );
+  }
+}
+
+final class _ZoomTransition extends TransitionType {
+  const _ZoomTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final scaleTween =
+        Tween<double>(begin: 0.0, end: 1.0).chain(CurveTween(curve: curve));
+
+    return (context, animation, secondary, child) {
+      final scaleAnimation = animation.drive(scaleTween);
+      return ScaleTransition(
+        scale: scaleAnimation,
+        child: FadeTransition(
+          opacity: scaleAnimation,
+          child: child,
+        ),
+      );
+    };
+  }
+}
+
+final class _SizeTransitionPreset extends TransitionType {
+  const _SizeTransitionPreset();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final curveTween = CurveTween(curve: curve);
+    return (context, animation, secondary, child) => Align(
+          alignment: Alignment.topCenter,
+          child: SizeTransition(
+            sizeFactor: animation.drive(curveTween),
+            axis: Axis.vertical,
+            child: child,
+          ),
+        );
+  }
+}
+
+final class _CupertinoTransition extends TransitionType {
+  const _CupertinoTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final slideTween = Tween<Offset>(
+      begin: const Offset(1.0, 0.0),
+      end: Offset.zero,
+    ).chain(CurveTween(curve: curve));
+
+    return (context, animation, secondary, child) => SlideTransition(
+          position: animation.drive(slideTween),
+          child: child,
+        );
+  }
+}
+
+final class _CupertinoDialogTransition extends TransitionType {
+  const _CupertinoDialogTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final scaleTween =
+        Tween<double>(begin: 1.1, end: 1.0).chain(CurveTween(curve: curve));
+    final curveTween = CurveTween(curve: curve);
+
+    return (context, animation, secondary, child) => FadeTransition(
+          opacity: animation.drive(curveTween),
+          child: ScaleTransition(
+            scale: animation.drive(scaleTween),
+            child: child,
+          ),
+        );
+  }
+}
+
+final class _NativeTransition extends TransitionType {
+  const _NativeTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final curveTween = CurveTween(curve: curve);
+    final scaleTween =
+        Tween<double>(begin: 0.94, end: 1.0).chain(CurveTween(curve: curve));
+
+    return (context, animation, secondary, child) => FadeTransition(
+          opacity: animation.drive(curveTween),
+          child: ScaleTransition(
+            scale: animation.drive(scaleTween),
+            child: child,
+          ),
+        );
+  }
+}
+
+final class _DownloadTransition extends TransitionType {
+  const _DownloadTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final slideTween = Tween<Offset>(
+      begin: const Offset(0, -1),
+      end: Offset.zero,
+    ).chain(CurveTween(curve: curve));
+
+    return (context, animation, secondary, child) => SlideTransition(
+          position: animation.drive(slideTween),
+          child: child,
+        );
+  }
+}
+
+final class _UptownTransition extends TransitionType {
+  const _UptownTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final slideTween = Tween<Offset>(
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).chain(CurveTween(curve: curve));
+
+    return (context, animation, secondary, child) => SlideTransition(
+          position: animation.drive(slideTween),
+          child: child,
+        );
+  }
+}
+
+final class _TopLevelTransition extends TransitionType {
+  const _TopLevelTransition();
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final scaleTween =
+        Tween<double>(begin: 0.8, end: 1.0).chain(CurveTween(curve: curve));
+    final curveTween = CurveTween(curve: curve);
+
+    return (context, animation, secondary, child) => FadeTransition(
+          opacity: animation.drive(curveTween),
+          child: ScaleTransition(
+            scale: animation.drive(scaleTween),
+            child: child,
+          ),
+        );
+  }
+}
+
+/// Optimized slide transition with configurable fade and parallax effects.
+final class _SlideTransition extends TransitionType {
+  const _SlideTransition({
+    required this.begin,
+    required this.end,
+    required this.fade,
+    required this.parallax,
+  });
+
+  final Offset begin;
+  final Offset end;
+  final bool fade;
+  final bool parallax;
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final primaryTween =
+        Tween<Offset>(begin: begin, end: end).chain(CurveTween(curve: curve));
+    final curveTween = fade ? CurveTween(curve: curve) : null;
+    final secondaryTween = parallax
+        ? Tween<Offset>(
+            begin: Offset.zero,
+            end: Offset(-begin.dx * 0.2, -begin.dy * 0.2),
+          ).chain(CurveTween(curve: curve))
+        : null;
+
+    return (context, animation, secondary, child) {
+      Widget result = SlideTransition(
+        position: animation.drive(primaryTween),
+        child: child,
+      );
+
+      if (fade) {
+        result = FadeTransition(
+          opacity: animation.drive(curveTween!),
+          child: result,
+        );
+      }
+
+      if (parallax && secondaryTween != null) {
+        result = AnimatedBuilder(
+          animation: secondary,
+          builder: (context, child) => Transform.translate(
+            offset: secondary.drive(secondaryTween).value,
+            child: child,
+          ),
+          child: result,
+        );
+      }
+
+      return result;
+    };
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _SlideTransition &&
+          other.begin == begin &&
+          other.end == end &&
+          other.fade == fade &&
+          other.parallax == parallax;
+
+  @override
+  int get hashCode => Object.hash(begin, end, fade, parallax);
+}
+
+/// Optimized scale transition with configurable alignment and fade.
+final class _ScaleTransition extends TransitionType {
+  const _ScaleTransition({
+    required this.from,
+    required this.to,
+    required this.alignment,
+    required this.fade,
+  });
+
+  final double from;
+  final double to;
+  final Alignment alignment;
+  final bool fade;
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final scaleTween =
+        Tween<double>(begin: from, end: to).chain(CurveTween(curve: curve));
+    final curveTween = fade ? CurveTween(curve: curve) : null;
+
+    return (context, animation, secondary, child) {
+      Widget result = ScaleTransition(
+        scale: animation.drive(scaleTween),
+        alignment: alignment,
+        child: child,
+      );
+
+      if (fade) {
+        result = FadeTransition(
+          opacity: animation.drive(curveTween!),
+          child: result,
+        );
+      }
+
+      return result;
+    };
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _ScaleTransition &&
+          other.from == from &&
+          other.to == to &&
+          other.alignment == alignment &&
+          other.fade == fade;
+
+  @override
+  int get hashCode => Object.hash(from, to, alignment, fade);
+}
+
+/// Optimized uniform scale transition.
+final class _ScaleXYTransition extends TransitionType {
+  const _ScaleXYTransition({
+    required this.from,
+    required this.to,
+    required this.fade,
+  });
+
+  final double from;
+  final double to;
+  final bool fade;
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final scaleTween =
+        Tween<double>(begin: from, end: to).chain(CurveTween(curve: curve));
+    final curveTween = fade ? CurveTween(curve: curve) : null;
+
+    return (context, animation, secondary, child) {
+      Widget result = ScaleTransition(
+        scale: animation.drive(scaleTween),
+        alignment: Alignment.center,
+        child: child,
+      );
+
+      if (fade) {
+        result = FadeTransition(
+          opacity: animation.drive(curveTween!),
+          child: result,
+        );
+      }
+
+      return result;
+    };
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _ScaleXYTransition &&
+          other.from == from &&
+          other.to == to &&
+          other.fade == fade;
+
+  @override
+  int get hashCode => Object.hash(from, to, fade);
+}
+
+/// Paired transition that handles different animations for incoming and outgoing routes.
+final class _PairedTransition extends TransitionType {
+  const _PairedTransition({
+    required this.incoming,
+    required this.outgoing,
+  });
+
+  final TransitionType incoming;
+  final TransitionType outgoing;
+
+  @override
+  TransitionBuilder builder(Curve curve) {
+    final incomingBuilder = incoming.builder(curve);
+    final outgoingBuilder = outgoing.builder(curve);
+
+    return (context, animation, secondaryAnimation, child) {
+      // For paired transitions, we need to determine which route this is
+      // by checking if secondaryAnimation is active (meaning we're the background route)
+      if (secondaryAnimation.status != AnimationStatus.dismissed &&
+          secondaryAnimation.value > 0.0) {
+        // This is the outgoing/background route
+        final reversedSecondary =
+            Tween<double>(begin: 1.0, end: 0.0).animate(secondaryAnimation);
+        return outgoingBuilder(context, reversedSecondary, animation, child);
+      }
+
+      // This is the incoming/foreground route
+      return incomingBuilder(context, animation, secondaryAnimation, child);
+    };
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _PairedTransition &&
+          other.incoming == incoming &&
+          other.outgoing == outgoing;
+
+  @override
+  int get hashCode => Object.hash(incoming, outgoing);
+}
+
+/// High-performance page animation utilities.
 class PageAnimation {
-  /// Single entry-point: builds a [CustomTransitionPage] by TransitionType type
-  /// Returns a [CustomTransitionPage] wrapping [child], with
-  /// animation determined by [type] and [curve].
+  PageAnimation._();
+
+  /// Creates a CustomTransitionPage with the specified transition configuration.
   static CustomTransitionPage<T> buildCustomTransitionPage<T>(
     LocalKey key, {
     required Widget child,
@@ -75,13 +569,13 @@ class PageAnimation {
     bool maintainState = true,
     bool fullscreenDialog = false,
   }) {
-    final transition = _transitionBuilder(type, curve ?? CustomCurves.ease);
+    final effectiveCurve = curve ?? CustomCurves.ease;
     return CustomTransitionPage<T>(
       key: key,
       child: child,
       transitionDuration: duration,
       reverseTransitionDuration: reverseDuration,
-      transitionsBuilder: transition,
+      transitionsBuilder: type.builder(effectiveCurve),
       barrierDismissible: barrierDismissible,
       opaque: opaque,
       barrierColor: barrierColor,
@@ -91,8 +585,7 @@ class PageAnimation {
     );
   }
 
-  /// Returns a [PageRouteBuilder] for [child], using the specified
-  /// [type], [curve], durations, and optional [settings].
+  /// Creates a PageRouteBuilder with the specified transition configuration.
   static PageRouteBuilder<T> pageRouteBuilder<T>(
     Widget child, {
     TransitionType type = TransitionType.native,
@@ -108,9 +601,10 @@ class PageAnimation {
     bool fullscreenDialog = false,
     bool allowSnapshotting = true,
   }) {
+    final effectiveCurve = curve ?? CustomCurves.ease;
     return PageRouteBuilder<T>(
       pageBuilder: (_, __, ___) => child,
-      transitionsBuilder: _transitionBuilder(type, curve ?? CustomCurves.ease),
+      transitionsBuilder: type.builder(effectiveCurve),
       transitionDuration: duration,
       reverseTransitionDuration: reverseDuration,
       settings: settings,
@@ -124,168 +618,29 @@ class PageAnimation {
     );
   }
 
-  // Helper for scale transitions
-  static TransitionBuilder _scaleBuilder(Alignment alignment, Curve curve, {bool fade = false, double from = 0.8}) {
-    return (context, animation, secondary, child) {
-      final curveTween = CurveTween(curve: curve);
-      final scale = animation.drive(
-        Tween<double>(begin: from, end: 1.0).chain(curveTween),
-      );
-      final Widget scaled = ScaleTransition(
-        scale: scale,
-        alignment: alignment,
-        child: child,
-      );
-      if (!fade) return scaled;
-
-      final opacity = animation.drive(curveTween);
-      return FadeTransition(opacity: opacity, child: scaled);
-    };
-  }
-
-  static TransitionBuilder _transitionBuilder(TransitionType type, Curve curve) {
-    switch (type) {
-      case TransitionType.none:
-        return (context, animation, secondary, child) => child;
-      case TransitionType.fade:
-      case TransitionType.fadeIn:
-        return (context, animation, secondary, child) => FadeTransition(opacity: animation.drive(CurveTween(curve: curve)), child: child);
-
-      case TransitionType.leftToRight:
-        return (context, animation, secondary, child) {
-          final offset = animation.drive(Tween<Offset>(begin: Offset(-1, 0), end: Offset.zero).chain(CurveTween(curve: curve)));
-          return SlideTransition(position: offset, child: child);
-        };
-
-      case TransitionType.leftToRightWithFade:
-        return (context, animation, secondary, child) {
-          final slide = animation.drive(Tween<Offset>(begin: Offset(-1, 0), end: Offset.zero).chain(CurveTween(curve: curve)));
-          final fade = animation.drive(CurveTween(curve: curve));
-          return SlideTransition(position: slide, child: FadeTransition(opacity: fade, child: child));
-        };
-
-      case TransitionType.rightToLeft:
-        return (context, animation, secondary, child) {
-          final offset = animation.drive(Tween<Offset>(begin: Offset(1, 0), end: Offset.zero).chain(CurveTween(curve: curve)));
-          return SlideTransition(position: offset, child: child);
-        };
-
-      case TransitionType.rightToLeftWithFade:
-        return (context, animation, secondary, child) {
-          final slide = animation.drive(Tween<Offset>(begin: Offset(1, 0), end: Offset.zero).chain(CurveTween(curve: curve)));
-          final fade = animation.drive(CurveTween(curve: curve));
-          return SlideTransition(position: slide, child: FadeTransition(opacity: fade, child: child));
-        };
-
-      case TransitionType.zoom:
-        return (context, animation, secondary, child) {
-          final zoomAnimation = animation.drive(Tween<double>(begin: 0.0, end: 1.0).chain(CurveTween(curve: curve)));
-          return ScaleTransition(scale: zoomAnimation, child: FadeTransition(opacity: zoomAnimation, child: child));
-        };
-
-      case TransitionType.size:
-        return (context, animation, secondary, child) {
-          return Align(
-            alignment: Alignment.topCenter,
-            child: SizeTransition(sizeFactor: animation.drive(CurveTween(curve: curve)), axis: Axis.vertical, child: child),
-          );
-        };
-
-      case TransitionType.cupertino:
-        return (context, animation, secondary, child) {
-          final slide = animation.drive(Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset.zero).chain(CurveTween(curve: curve)));
-          return SlideTransition(position: slide, child: child);
-        };
-
-      case TransitionType.cupertinoDialog:
-        return (context, animation, secondary, child) {
-          final scale = animation.drive(Tween<double>(begin: 1.1, end: 1.0).chain(CurveTween(curve: curve)));
-          final fade = animation.drive(CurveTween(curve: curve));
-          return FadeTransition(opacity: fade, child: ScaleTransition(scale: scale, child: child));
-        };
-
-      case TransitionType.native:
-        return (context, animation, secondary, child) {
-          final fade = animation.drive(CurveTween(curve: curve));
-          final scale = animation.drive(Tween<double>(begin: 0.94, end: 1.0).chain(CurveTween(curve: curve)));
-          return FadeTransition(opacity: fade, child: ScaleTransition(scale: scale, child: child));
-        };
-
-      case TransitionType.download:
-        return (context, animation, secondary, child) {
-          final drop = animation.drive(Tween<Offset>(begin: Offset(0, -1), end: Offset.zero).chain(CurveTween(curve: curve)));
-          return SlideTransition(position: drop, child: child);
-        };
-
-      case TransitionType.uptown:
-        return (context, animation, secondary, child) {
-          final rise = animation.drive(Tween<Offset>(begin: Offset(0, 1), end: Offset.zero).chain(CurveTween(curve: curve)));
-          return SlideTransition(position: rise, child: child);
-        };
-
-      case TransitionType.topLevel:
-        return (context, animation, secondary, child) {
-          final scale = animation.drive(Tween<double>(begin: 0.8, end: 1.0).chain(CurveTween(curve: curve)));
-          final fade = animation.drive(CurveTween(curve: curve));
-          return FadeTransition(opacity: fade, child: ScaleTransition(scale: scale, child: child));
-        };
-
-      // Scale-from- 0.8… with fade
-      case TransitionType.levelFromTopLeftWithFade:
-        return _scaleBuilder(Alignment.topLeft, curve, fade: true);
-      case TransitionType.levelFromTopCenterWithFade:
-        return _scaleBuilder(Alignment.topCenter, curve, fade: true);
-      case TransitionType.levelFromTopRightWithFade:
-        return _scaleBuilder(Alignment.topRight, curve, fade: true);
-
-      case TransitionType.levelFromCenterWithFade:
-        return _scaleBuilder(Alignment.center, curve, fade: true);
-
-      case TransitionType.levelFromBottomLeftWithFade:
-        return _scaleBuilder(Alignment.bottomLeft, curve, fade: true);
-      case TransitionType.levelFromBottomCenterWithFade:
-        return _scaleBuilder(Alignment.bottomCenter, curve, fade: true);
-      case TransitionType.levelFromBottomRightWithFade:
-        return _scaleBuilder(Alignment.bottomRight, curve, fade: true);
-
-      case TransitionType.levelFromLeftCenterWithFade:
-        return _scaleBuilder(Alignment.centerLeft, curve, fade: true);
-      case TransitionType.levelFromRightCenterWithFade:
-        return _scaleBuilder(Alignment.centerRight, curve, fade: true);
-
-      case TransitionType.scaleFromTopLeft:
-        return _scaleBuilder(Alignment.topLeft, curve, from: 0.0);
-
-      case TransitionType.scaleFromTopCenter:
-        return _scaleBuilder(Alignment.topCenter, curve, from: 0.0);
-      case TransitionType.scaleFromTopRight:
-        return _scaleBuilder(Alignment.topRight, curve, from: 0.0);
-
-      case TransitionType.scaleFromCenter:
-        return _scaleBuilder(Alignment.center, curve, from: 0.0);
-
-      case TransitionType.scaleFromBottomLeft:
-        return _scaleBuilder(Alignment.bottomLeft, curve, from: 0.0);
-      case TransitionType.scaleFromBottomCenter:
-        return _scaleBuilder(Alignment.bottomCenter, curve, from: 0.0);
-      case TransitionType.scaleFromBottomRight:
-        return _scaleBuilder(Alignment.bottomRight, curve, from: 0.0);
-
-      case TransitionType.scaleFromLeftCenter:
-        return _scaleBuilder(Alignment.centerLeft, curve, from: 0.0);
-      case TransitionType.scaleFromRightCenter:
-        return _scaleBuilder(Alignment.centerRight, curve, from: 0.0);
-    }
+  /// Convenience method to push a page with transition
+  static Future<T?> push<T>(
+    BuildContext context,
+    Widget child, {
+    TransitionType type = TransitionType.native,
+    Curve? curve,
+    Duration? duration,
+    Duration? reverseDuration,
+  }) {
+    return Navigator.of(context).push<T>(
+      pageRouteBuilder<T>(
+        child,
+        type: type,
+        curve: curve,
+        duration: duration ?? const Duration(milliseconds: 300),
+        reverseDuration: reverseDuration ?? const Duration(milliseconds: 300),
+      ),
+    );
   }
 }
 
-/// A stub implementation of GoRouter's `CustomTransitionPage` to avoid dependencies on go_router. Replace with the real import when needed.
-
+/// High-performance CustomTransitionPage implementation.
 class CustomTransitionPage<T> extends Page<T> {
-  /// Constructor for a page with custom transition functionality.
-  ///
-  /// To be used instead of MaterialPage or CupertinoPage, which provide
-  /// their own transitions.
   const CustomTransitionPage({
     required this.child,
     required this.transitionsBuilder,
@@ -303,86 +658,56 @@ class CustomTransitionPage<T> extends Page<T> {
     super.restorationId,
   });
 
-  /// The content to be shown in the Route created by this page.
   final Widget child;
-
-  /// A duration argument to customize the duration of the custom page
-  /// transition.
-  ///
-  /// Defaults to 300ms.
   final Duration transitionDuration;
-
-  /// A duration argument to customize the duration of the custom page
-  /// transition on pop.
-  ///
-  /// Defaults to 300ms.
   final Duration reverseTransitionDuration;
-
-  /// Whether the route should remain in memory when it is inactive.
-  ///
-  /// If this is true, then the route is maintained, so that any futures it is
-  /// holding from the next route will properly resolve when the next route
-  /// pops. If this is not necessary, this can be set to false to allow the
-  /// framework to entirely discard the route's widget hierarchy when it is
-  /// not visible.
   final bool maintainState;
-
-  /// Whether this page route is a full-screen dialog.
-  ///
-  /// In Material and Cupertino, being fullscreen has the effects of making the
-  /// app bars have a close button instead of a back button. On iOS, dialogs
-  /// transitions animate differently and are also not closeable with the
-  /// back swipe gesture.
   final bool fullscreenDialog;
-
-  /// Whether the route obscures previous routes when the transition is
-  /// complete.
-  ///
-  /// When an opaque route's entrance transition is complete, the routes
-  /// behind the opaque route will not be built to save resources.
   final bool opaque;
-
-  /// Whether you can dismiss this route by tapping the modal barrier.
   final bool barrierDismissible;
-
-  /// The color to use for the modal barrier.
-  ///
-  /// If this is null, the barrier will be transparent.
   final Color? barrierColor;
-
-  /// The semantic label used for a dismissible barrier.
-  ///
-  /// If the barrier is dismissible, this label will be read out if
-  /// accessibility tools (like VoiceOver on iOS) focus on the barrier.
   final String? barrierLabel;
-
-  /// Override this method to wrap the child with one or more transition
-  /// widgets that define how the route arrives on and leaves the screen.
-  ///
-  /// By default, the child (which contains the widget returned by buildPage) is
-  /// not wrapped in any transition widgets.
-  ///
-  /// The transitionsBuilder method, is called each time the Route's state
-  /// changes while it is visible (e.g. if the value of canPop changes on the
-  /// active route).
-  ///
-  /// The transitionsBuilder method is typically used to define transitions
-  /// that animate the new topmost route's comings and goings. When the
-  /// Navigator pushes a route on the top of its stack, the new route's
-  /// primary animation runs from 0.0 to 1.0. When the Navigator pops the
-  /// topmost route, e.g. because the use pressed the back button, the primary
-  /// animation runs from 1.0 to 0.0.
-  final Widget Function(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child)
-      transitionsBuilder;
+  final TransitionBuilder transitionsBuilder;
 
   @override
-  Route<T> createRoute(BuildContext context) => _CustomTransitionPageRoute<T>(this);
+  Route<T> createRoute(BuildContext context) =>
+      _CustomTransitionPageRoute<T>(this);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CustomTransitionPage &&
+          other.key == key &&
+          other.child == child &&
+          other.transitionDuration == transitionDuration &&
+          other.reverseTransitionDuration == reverseTransitionDuration &&
+          other.maintainState == maintainState &&
+          other.fullscreenDialog == fullscreenDialog &&
+          other.opaque == opaque &&
+          other.barrierDismissible == barrierDismissible &&
+          other.barrierColor == barrierColor &&
+          other.barrierLabel == barrierLabel;
+
+  @override
+  int get hashCode => Object.hash(
+        key,
+        child,
+        transitionDuration,
+        reverseTransitionDuration,
+        maintainState,
+        fullscreenDialog,
+        opaque,
+        barrierDismissible,
+        barrierColor,
+        barrierLabel,
+      );
 }
 
-class _CustomTransitionPageRoute<T> extends PageRoute<T> {
-  _CustomTransitionPageRoute(CustomTransitionPage<T> page) : super(settings: page);
+/// Optimized route implementation for custom transitions.
+final class _CustomTransitionPageRoute<T> extends PageRoute<T> {
+  _CustomTransitionPageRoute(this._page) : super(settings: _page);
 
-  CustomTransitionPage<T> get _page => settings as CustomTransitionPage<T>;
+  final CustomTransitionPage<T> _page;
 
   @override
   bool get barrierDismissible => _page.barrierDismissible;
@@ -427,17 +752,11 @@ class _CustomTransitionPageRoute<T> extends PageRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) =>
-      _page.transitionsBuilder(
-        context,
-        animation,
-        secondaryAnimation,
-        child,
-      );
+      _page.transitionsBuilder(context, animation, secondaryAnimation, child);
 }
 
-/// Custom transition page with no transition.
+/// Zero-transition page for instant navigation.
 class NoTransitionPage<T> extends CustomTransitionPage<T> {
-  /// Constructor for a page with no transition functionality.
   const NoTransitionPage({
     required super.child,
     super.name,
@@ -445,12 +764,16 @@ class NoTransitionPage<T> extends CustomTransitionPage<T> {
     super.restorationId,
     super.key,
   }) : super(
-          transitionsBuilder: _transitionsBuilder,
+          transitionsBuilder: _noTransition,
           transitionDuration: Duration.zero,
           reverseTransitionDuration: Duration.zero,
         );
 
-  static Widget _transitionsBuilder(
-          BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) =>
+  static Widget _noTransition(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) =>
       child;
 }

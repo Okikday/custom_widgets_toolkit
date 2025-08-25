@@ -228,3 +228,7 @@
 ## 0.0.73
 - **Allowed ButtonStyle on CustomTextButton**
 - **Fixed CustomRichText onEnter, onExit and mourseCursor**
+
+## 0.0.74
+- **Refactored [PageAnimation] for more flexibility**
+- **breaking changes in [PageAnimation]**
