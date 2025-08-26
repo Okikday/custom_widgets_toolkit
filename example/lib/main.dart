@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:custom_widgets_toolkit/custom_widgets_toolkit.dart';
 import 'package:flutter/material.dart';
 
@@ -400,7 +402,7 @@ class _CustomWidgetsTestPageState extends State<CustomWidgetsTestPage> {
             const SizedBox(height: 10),
             CustomElevatedButton(
               label: _isButtonEnabled ? "Enabled Button" : "Disabled Button",
-              onClick: _isButtonEnabled ? () => print("Button Clicked") : null,
+              onClick: _isButtonEnabled ? () => log("Button Clicked") : null,
               backgroundColor: _buttonBackgroundColor,
               borderRadius: _buttonBorderRadius,
               elevation: _buttonElevation,

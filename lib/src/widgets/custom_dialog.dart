@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class CustomDialog {
   // Static reference to the current route.
-  static PageRoute? _currentRoute;
+  static Route? _currentRoute;
 
   static Future<T?> show<T>(
     BuildContext context, {
@@ -30,19 +30,23 @@ class CustomDialog {
         curve: curve ?? CustomCurves.decelerate,
         barrierColor: barrierColor,
         child: child);
-    final pageRoute = PageAnimation.pageRouteBuilder(
-      scaffold,
-      type: transitionType,
+
+    final modalRoute = _CustomDialogRoute<T>(
+      child: scaffold,
+      transitionType: transitionType,
       duration: transitionDuration,
       reverseDuration: reverseTransitionDuration,
-      opaque: opaque,
-      fullscreenDialog: fullscreenDialog
+      curve: curve ?? CustomCurves.decelerate,
+      isOpaque: opaque,
+      dismissible: canPop,
+      barrier: Colors.transparent,
+      fullscreenDialog: fullscreenDialog,
     );
 
-    _currentRoute = pageRoute;
+    _currentRoute = modalRoute;
 
     // Push the route and clear the stored reference once it completes.
-    return Navigator.of(context).push<T>(pageRoute as Route<T>).whenComplete(() {
+    return Navigator.of(context).push<T>(modalRoute).whenComplete(() {
       _currentRoute = null;
     });
   }
@@ -91,19 +95,22 @@ class CustomDialog {
       ),
     );
 
-    final pageRoute = PageAnimation.pageRouteBuilder(
-      scaffold,
-      type: transitionType,
+    final modalRoute = _CustomDialogRoute<T>(
+      child: scaffold,
+      transitionType: transitionType,
       duration: transitionDuration,
       reverseDuration: reverseTransitionDuration,
-      opaque: false,
+      curve: curve ?? CustomCurves.decelerate,
+      isOpaque: false,
+      dismissible: canPop,
+      barrier: Colors.transparent,
     );
 
     // Store the route reference.
-    _currentRoute = pageRoute;
+    _currentRoute = modalRoute;
 
     // Push the route and clear the stored reference once it completes.
-    return Navigator.of(context).push<T>(pageRoute as Route<T>).whenComplete(() {
+    return Navigator.of(context).push<T>(modalRoute).whenComplete(() {
       _currentRoute = null;
     });
   }
@@ -111,7 +118,6 @@ class CustomDialog {
   /// Hides the dialog by popping the current route if it exists.
   /// If the dialog has already been popped or the context is no longer valid,
   /// this function will do nothing.
-
   static void hide(BuildContext context) {
     if (_currentRoute != null) {
       // Check if the Navigator can pop before calling pop.
@@ -154,4 +160,82 @@ class CustomDialog {
     "Getting things set up...",
     "Hang on, loading now...",
   ];
+}
+
+/// Custom modal route implementation for dialogs that prevents interference
+/// with underlying page transitions.
+class _CustomDialogRoute<T> extends ModalRoute<T> {
+  _CustomDialogRoute({
+    required this.child,
+    required this.transitionType,
+    required this.duration,
+    required this.reverseDuration,
+    required this.curve,
+    this.isOpaque = true,
+    this.dismissible = true,
+    this.barrier,
+    this.label,
+    this.fullscreenDialog = false,
+    super.settings,
+  });
+
+  final Widget child;
+  final TransitionType transitionType;
+  final Duration duration;
+  final Duration reverseDuration;
+  final Curve curve;
+  final bool isOpaque;
+  final bool dismissible;
+  final Color? barrier;
+  final String? label;
+  final bool fullscreenDialog;
+
+  @override
+  Duration get transitionDuration => duration;
+
+  @override
+  Duration get reverseTransitionDuration => reverseDuration;
+
+  @override
+  bool get opaque => isOpaque;
+
+  @override
+  bool get barrierDismissible => dismissible;
+
+  @override
+  Color? get barrierColor => barrier;
+
+  @override
+  String? get barrierLabel => label;
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    return Semantics(
+      scopesRoute: true,
+      explicitChildNodes: true,
+      child: child,
+    );
+  }
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return transitionType.builder(curve)(
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
+  }
 }

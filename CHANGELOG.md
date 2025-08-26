@@ -232,3 +232,7 @@
 ## 0.0.74
 - **Refactored [PageAnimation] for more flexibility**
 - **breaking changes in [PageAnimation]**
+
+## 0.0.75
+- **Extended page animation functionalities**
+- **Fixed and Adapted CustomDialog to use modalRoute to work properly with [PageAnimation]**

@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "custom_widgets_toolkit",
-      "version": "0.0.74",
+      "version": "0.0.75",
       "dependencies": [
         "flutter"
       ],
