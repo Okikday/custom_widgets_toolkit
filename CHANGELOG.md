@@ -236,3 +236,6 @@
 ## 0.0.75
 - **Extended page animation functionalities**
 - **Fixed and Adapted CustomDialog to use modalRoute to work properly with [PageAnimation]**
+
+## 0.0.76
+- **Improved [CustomDialog] performance**

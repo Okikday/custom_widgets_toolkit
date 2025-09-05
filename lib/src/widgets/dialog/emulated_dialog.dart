@@ -10,8 +10,6 @@ class EmulatedDialog extends StatefulWidget {
   final Widget child;
   final Duration transitionDuration;
   final Duration reverseTransitionDuration;
-
-  /// Use CustomCurves
   final Curve? curve;
 
   const EmulatedDialog({
@@ -31,85 +29,136 @@ class EmulatedDialog extends StatefulWidget {
 }
 
 class _EmulatedDialogState extends State<EmulatedDialog> with SingleTickerProviderStateMixin {
-  int msgIndex = 0;
-  late final AnimationController _blurController;
-  Animation<Offset>? _curvedBlurAnimation;
-  late final ColorTween _scaffoldBgColorTween;
+  late final AnimationController _controller;
+  late final Animation<double> _blurAnimation;
+  late final Animation<Color?> _colorAnimation;
+
+  late final bool _hasBlur;
+  late final Color _startColor;
+  late final Color _endColor;
 
   @override
   void initState() {
     super.initState();
-    _blurController = AnimationController(
+
+    _hasBlur = widget.blurSigma != null && (widget.blurSigma!.dx > 0 || widget.blurSigma!.dy > 0);
+
+    _startColor = Colors.transparent;
+    _endColor = widget.barrierColor ?? Colors.black.withValues(alpha: 0.1);
+
+    _controller = AnimationController(
       vsync: this,
       duration: widget.transitionDuration,
       reverseDuration: widget.reverseTransitionDuration,
-    )..forward(from: 0);
-    _curvedBlurAnimation = widget.blurSigma == null
-        ? null
-        : Tween<Offset>(begin: Offset.zero, end: widget.blurSigma).animate(CurvedAnimation(
-            parent: _blurController,
-            curve: widget.curve ?? CustomCurves.decelerate,
-            reverseCurve: widget.curve,
-          ));
-    _scaffoldBgColorTween = ColorTween(begin: Colors.blueGrey.withAlpha(10), end: widget.barrierColor ?? Colors.blueGrey.withAlpha(10));
+    );
+
+    final curve = CurvedAnimation(
+      parent: _controller,
+      curve: widget.curve ?? CustomCurves.decelerate,
+    );
+
+    _blurAnimation = _hasBlur ? Tween<double>(begin: 0.0, end: 1.0).animate(curve) : kAlwaysCompleteAnimation;
+
+    _colorAnimation = ColorTween(
+      begin: _startColor,
+      end: _endColor,
+    ).animate(curve);
+
+    _controller.forward();
   }
 
   @override
   void dispose() {
-    _blurController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-        canPop: widget.canPop,
-        onPopInvokedWithResult: (didPop, result) {
-          if (widget.canPop) _blurController.reverse();
-        },
-        child: RepaintBoundary(
-          child: AnimatedBuilder(
-            animation: _blurController,
-            builder: (context, child) {
-              final Color? color = _scaffoldBgColorTween.evaluate(_blurController);
-              return Scaffold(
-                backgroundColor: color,
-                body: child,
-              );
-            },
-            child: (widget.blurSigma != null && _curvedBlurAnimation != null)
-                ? BlurredBackground(curvedBlurAnimation: _curvedBlurAnimation, widget: widget)
-                : widget.child,
-          ),
-        ));
+      canPop: widget.canPop,
+      onPopInvokedWithResult: (didPop, result) {
+        if (widget.canPop && !didPop) {
+          _controller.reverse();
+        }
+      },
+      child: _hasBlur
+          ? _BlurredDialogContent(
+              controller: _controller,
+              blurAnimation: _blurAnimation,
+              colorAnimation: _colorAnimation,
+              blurSigma: widget.blurSigma!,
+              child: widget.child,
+            )
+          : _SimpleDialogContent(
+              colorAnimation: _colorAnimation,
+              child: widget.child,
+            ),
+    );
   }
 }
 
-class BlurredBackground extends StatelessWidget {
-  const BlurredBackground({
-    super.key,
-    required Animation<Offset>? curvedBlurAnimation,
-    required this.widget,
-  }) : _curvedBlurAnimation = curvedBlurAnimation;
+class _BlurredDialogContent extends StatelessWidget {
+  const _BlurredDialogContent({
+    required this.controller,
+    required this.blurAnimation,
+    required this.colorAnimation,
+    required this.blurSigma,
+    required this.child,
+  });
 
-  final Animation<Offset>? _curvedBlurAnimation;
-  final EmulatedDialog widget;
+  final AnimationController controller;
+  final Animation<double> blurAnimation;
+  final Animation<Color?> colorAnimation;
+  final Offset blurSigma;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _curvedBlurAnimation!,
-      builder: (context, child) {
-        return RepaintBoundary(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: _curvedBlurAnimation!.value.dx,
-              sigmaY: _curvedBlurAnimation!.value.dy,
-            ),
-            child: widget.child,
-          ),
-        );
-      },
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: controller,
+        builder: (context, _) {
+          final blurValue = blurAnimation.value;
+          return Scaffold(
+            backgroundColor: colorAnimation.value,
+            body: blurValue > 0
+                ? RepaintBoundary(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: blurSigma.dx * blurValue,
+                        sigmaY: blurSigma.dy * blurValue,
+                      ),
+                      child: child,
+                    ),
+                  )
+                : child,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _SimpleDialogContent extends StatelessWidget {
+  const _SimpleDialogContent({
+    required this.colorAnimation,
+    required this.child,
+  });
+
+  final Animation<Color?> colorAnimation;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: colorAnimation,
+        builder: (context, _) => Scaffold(
+          backgroundColor: colorAnimation.value,
+          body: child,
+        ),
+      ),
     );
   }
 }
