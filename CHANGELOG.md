@@ -239,3 +239,6 @@
 
 ## 0.0.76
 - **Improved [CustomDialog] performance**
+
+## 0.0.77
+- **Fixed some bugs with [PageAnimation]**
