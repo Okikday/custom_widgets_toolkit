@@ -565,7 +565,7 @@ final class _CustomTransitionPageRoute<T> extends PageRoute<T> {
 }
 
 class PageAnimation {
-  PageAnimation._();
+  const PageAnimation._();
 
   /// Creates a CustomTransitionPage with the specified transition configuration.
   static CustomTransitionPage<T> buildCustomTransitionPage<T>(

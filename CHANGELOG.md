@@ -242,3 +242,6 @@
 
 ## 0.0.77
 - **Fixed some bugs with [PageAnimation]**
+
+## 0.0.78
+- **Improved [PageAnimation]**
