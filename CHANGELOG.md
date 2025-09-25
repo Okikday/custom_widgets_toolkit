@@ -245,3 +245,6 @@
 
 ## 0.0.78
 - **Improved [PageAnimation]**
+
+## 0.0.79
+- **Fixed where Dialog has errors when shown**

@@ -43,8 +43,8 @@ class _EmulatedDialogState extends State<EmulatedDialog> with SingleTickerProvid
 
     _hasBlur = widget.blurSigma != null && (widget.blurSigma!.dx > 0 || widget.blurSigma!.dy > 0);
 
-    _startColor = Theme.of(context).scaffoldBackgroundColor.withAlpha(10);
-    _endColor = widget.barrierColor ?? Colors.black.withValues(alpha: 0.1);
+    _startColor = Colors.transparent;
+    _endColor = widget.barrierColor ?? Colors.black.withValues(alpha: 0.4);
 
     _controller = AnimationController(
       vsync: this,
