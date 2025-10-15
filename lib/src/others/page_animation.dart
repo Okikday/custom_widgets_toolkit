@@ -701,3 +701,28 @@ class NoTransitionPage<T> extends CustomTransitionPage<T> {
   ) =>
       child;
 }
+
+/// A PageTransitionsBuilder that wraps TransitionType for use with MaterialApp's PageTransitionsTheme.
+class CustomPageTransitionsBuilder extends PageTransitionsBuilder {
+  const CustomPageTransitionsBuilder({
+    required this.transitionType,
+    this.curve = Curves.easeInOutCirc,
+    this.reverseCurve,
+  });
+
+  final TransitionType transitionType;
+  final Curve curve;
+  final Curve? reverseCurve;
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final builder = transitionType.builder(curve, reverseCurve: reverseCurve);
+    return builder(context, animation, secondaryAnimation, child);
+  }
+}

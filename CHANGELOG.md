@@ -248,3 +248,6 @@
 
 ## 0.0.79
 - **Fixed where Dialog has errors when shown**
+
+## 0.0.80
+- **Added [CustomPageTransitionsBuilder] for use with pageTransitionsTheme**
