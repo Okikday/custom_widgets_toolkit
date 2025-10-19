@@ -1,3 +1,8 @@
+## 0.0.82
+- **fix: Fade flashing when using paired transitions with fade, both routes might be fading simultaneously, causing conflicts**
+- **fix: Duration collision where the secondary animation duration isn't properly controlled in paired transitions**
+- **Added TransitionType CircularReveal, Combine, and iOS swipe-back support**
+
 ## 0.0.81
 - **Fix show [CustomPageTransitionsBuilder]**
 

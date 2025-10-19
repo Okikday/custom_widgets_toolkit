@@ -188,6 +188,8 @@ class _CustomDialogRoute<T> extends ModalRoute<T> {
   final bool dismissible;
   final Color? barrier;
   final String? label;
+
+  @override
   final bool fullscreenDialog;
 
   @override

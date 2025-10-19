@@ -2,9 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:custom_widgets_toolkit/custom_widgets_toolkit.dart';
-import 'package:flutter/widgets.dart';
+import 'dart:io' show Platform;
+import 'dart:math' as math;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'custom_curves.dart';
 
 typedef TransitionBuilder = Widget Function(
   BuildContext context,
@@ -13,14 +17,12 @@ typedef TransitionBuilder = Widget Function(
   Widget child,
 );
 
-/// Parameterized, ergonomic transition descriptor with optimized performance.
 abstract class TransitionType {
   const TransitionType();
 
   /// Build the transitionsBuilder used by PageRouteBuilder / CustomTransitionPage.
   TransitionBuilder builder(Curve curve, {Curve? reverseCurve});
 
-  // Preset singletons with const constructors for memory efficiency
   static const TransitionType none = _NoneTransition();
   static const TransitionType cupertino = _CupertinoTransition();
   static const TransitionType cupertinoDialog = _CupertinoDialogTransition();
@@ -36,6 +38,7 @@ abstract class TransitionType {
   static const TransitionType topLevel = _TopLevelTransition();
   static const TransitionType uptown = _UptownTransition();
   static const TransitionType zoom = _ZoomTransition();
+  static const TransitionType circularReveal = _CircularRevealTransition();
 
   /// Creates a configurable slide transition with optional fade and parallax effects.
   factory TransitionType.slide({Offset? begin, Offset? end, bool fade = false, bool parallax = true}) =>
@@ -54,6 +57,10 @@ abstract class TransitionType {
   factory TransitionType.scaleXY({double from = 0.8, double to = 1.0, bool fade = false}) =>
       _ScaleXYTransition(from: from, to: to, fade: fade);
 
+  /// Creates a circular reveal transition from a specific alignment point.
+  factory TransitionType.circularRevealFrom({Alignment alignment = Alignment.center}) =>
+      _CircularRevealTransition(alignment: alignment);
+
   /// Creates a paired transition where incoming and outgoing routes have different animations.
   factory TransitionType.paired({
     required TransitionType incoming,
@@ -71,6 +78,10 @@ abstract class TransitionType {
         curve: curve,
         reverseCurve: reverseCurve,
       );
+
+  /// Creates a combined transition that layers multiple transition effects.
+  factory TransitionType.combine({required List<TransitionType> transitions}) =>
+      _CombineTransition(transitions: transitions);
 }
 
 // Private implementations with optimized const constructors
@@ -164,7 +175,10 @@ final class _ZoomTransition extends TransitionType {
 
     return (context, animation, secondaryAnimation, child) {
       final scaleAnimation = animation.drive(scaleTween);
-      return ScaleTransition(scale: scaleAnimation, child: FadeTransition(opacity: scaleAnimation, child: child));
+      return ScaleTransition(
+        scale: scaleAnimation,
+        child: FadeTransition(opacity: scaleAnimation, child: child),
+      );
     };
   }
 }
@@ -274,7 +288,6 @@ final class _SlideTransition extends TransitionType {
   @override
   TransitionBuilder builder(Curve curve, {Curve? reverseCurve}) {
     final primaryTween = Tween<Offset>(begin: begin, end: end).chain(CurveTween(curve: curve));
-    final curveTween = fade ? CurveTween(curve: curve) : null;
     final secondaryTween = parallax
         ? Tween<Offset>(
             begin: Offset.zero,
@@ -283,17 +296,25 @@ final class _SlideTransition extends TransitionType {
         : null;
 
     return (context, animation, secondaryAnimation, child) {
-      Widget result = SlideTransition(position: animation.drive(primaryTween), child: child);
+      Widget result = child;
 
+      // Apply slide transition
+      result = SlideTransition(position: animation.drive(primaryTween), child: result);
+
+      // Apply fade with proper bounds to avoid flashing
       if (fade) {
-        result = FadeTransition(opacity: animation.drive(curveTween!), child: result);
+        final fadeTween = Tween<double>(begin: 0.0, end: 1.0).chain(CurveTween(curve: curve));
+        result = FadeTransition(opacity: animation.drive(fadeTween), child: result);
       }
 
+      // Apply parallax effect on secondary animation
       if (parallax && secondaryTween != null) {
         result = AnimatedBuilder(
           animation: secondaryAnimation,
-          builder: (context, child) =>
-              Transform.translate(offset: secondaryAnimation.drive(secondaryTween).value, child: child),
+          builder: (context, child) {
+            final offset = secondaryAnimation.drive(secondaryTween).value;
+            return Transform.translate(offset: offset, child: child);
+          },
           child: result,
         );
       }
@@ -385,6 +406,111 @@ final class _ScaleXYTransition extends TransitionType {
   int get hashCode => Object.hash(from, to, fade);
 }
 
+/// Circular reveal transition that expands/contracts from a point.
+final class _CircularRevealTransition extends TransitionType {
+  const _CircularRevealTransition({this.alignment = Alignment.center});
+
+  final Alignment alignment;
+
+  @override
+  TransitionBuilder builder(Curve curve, {Curve? reverseCurve}) {
+    final curveTween = CurveTween(curve: curve);
+
+    return (context, animation, secondaryAnimation, child) {
+      return AnimatedBuilder(
+        animation: animation,
+        builder: (context, child) {
+          final progress = animation.drive(curveTween).value;
+
+          return ClipPath(
+            clipper: _CircularRevealClipper(progress: progress, alignment: alignment),
+            child: child,
+          );
+        },
+        child: child,
+      );
+    };
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is _CircularRevealTransition && other.alignment == alignment;
+
+  @override
+  int get hashCode => alignment.hashCode;
+}
+
+/// Custom clipper for circular reveal effect.
+class _CircularRevealClipper extends CustomClipper<Path> {
+  const _CircularRevealClipper({required this.progress, required this.alignment});
+
+  final double progress;
+  final Alignment alignment;
+
+  @override
+  Path getClip(Size size) {
+    final center = alignment.alongSize(size);
+    // Calculate the maximum radius needed to cover the entire screen from the center point
+    final maxRadius = _calculateMaxRadius(size, center);
+    final radius = maxRadius * progress;
+
+    final path = Path()..addOval(Rect.fromCircle(center: center, radius: radius));
+
+    return path;
+  }
+
+  double _calculateMaxRadius(Size size, Offset center) {
+    final dx = size.width > center.dx ? size.width - center.dx : center.dx;
+    final dy = size.height > center.dy ? size.height - center.dy : center.dy;
+
+    // Use Pythagoras to find the distance to the farthest corner
+    return math.sqrt(dx * dx + dy * dy) * 1.5;
+  }
+
+  @override
+  bool shouldReclip(_CircularRevealClipper oldClipper) =>
+      oldClipper.progress != progress || oldClipper.alignment != alignment;
+}
+
+/// Combines multiple transitions into one layered effect.
+final class _CombineTransition extends TransitionType {
+  const _CombineTransition({required this.transitions});
+
+  final List<TransitionType> transitions;
+
+  @override
+  TransitionBuilder builder(Curve curve, {Curve? reverseCurve}) {
+    final builders = transitions.map((t) => t.builder(curve, reverseCurve: reverseCurve)).toList();
+
+    return (context, animation, secondaryAnimation, child) {
+      Widget result = child;
+
+      // Apply transitions in order, each wrapping the previous result
+      for (final builder in builders) {
+        result = builder(context, animation, secondaryAnimation, result);
+      }
+
+      return result;
+    };
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! _CombineTransition) return false;
+    if (other.transitions.length != transitions.length) return false;
+
+    for (var i = 0; i < transitions.length; i++) {
+      if (other.transitions[i] != transitions[i]) return false;
+    }
+
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hashAll(transitions);
+}
+
 final class _PairedTransition extends TransitionType {
   const _PairedTransition({
     required this.incoming,
@@ -411,15 +537,15 @@ final class _PairedTransition extends TransitionType {
     final outgoingBuilder = outgoing.builder(effectiveCurve, reverseCurve: effectiveReverseCurve);
 
     return (context, animation, secondaryAnimation, child) {
-      // Check if this is the outgoing route (being pushed out by a new route)
-      // The secondary animation drives when this route is being covered by another
-      if (secondaryAnimation.status == AnimationStatus.forward ||
-          (secondaryAnimation.status == AnimationStatus.reverse && secondaryAnimation.value > 0.0)) {
-        // This route is being pushed out, use outgoing animation
+      // Use secondary animation for outgoing when another route is being pushed on top
+      final isOutgoing = secondaryAnimation.status != AnimationStatus.dismissed;
+
+      if (isOutgoing && secondaryAnimation.value > 0.0) {
+        // This route is being pushed out, use outgoing animation with secondary
         return outgoingBuilder(context, secondaryAnimation, animation, child);
       }
 
-      // This is the incoming route, use incoming animation
+      // This is the incoming route or fully visible, use incoming animation
       return incomingBuilder(context, animation, secondaryAnimation, child);
     };
   }
@@ -439,7 +565,7 @@ final class _PairedTransition extends TransitionType {
   int get hashCode => Object.hash(incoming, outgoing, outgoingDuration, reverseDuration, curve, reverseCurve);
 }
 
-/// Enhanced CustomTransitionPage with paired transition duration support.
+/// Enhanced CustomTransitionPage with paired transition duration and iOS swipe-back support.
 class CustomTransitionPage<T> extends Page<T> {
   const CustomTransitionPage({
     required this.child,
@@ -453,6 +579,7 @@ class CustomTransitionPage<T> extends Page<T> {
     this.barrierColor,
     this.barrierLabel,
     this.transitionType,
+    this.allowIosSwipeBack = true,
     super.key,
     super.name,
     super.arguments,
@@ -470,6 +597,7 @@ class CustomTransitionPage<T> extends Page<T> {
   final String? barrierLabel;
   final TransitionBuilder transitionsBuilder;
   final TransitionType? transitionType;
+  final bool allowIosSwipeBack;
 
   @override
   Route<T> createRoute(BuildContext context) => _CustomTransitionPageRoute<T>(this);
@@ -488,7 +616,8 @@ class CustomTransitionPage<T> extends Page<T> {
           other.barrierDismissible == barrierDismissible &&
           other.barrierColor == barrierColor &&
           other.barrierLabel == barrierLabel &&
-          other.transitionType == transitionType;
+          other.transitionType == transitionType &&
+          other.allowIosSwipeBack == allowIosSwipeBack;
 
   @override
   int get hashCode => Object.hash(
@@ -503,11 +632,12 @@ class CustomTransitionPage<T> extends Page<T> {
         barrierColor,
         barrierLabel,
         transitionType,
+        allowIosSwipeBack,
       );
 }
 
-/// Enhanced route implementation with proper paired transition duration handling.
-final class _CustomTransitionPageRoute<T> extends PageRoute<T> {
+/// Enhanced route implementation with proper paired transition duration handling and iOS swipe-back support.
+final class _CustomTransitionPageRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMixin<T> {
   _CustomTransitionPageRoute(this._page) : super(settings: _page);
 
   final CustomTransitionPage<T> _page;
@@ -536,6 +666,18 @@ final class _CustomTransitionPageRoute<T> extends PageRoute<T> {
   @override
   bool get opaque => _page.opaque;
 
+  // iOS swipe-back gesture support
+  @override
+  bool get popGestureEnabled => _page.allowIosSwipeBack && !_page.fullscreenDialog;
+
+  // Required by CupertinoRouteTransitionMixin
+  @override
+  String? get title => null;
+
+  // Required by CupertinoRouteTransitionMixin
+  @override
+  Widget buildContent(BuildContext context) => _page.child;
+
   Duration _getDuration({required bool forward}) {
     // Handle paired transition durations
     if (_page.transitionType is _PairedTransition) {
@@ -552,7 +694,7 @@ final class _CustomTransitionPageRoute<T> extends PageRoute<T> {
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) =>
-      Semantics(scopesRoute: true, explicitChildNodes: true, child: _page.child);
+      Semantics(scopesRoute: true, explicitChildNodes: true, child: buildContent(context));
 
   @override
   Widget buildTransitions(
@@ -560,8 +702,14 @@ final class _CustomTransitionPageRoute<T> extends PageRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     Widget child,
-  ) =>
-      _page.transitionsBuilder(context, animation, secondaryAnimation, child);
+  ) {
+    // Use iOS swipe-back gesture only on iOS platform
+    if (_page.allowIosSwipeBack && !_page.fullscreenDialog && Platform.isIOS) {
+      return CupertinoRouteTransitionMixin.buildPageTransitions<T>(this, context, animation, secondaryAnimation, child);
+    }
+
+    return _page.transitionsBuilder(context, animation, secondaryAnimation, child);
+  }
 }
 
 class PageAnimation {
@@ -582,6 +730,7 @@ class PageAnimation {
     String? barrierLabel,
     bool maintainState = true,
     bool fullscreenDialog = false,
+    bool allowIosSwipeBack = true,
   }) {
     // Assert that curve parameters are not set when using paired transitions
     // to avoid conflicting configurations
@@ -619,6 +768,7 @@ class PageAnimation {
       maintainState: maintainState,
       fullscreenDialog: fullscreenDialog,
       transitionType: type,
+      allowIosSwipeBack: allowIosSwipeBack,
     );
   }
 
