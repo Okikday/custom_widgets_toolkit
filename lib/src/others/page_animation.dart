@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show Platform;
 import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'custom_curves.dart';
@@ -704,7 +704,7 @@ final class _CustomTransitionPageRoute<T> extends PageRoute<T> with CupertinoRou
     Widget child,
   ) {
     // Use iOS swipe-back gesture only on iOS platform
-    if (_page.allowIosSwipeBack && !_page.fullscreenDialog && Platform.isIOS) {
+    if (_page.allowIosSwipeBack && !_page.fullscreenDialog && defaultTargetPlatform == TargetPlatform.iOS) {
       return CupertinoRouteTransitionMixin.buildPageTransitions<T>(this, context, animation, secondaryAnimation, child);
     }
 

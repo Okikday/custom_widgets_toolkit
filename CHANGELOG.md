@@ -1,3 +1,6 @@
+## 0.0.83
+- **Fix error on web when checking Platform**
+
 ## 0.0.82
 - **fix: Fade flashing when using paired transitions with fade, both routes might be fading simultaneously, causing conflicts**
 - **fix: Duration collision where the secondary animation duration isn't properly controlled in paired transitions**
